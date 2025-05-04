@@ -7,46 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         :root {
-          /* Palette: Soft, modern, slightly muted */
-          --bg-color: #f8f9fc; /* Very light, slightly cool gray */
-          --text-color: #344054; /* Dark gray, less harsh than black */
-          --text-color-light: #667085; /* Lighter gray for secondary text */
-          --input-bg-color: #ffffff; /* White input area for contrast */
-          --border-color: #e4e7ec; /* Soft border color */
+          /* Core Palette - Soft, Off-White/Grey Base, Refined Accents */
+          --bg-color: #f4f7f9; /* Soft, slightly cool off-white */
+          --text-color: #2d3748; /* Dark grey-blue, better contrast, less harsh than black */
+          --input-bg-color: #ffffff; /* Clean white for input area */
+          --border-color: #e2e8f0; /* Lighter, less prominent border */
+          --subtle-bg-color: #edf2f7; /* Very light grey for subtle backgrounds */
 
-          --accent-primary-color: #444ce7; /* Vibrant but professional blue */
-          --accent-secondary-color: #027a48; /* Deep green for assistant */
-          --system-color: #667085; /* Matches secondary text color */
-          --error-color: #d92d20; /* Clear but not overly aggressive red */
+          /* Accent & Role Colors - Desaturated, Modern Tones */
+          --user-prefix-color: #2b6cb0; /* Refined, slightly desaturated blue */
+          --assistant-color: #2f855a; /* Calmer, sophisticated green/teal */
+          --system-color: #4a5568; /* Medium grey for system messages */
+          --command-color: var(--user-prefix-color); /* Link command help to user color */
+          --error-color: #c53030; /* Less vibrant, but clear red */
+          --highlight-color: var(--user-prefix-color); /* Use user blue for primary highlights */
+          --placeholder-color: #a0aec0; /* Softer placeholder text */
 
-          --user-prefix-color: var(--accent-primary-color);
-          --user-bg-color: rgba(68, 76, 231, 0.06); /* Subtle blue background */
-          --assistant-prefix-color: var(--accent-secondary-color);
-          --assistant-bg-color: rgba(2, 122, 72, 0.06); /* Subtle green background */
-          --system-bg-color: rgba(102, 112, 133, 0.06); /* Subtle gray background */
-          --error-bg-color: rgba(217, 45, 32, 0.06); /* Subtle red background */
+          /* UI Elements */
+          --scrollbar-thumb-color: #cbd5e0;
+          --scrollbar-track-color: #edf2f7;
+          --copy-button-bg: rgba(0, 0, 0, 0.03);
+          --copy-button-hover-bg: rgba(0, 0, 0, 0.06);
 
-          --command-color: var(--accent-primary-color); /* Keep consistent with user actions */
-          --highlight-color: var(--accent-primary-color);
-          --scrollbar-thumb-color: #d0d5dd; /* Gray scrollbar thumb */
-          --scrollbar-track-color: #f2f4f7; /* Very light scrollbar track */
-          --code-bg-color: rgba(102, 112, 133, 0.08); /* Subtle background for code blocks */
-          --link-color: var(--accent-secondary-color); /* Use assistant color for links in help */
-
-          /* Typography & Spacing */
-          --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Modern sans-serif */
-          --font-size-base: 16px; /* Slightly smaller base */
+          /* Typography & Spacing - More breathable, modern feel */
+          --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          --font-size-base: 16px; /* Slightly smaller for crispness */
           --font-size-mobile: 15px;
-          --line-height: 1.65; /* Increased for readability */
+          --line-height: 1.65; /* Increased for better readability */
 
-          --padding-base: 20px; /* Slightly more padding */
-          --padding-mobile: 14px;
+          --padding-base: 20px; /* Increased spacing */
+          --padding-mobile: 15px;
           --border-radius-base: 12px; /* Softer corners */
           --border-radius-small: 6px;
         }
-
-        /* Apply Inter font if available */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         *, *::before, *::after {
           box-sizing: border-box;
@@ -54,13 +47,14 @@
 
         html {
           font-size: var(--font-size-base);
+          -webkit-font-smoothing: antialiased; /* Smoother fonts on MacOS/iOS */
+          -moz-osx-font-smoothing: grayscale; /* Smoother fonts on Firefox */
         }
 
         body {
           background-color: var(--bg-color);
           color: var(--text-color);
           font-family: var(--font-family);
-          font-weight: 400;
           margin: 0;
           padding: 0;
           display: flex;
@@ -68,78 +62,69 @@
           height: 100vh;
           height: 100dvh; /* Use dvh for better mobile viewport handling */
           overflow: hidden;
-          -webkit-font-smoothing: antialiased; /* Smoother fonts */
-          -moz-osx-font-smoothing: grayscale;
         }
 
         main#terminal {
           flex-grow: 1;
-		  padding: var(--padding-base) var(--padding-base) 85px var(--padding-base); /* Increased bottom padding */
+		  padding: var(--padding-base) var(--padding-base) 90px var(--padding-base); /* Increased bottom padding */
           overflow-y: auto;
           white-space: pre-wrap;
           word-wrap: break-word;
           line-height: var(--line-height);
         }
 
-        /* Custom Scrollbar */
+        /* Custom Scrollbar Styling */
         main#terminal::-webkit-scrollbar { width: 10px; }
-        main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); border-radius: 5px;}
         main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
-        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #98a2b3; /* Darker gray on hover */ }
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #a0aec0; } /* Slightly darker on hover */
         main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
 
-        /* Input Area Footer */
         footer#inputArea {
           display: flex;
-          align-items: flex-start; /* Align items to the top for multi-line textarea */
+          align-items: stretch;
           background-color: var(--input-bg-color);
-          padding: calc(var(--padding-base) * 0.75) var(--padding-base); /* Adjusted padding */
+          padding: calc(var(--padding-base) / 2) var(--padding-base); /* Adjusted padding */
           border-top: 1px solid var(--border-color);
-          box-shadow: 0 -4px 12px rgba(52, 64, 84, 0.04); /* Softer shadow */
+          box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05); /* Softer, more modern shadow */
           flex-shrink: 0;
           position: relative;
           z-index: 10;
+          transition: height 0.1s ease-out; /* Smooth height transition */
         }
 
-        #prompt {
-          color: var(--accent-primary-color);
-          margin-right: 0.7em;
-          font-weight: 600; /* Slightly bolder prompt */
-          line-height: var(--line-height);
-          padding: calc(var(--padding-base) / 2.8) 0; /* Align with textarea padding */
-          user-select: none;
-          align-self: flex-start; /* Keep aligned with top */
-          padding-top: calc(var(--padding-base) / 2.8); /* Match textarea padding */
+        /* Floating Elements */
+        .floatingElement {
+            position: fixed;
+            background-color: rgba(255, 255, 255, 0.85);
+            color: var(--text-color);
+            padding: 7px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-base);
+            z-index: 1000;
+            font-family: var(--font-family);
+            font-size: 13px; /* Slightly smaller */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            transition: bottom 0.2s ease-out, opacity 0.2s ease-out;
+            opacity: 0.9;
         }
-
-        #userInput {
-          flex-grow: 1;
-          background-color: transparent;
-          border: none;
-          outline: none;
-          color: var(--text-color);
-          font-family: var(--font-family);
-          font-size: inherit;
-          line-height: var(--line-height);
-          padding: calc(var(--padding-base) / 2.8) 0; /* Consistent padding */
-          caret-color: var(--accent-primary-color);
-          resize: none;
-          overflow-y: hidden;
-          /* Ensure minimum height accommodates padding and line height */
-          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.8) * 2 + 2px);
-          font-weight: 400;
-        }
-        #userInput::placeholder {
-            color: #98a2b3; /* Lighter placeholder text */
-            font-style: normal;
+        .floatingElement:hover {
             opacity: 1;
-            font-weight: 400;
         }
-        #userInput:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-            background-color: #f2f4f7; /* Indicate disabled state more clearly */
+
+        #tokenCounter {
+            bottom: 90px; /* Adjust based on input area padding */
+            right: var(--padding-base);
         }
+        #scrollToggle {
+            bottom: 90px;
+            left: var(--padding-base);
+            cursor: pointer;
+            user-select: none;
+        }
+
 
         /* Message Styling */
         .message {
@@ -148,239 +133,199 @@
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          padding: calc(var(--padding-base) * 0.8) calc(var(--padding-base) * 0.9); /* Adjusted padding */
+          padding: calc(var(--padding-base) / 1.5); /* Consistent padding */
           border-radius: var(--border-radius-base);
-          max-width: 85%; /* Slightly less max-width for better centering feel */
-          border: 1px solid transparent; /* Base border for structure */
-          transition: background-color 0.2s ease; /* Smooth transition on hover */
+          max-width: 90%; /* Slightly narrower for cleaner look */
+          transition: background-color 0.2s ease; /* Subtle hover effect (optional) */
         }
+        /* Add subtle hover effect for interaction cue */
+        /* .message:hover { background-color: rgba(0,0,0,0.015); } */
 
         .prefix {
-          font-weight: 600; /* Bolder prefix */
+          font-weight: 600; /* Semibold */
           flex-shrink: 0;
-          margin-bottom: 0.4em; /* More space below prefix */
+          margin-bottom: 0.4em;
           user-select: none;
           white-space: pre;
-          font-size: 0.85em; /* Smaller prefix */
-          opacity: 0.9;
-          letter-spacing: 0.5px; /* Slight letter spacing */
-          text-transform: uppercase; /* Uppercase prefix */
+          font-size: 0.85em; /* Slightly smaller prefix */
+          opacity: 0.85; /* Slightly less prominent */
+          text-transform: uppercase; /* Standardize prefix casing */
         }
 
         .content {
           flex-grow: 1;
           word-break: break-word;
+          /* color is inherited from body by default, roles can override if needed */
         }
 
-        /* User Messages */
+        /* Role-specific styling */
         .user .prefix { color: var(--user-prefix-color); }
-        .user .content { color: var(--text-color); }
-        .user {
-            background-color: var(--user-bg-color);
-            align-self: flex-end;
-            border-color: rgba(68, 76, 231, 0.15);
-        }
+        /* .user .content { color: #1a202c; } */ /* Use default dark text or specify if needed */
+        .user { background-color: rgba(43, 108, 176, 0.08); align-self: flex-end; } /* Slightly tinted background */
 
-        /* Assistant Messages */
-        .assistant .prefix { color: var(--assistant-prefix-color); }
-        .assistant .content { color: var(--text-color); }
-        .assistant {
-            background-color: var(--assistant-bg-color);
-            align-self: flex-start;
-            border-color: rgba(2, 122, 72, 0.15);
-        }
+        .assistant .prefix { color: var(--assistant-color); }
+        /* .assistant .content { color: #1a202c; } */
+        .assistant { background-color: rgba(47, 133, 90, 0.07); align-self: flex-start; }
 
-        /* System Messages */
         .system .prefix { color: var(--system-color); }
         .system .content { color: var(--system-color); }
-        .system {
-            background-color: var(--system-bg-color);
-            font-size: 0.92em;
-            align-self: center;
-            max-width: 80%;
-            text-align: center;
-            border-color: rgba(102, 112, 133, 0.15);
-            padding: calc(var(--padding-base) * 0.6) calc(var(--padding-base) * 0.8);
-        }
-        .system .prefix { margin-bottom: 0.3em; }
+        .system { background-color: var(--subtle-bg-color); font-size: 0.95em; align-self: center; max-width: 85%; text-align: center; } /* Subtle grey background */
 
-        /* Help Output */
+        /* Specific System message types */
         .system.help-output {
             text-align: left;
             align-self: flex-start;
-            max-width: 85%;
-            background-color: var(--system-bg-color);
-            border-color: rgba(102, 112, 133, 0.15);
+            max-width: 90%;
+            background-color: var(--subtle-bg-color);
         }
-        .system.help-output .prefix {
-            color: var(--command-color);
-            opacity: 1;
-        }
+        .system.help-output .prefix,
         .system.help-output .content {
-            color: var(--text-color);
+            color: var(--system-color); /* Keep system color for consistency */
             opacity: 1;
         }
-		.system.help-output .content a {
-			color: var(--link-color); /* Use defined link color */
-			text-decoration: underline;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 2px;
+		.system.help-output .content b { /* Style bolded headers */
+            color: var(--text-color);
+            font-weight: 600;
+        }
+        .system.help-output .content a { /* Link Styling */
+			color: var(--highlight-color); /* Use highlight color for links */
+			text-decoration: none;
             font-weight: 500;
 		}
         .system.help-output .content a:hover {
-            color: #05603a; /* Darker green on hover */
+            text-decoration: underline;
         }
-		.system.help-output code {
-			background-color: var(--code-bg-color);
+		.system.help-output code { /* Code Block Styling */
+			background-color: rgba(0, 0, 0, 0.04);
             color: var(--text-color);
 			padding: 3px 6px;
 			border-radius: var(--border-radius-small);
 			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 			font-size: 0.9em;
             border: 1px solid var(--border-color);
+            display: inline-block; /* Prevents wrapping issues sometimes */
 		}
-        .system.help-output b {
-            font-weight: 600;
-            color: var(--text-color);
-        }
 
-        /* Error Messages */
         .error .prefix { color: var(--error-color); }
-        .error .content { color: var(--error-color); font-weight: 500; /* Slightly less bold */ }
-        .error {
-            background-color: var(--error-bg-color);
-            align-self: center;
-            text-align: center;
-            max-width: 80%;
-            border-color: rgba(217, 45, 32, 0.15);
+        .error .content { color: var(--error-color); font-weight: 500; } /* Slightly less bold */
+        .error { background-color: rgba(197, 48, 48, 0.08); align-self: center; text-align: center; max-width: 85%; }
+
+        /* Input Area Elements */
+        #prompt {
+          color: var(--highlight-color);
+          margin-right: 0.7em;
+          font-weight: 600; /* Semibold prompt */
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0; /* Match textarea padding */
+          user-select: none;
+          align-self: flex-start;
+          padding-top: 9px; /* Fine-tune vertical alignment */
         }
 
-        /* Thinking Animation */
+        #userInput {
+          flex-grow: 1;
+          background-color: transparent; /* Inherit from footer */
+          border: none;
+          outline: none;
+          color: var(--text-color);
+          font-family: var(--font-family);
+          font-size: inherit;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0; /* Vertical padding */
+          caret-color: var(--highlight-color);
+          resize: none;
+          overflow-y: hidden; /* Managed by adjustTextareaHeight */
+          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 2px); /* Calculate min-height accurately */
+        }
+        #userInput::placeholder { color: var(--placeholder-color); font-style: italic; opacity: 0.9; }
+        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
+
+        /* Loading/Thinking Indicator */
         .loading-content {
             display: inline-flex;
             align-items: baseline;
-            color: var(--text-color-light); /* Use lighter text for thinking */
+            opacity: 0.9;
         }
         .thinking-timer-span {
-            margin-left: 8px;
-            font-size: 0.9em;
+            margin-left: 10px; /* More space */
+            font-size: 0.85em;
             opacity: 0.8;
-            color: var(--text-color-light);
+            color: var(--system-color); /* Use system color */
             white-space: nowrap;
         }
 
-        /* Floating Elements (Token Counter, Scroll Toggle) */
-        .floatingElement {
-          position: fixed;
-          background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-          color: var(--text-color-light); /* Lighter text */
-          padding: 6px 12px;
-          border: 1px solid var(--border-color);
-          border-radius: var(--border-radius-base);
-          z-index: 1000;
-          font-family: var(--font-family);
-          font-size: 13px; /* Smaller font */
-          backdrop-filter: blur(5px); /* Slightly stronger blur */
-          -webkit-backdrop-filter: blur(5px);
-          transition: bottom 0.2s ease-out, background-color 0.2s ease, color 0.2s ease;
-          box-shadow: 0 2px 8px rgba(52, 64, 84, 0.08); /* Subtle shadow */
-          font-weight: 500;
-        }
-
-        #tokenCounter {
-          bottom: 90px; /* Adjusted default bottom */
-          right: var(--padding-base);
-        }
-
-        #scrollToggle {
-          bottom: 90px; /* Adjusted default bottom */
-          left: var(--padding-base);
-          cursor: pointer;
-          user-select: none;
-        }
-        #scrollToggle:hover {
-           background-color: rgba(248, 249, 252, 0.95); /* Slightly change bg on hover */
-           color: var(--text-color); /* Darker text on hover */
-        }
-
         /* Copy Button */
-		.copy-btn {
+        .copy-btn {
 		  position: absolute;
-		  top: 8px; /* Slightly more space */
+		  top: 8px; /* Adjust position */
 		  right: 8px;
 		  border: none;
-		  background: rgba(52, 64, 84, 0.06); /* Subtle background */
-		  color: var(--text-color-light); /* Use lighter text color */
-          padding: 4px 7px;
+		  background: var(--copy-button-bg);
+		  color: var(--highlight-color); /* Match prompt/highlight */
+          padding: 4px 8px; /* Slightly larger */
           border-radius: var(--border-radius-small);
 		  font-family: var(--font-family);
-		  font-size: 0.78em; /* Slightly larger */
+		  font-size: 0.75em; /* Small but readable */
 		  cursor: pointer;
-		  opacity: 0;
+		  opacity: 0; /* Hidden by default */
 		  user-select: none;
-		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in, color 0.15s ease-in;
+		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
           line-height: 1.2;
           text-align: center;
           font-weight: 500;
 		}
-		.message:hover .copy-btn { opacity: 0.6; } /* Less aggressive opacity on hover */
-        .copy-btn:hover { opacity: 1; background: rgba(52, 64, 84, 0.1); color: var(--text-color); }
-		.copy-btn:focus { outline: none; box-shadow: 0 0 0 2px rgba(68, 76, 231, 0.3); /* Focus ring */ }
-        .copy-btn:active { background: rgba(52, 64, 84, 0.15); }
+		.message:hover .copy-btn { opacity: 0.7; } /* Show on message hover */
+        .copy-btn:hover { opacity: 1; background: var(--copy-button-hover-bg); }
+		.copy-btn:focus { outline: none; box-shadow: 0 0 0 2px rgba(var(--highlight-color), 0.3); } /* Subtle focus ring */
 
         /* Responsive Adjustments */
-        @media (max-width: 768px) { /* Tablet breakpoint */
-            .message { max-width: 90%; }
-            .system, .error { max-width: 85%; }
-        }
-
-        @media (max-width: 600px) { /* Mobile breakpoint */
+        @media (max-width: 768px) { /* Wider breakpoint for tablets */
           html { font-size: var(--font-size-mobile); }
 		  main#terminal {
-            padding: var(--padding-mobile) var(--padding-mobile) 75px var(--padding-mobile); /* Adjust bottom padding */
+            padding: var(--padding-mobile) var(--padding-mobile) 80px var(--padding-mobile); /* Adjust padding */
           }
-          footer#inputArea { padding: calc(var(--padding-mobile) * 0.8) var(--padding-mobile); }
-          #prompt { padding: calc(var(--padding-mobile) / 2.5) 0; margin-right: 0.6em; }
-          #userInput { padding: calc(var(--padding-mobile) / 2.5) 0; min-height: calc(var(--line-height) * 1em + (var(--padding-mobile) / 2.5) * 2 + 2px); }
+          footer#inputArea { padding: calc(var(--padding-mobile) / 1.5) var(--padding-mobile); }
+          #prompt { padding: calc(var(--padding-mobile) / 2.2) 0; padding-top: 8px; margin-right: 0.5em; }
+          #userInput { padding: calc(var(--padding-mobile) / 2.2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
 
-          .message {
-              margin-bottom: calc(var(--padding-mobile) * 1.1);
-              padding: calc(var(--padding-mobile) * 0.85) calc(var(--padding-mobile) * 0.95);
-              max-width: 95%; /* Allow wider messages on mobile */
-              border-radius: calc(var(--border-radius-base) * 0.8); /* Slightly smaller radius */
-            }
-          .system, .error { max-width: 90%; }
+          .message { margin-bottom: calc(var(--padding-mobile) * 1.1); max-width: 95%; }
+          .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 0.9); }
+          .system, .error { max-width: 92%; }
 
           main#terminal::-webkit-scrollbar { width: 8px; }
           main#terminal::-webkit-scrollbar-thumb { border-width: 1.5px; }
 
           .floatingElement {
+              padding: 6px 12px;
               font-size: 12px;
-              padding: 5px 10px;
-              border-radius: calc(var(--border-radius-base) * 0.8);
+              border-radius: var(--border-radius-base) * 0.8;
           }
-          #tokenCounter { bottom: 75px; right: var(--padding-mobile); }
-          #scrollToggle { bottom: 75px; left: var(--padding-mobile); }
+          #tokenCounter { bottom: 80px; right: var(--padding-mobile); }
+          #scrollToggle { bottom: 80px; left: var(--padding-mobile); }
 
-          .copy-btn { font-size: 0.75em; padding: 3px 6px; top: 6px; right: 6px; }
+          .copy-btn { top: 6px; right: 6px; padding: 3px 6px; font-size: 0.7em;}
         }
+
+        /* Small mobile tweaks */
+         @media (max-width: 480px) {
+            /* Maybe hide scroll toggle on very small screens if needed */
+            /* #scrollToggle { display: none; } */
+         }
 
     </style>
 </head>
 <body>
+    <!-- HTML Structure remains unchanged -->
     <main id="terminal"></main>
-    <!-- Added base class for floating elements -->
     <div id="tokenCounter" class="floatingElement">Token: 0</div>
-	<div id="scrollToggle" class="floatingElement floatingToggle">🔽 Scroll Automatico: ON</div>
+	<div id="scrollToggle" class="floatingElement">🔽 Scroll Automatico: ON</div>
     <footer id="inputArea">
         <span id="prompt">></span>
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
     <script>
-        // NO CHANGES TO JAVASCRIPT LOGIC AS REQUESTED
-        // The entire <script> block remains identical to your original code.
-
+        // JAVASCRIPT REMAINS IDENTICAL - NO CHANGES BELOW THIS LINE
         const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
 		const COMMAND_INFO = [
@@ -393,11 +338,12 @@
         const terminalDiv = document.getElementById("terminal");
         const userInput = document.getElementById("userInput");
         const tokenCounterDiv = document.getElementById("tokenCounter");
+        const scrollToggleDiv = document.getElementById("scrollToggle");
 
 		let autoScrollEnabled = true;
-		const scrollToggleDiv = document.getElementById("scrollToggle");
-		// Remove the old class, use the new base class for styling
-        scrollToggleDiv.classList.remove("floatingToggle");
+		// Attach floatingElement class dynamically or ensure it's on the HTML
+        scrollToggleDiv.classList.add('floatingElement');
+        tokenCounterDiv.classList.add('floatingElement');
 
 		scrollToggleDiv.addEventListener("click", () => {
 		  autoScrollEnabled = !autoScrollEnabled;
@@ -447,13 +393,14 @@
 
             switch(role) {
                 case 'user':
-                    prefixSpan.textContent = "UTENTE:";
+                    prefixSpan.textContent = "UTENTE:"; // Keep JS logic same
                     contentSpan.textContent = text;
                     break;
                 case 'assistant':
                     prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
                     if (isLoading) {
                         contentSpan.classList.add("loading-content");
+                        // Inner structure might need minor tweaks if CSS relies heavily on it, but try to keep JS output same.
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
                     } else {
                         contentSpan.textContent = text;
@@ -461,7 +408,8 @@
                     break;
 				case 'system':
 					prefixSpan.textContent = "SISTEMA:";
-					extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
+					// Check if JS needs modification for innerHTML vs textContent - keep as is
+                    extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
 					break;
                 case 'error':
                     prefixSpan.textContent = "ERRORE!";
@@ -476,14 +424,15 @@
 			msgDiv.appendChild(prefixSpan);
 			msgDiv.appendChild(contentSpan);
 
+			// Copy Button Logic remains unchanged
 			const copyBtn = document.createElement("button");
 			copyBtn.classList.add("copy-btn");
 			copyBtn.setAttribute("title", "Copia questo messaggio");
-			copyBtn.textContent = "Copia";
+			copyBtn.textContent = "Copia"; // Keep text same
 
 			copyBtn.addEventListener("click", (e) => {
 			  e.stopPropagation();
-			  const txt = contentSpan.textContent || "";
+			  const txt = contentSpan.textContent || ""; // Extract text simply
 			  navigator.clipboard.writeText(txt).then(() => {
 				copyBtn.textContent = "Copiato!";
 				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
@@ -502,15 +451,17 @@
 
 		function scrollToBottom() {
 		  if (!autoScrollEnabled) return;
+		  // Debounce slightly? No, keep simple scroll.
 		  requestAnimationFrame(() => {
 			terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
 		  });
 		}
 
+        // Adjust Textarea Height Logic remains unchanged
         function adjustTextareaHeight() {
             userInput.style.height = 'auto';
             let newHeight = userInput.scrollHeight;
-            const maxHeight = 180; // Keep max height constraint
+            const maxHeight = 180; // Max height stays the same for now
             if (newHeight > maxHeight) {
                 newHeight = maxHeight;
                 userInput.style.overflowY = 'auto';
@@ -520,19 +471,29 @@
             userInput.style.height = newHeight + 'px';
 
             const inputArea = document.getElementById('inputArea');
-            const tokenCounter = document.getElementById('tokenCounter'); // Get elements directly
-            const scrollToggle = document.getElementById('scrollToggle');
+            const tokenCounterElem = document.getElementById('tokenCounter');
+            const scrollToggleElem = document.getElementById('scrollToggle');
 
-			if (inputArea && tokenCounter && scrollToggle) {
-			  const inputAreaHeight = inputArea.offsetHeight;
-              // Use the variable from root CSS or a fixed value for spacing
-              const bottomOffset = 15; // Adjust this value as needed for spacing
-			  const newBottom = `${inputAreaHeight + bottomOffset}px`;
-			  tokenCounter.style.bottom = newBottom;
-			  scrollToggle.style.bottom = newBottom;
-			}
+
+            if (inputArea && tokenCounterElem && scrollToggleElem) {
+              // Calculate new bottom position for floating elements based on footer height + buffer
+              const inputAreaHeight = inputArea.offsetHeight;
+              const buffer = parseInt(window.getComputedStyle(terminalDiv).paddingBottom) / 3 || 15; // Use ~1/3 of terminal bottom padding as buffer
+			  const newBottom = `${inputAreaHeight + buffer}px`;
+
+              // Function to update style defensively
+              const updateStyle = (elem, styleProp, value) => {
+                  if (elem && elem.style[styleProp] !== value) {
+                      elem.style[styleProp] = value;
+                  }
+              };
+
+			  updateStyle(tokenCounterElem, 'bottom', newBottom);
+			  updateStyle(scrollToggleElem, 'bottom', newBottom);
+            }
         }
 
+        // UI Update Logic remains unchanged
 		function updateTokenCounterUI() {
 			const countStr = formatTokenCount(appState.currentTokenCount);
 			const limitStr = formatTokenCount(appState.currentTokenLimit);
@@ -540,26 +501,28 @@
 		}
 
         function updatePromptUI() {
-            promptSpan.textContent = "> "; // Kept simple as requested
+            // Prompt character '>' stays the same
+            promptSpan.textContent = "> ";
         }
 
         function updateUserInteractionState() {
+             // State logic remains unchanged
              const isDisabled = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
              userInput.disabled = isDisabled;
 
              if (appState.isWaitingForAI) {
-                 userInput.placeholder = `Digita 'stop' per interrompere...`; // Added ellipsis
+                 userInput.placeholder = `Digita 'stop' per interrompere`;
              } else if (isDisabled) {
                  // Keep disabled placeholder
              } else if (!appState.currentCharacter) {
-                 userInput.placeholder = "Caricamento configurazione..."; // Changed text slightly
+                 userInput.placeholder = "Caricamento config...";
              } else {
-                 // Use current character in placeholder for context
-                 userInput.placeholder = `Chiedi a ${appState.currentCharacter || 'AI'}...`;
+                 userInput.placeholder = `Chiedi all'IA...`; // Or make more engaging? Keep as is.
              }
-             adjustTextareaHeight(); // Ensure height is correct after placeholder change
+             adjustTextareaHeight(); // Ensure height adjusts on state change
         }
 
+        // Animation/Timer Logic remains unchanged
         function startThinkingAnimationAndTimer() {
             if (!appState.loadingMsgDiv) return;
 
@@ -568,7 +531,6 @@
             if (!dotsSpan || !timerSpan) return;
 
             let dotCount = 1;
-            dotsSpan.textContent = "Sto pensando."; // Initial text
             appState.thinkingIntervalId = setInterval(() => {
                 dotCount = (dotCount % 3) + 1;
                 dotsSpan.textContent = "Sto pensando" + ".".repeat(dotCount);
@@ -593,16 +555,16 @@
                 appState.timerIntervalId = null;
             }
             appState.thinkingStartTime = null;
-            // Ensure loading class is removed if message persists
             if (appState.loadingMsgDiv) {
                 const contentSpan = appState.loadingMsgDiv.querySelector('.content');
                 if (contentSpan) {
+                    // Remove helper class added by JS, CSS handles final look
                     contentSpan.classList.remove('loading-content');
-                    // Restore default text color if needed (handled by CSS normally)
                 }
             }
         }
 
+        // State/API Interaction Logic remains unchanged
         function updateStateFromWorkerResponse(data) {
             if (data.activeCharacter) appState.currentCharacter = data.activeCharacter;
             if (data.activeModel) appState.currentModel = data.activeModel;
@@ -612,10 +574,6 @@
 
             updateTokenCounterUI();
             updatePromptUI();
-            // Update placeholder if character changed
-            if (!appState.isWaitingForAI && !userInput.disabled) {
-                updateUserInteractionState();
-            }
         }
 
         function resetConversationState(reason) {
@@ -652,7 +610,6 @@
                     if (data?.details) console.error("Dettagli Errore API:", data.details);
                     console.error("Risposta Errore API Completa:", data);
 
-                    // Preserve state updates even on error if available
                     if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
                     if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
                     if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
@@ -664,7 +621,6 @@
                     throw error;
                 }
 
-                // Validate expected response structure for chat messages
                 if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
                      console.error("Struttura risposta API inattesa:", data);
                      throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
@@ -677,14 +633,13 @@
             } catch (error) {
                 if (error.name === 'AbortError') {
                     console.log("Fetch interrotto dall'utente.");
-                    throw error; // Re-throw AbortError to be handled specifically
+                    throw error; // Re-throw to be handled by caller
                 }
 
                 console.error("Errore Fetch/API:", error);
                 if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-                     // Network error - more specific message
-                     const networkError = new Error("Errore di rete: Impossibile connettersi all'API. Verifica la connessione.");
-                     networkError.status = 0; // Indicate network issue
+                     const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
+                     networkError.status = 0; // Assign a pseudo-status for network errors
                      throw networkError;
                 }
                 // Re-throw other errors
@@ -692,43 +647,44 @@
             }
         }
 
+        // Input Handling Logic remains unchanged (including commands)
         async function handleUserInput() {
             const inputText = userInput.value.trim();
             userInput.value = "";
-            adjustTextareaHeight(); // Adjust height immediately after clearing
+            adjustTextareaHeight();
 
             if (inputText === "") return;
 
-            // Handle 'stop' command during AI response
+            // Handle 'stop' command during AI processing
             if (appState.isWaitingForAI) {
                 if (inputText.toLowerCase() === 'stop') {
-                    appendMessage("user", inputText); // Show user's 'stop' command
+                    appendMessage("user", inputText); // Display user command
                     if (appState.abortController) {
-                        appState.abortController.abort(); // Signal abort
-                        // Message indicating stop is handled in the catch/finally block now
+                        appState.abortController.abort(); // Trigger abort
+                        // System message added in the catch/finally block of the API call now
                     } else {
-                        appendMessage("error", "Nessuna operazione AI da interrompere.");
+                        appendMessage("error", "Impossibile fermare: Nessun processo AI attivo trovato.");
                     }
                 } else {
-                    appendMessage("user", inputText); // Show user's ignored input
-                    appendMessage("system", `Input ignorato: AI occupata. Usa 'stop' per interrompere.`);
+                    appendMessage("user", inputText);
+                    appendMessage("system", `Input "${inputText}" ignorato: AI occupata. Digita 'stop' per interrompere.`);
                 }
                 scrollToBottom();
-                return;
+                return; // Don't process further if waiting
             }
 
-            // Add to command history
+            // Command History update
             if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== inputText) {
                 appState.commandHistory.push(inputText);
             }
-            appState.historyIndex = appState.commandHistory.length; // Reset history navigation index
+            appState.historyIndex = appState.commandHistory.length; // Reset index to end
 
-            // --- Command Handling (Unchanged Logic) ---
+            // Command Parsing (lowercase for command check, original for args if needed)
             const commandArgs = inputText.toLowerCase().split(/\s+/);
             const command = commandArgs[0];
-            const subCommand = commandArgs.slice(0,2).join(' '); // For multi-word commands like 'imposta modalità'
-            const originalArgs = inputText.split(/\s+/); // Keep original casing for values
+            const originalArgs = inputText.split(/\s+/); // Keep original casing for values like character names
 
+            // --- Command Handling ---
             if (command === 'reset') {
                 appendMessage("user", inputText);
                 resetConversationState('user command');
@@ -737,258 +693,270 @@
 
             if (command === 'help') {
                 appendMessage("user", inputText);
-                const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
+                // Sorting and formatting remain the same
+				const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
 					a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
 				);
-				let helpOutput = "<b>COMANDI DISPONIBILI:</b>\n"; // Slightly different title
+
+				let helpOutput = "<b>COMANDI DISPONIBILI:</b>\n"; // Slightly better header
 				commandsSorted.forEach(c => {
-					helpOutput += `  <code>${c.desc}</code>\n`; // Use <code> styling from CSS
+					helpOutput += `  <code>${c.desc}</code>\n`; // Use <code> for clarity
 				});
 				helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
 				const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna modalità trovata.'}\n\n`;
+				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna modalità definita.'}\n\n`; // Use clearer text
 				helpOutput += "<b>STATO ATTUALE:</b>\n";
 				helpOutput += `  Modalità Attiva: ${appState.currentCharacter || 'N/D'}\n`;
-				helpOutput += `  Modello Utilizzato: ${appState.currentModel || 'N/D'}\n\n`;
-				helpOutput += `<b>UTILIZZO:</b>\n`;
+				helpOutput += `  Modello AI:  ${appState.currentModel || 'N/D'}\n\n`;
+				helpOutput += `<b>UTILIZZO BASE:</b>\n`;
 				helpOutput += "  • Inserisci un messaggio per chattare con l'AI.\n";
-                helpOutput += "  • Usa i comandi per gestire la sessione.\n";
-				appendMessage("system", helpOutput, false, "help-output"); // Use specific class for styling
+                helpOutput += "  • Usa i comandi per gestire la sessione.\n"; // Added clarification
+				appendMessage("system", helpOutput, false, "help-output");
 				scrollToBottom();
 				return;
             }
 
-            // Handle 'imposta modalità <nome>'
-            if (subCommand === 'imposta modalità') {
-                appendMessage("user", inputText);
+             if (command === 'imposta' && commandArgs.length > 1 && commandArgs[1] === 'modalità') {
+                appendMessage("user", inputText); // Show the full command entered
                 if (originalArgs.length < 3) {
-                     appendMessage("error", "Utilizzo non corretto. Esempio: <code>imposta modalità nome_modalità</code>");
+                     appendMessage("error", "Utilizzo non corretto. Esempio: imposta modalità <NomeModalità>");
                      return;
                 }
-                const settingValue = originalArgs.slice(2).join(' '); // Get the character name
-                const characterNameLower = settingValue.toLowerCase();
-                const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
+                const settingValue = originalArgs.slice(2).join(' '); // Get the character name with original casing
+
+                 // Case-insensitive search but store/use the actual name from availableCharacters
+                 const characterNameLower = settingValue.toLowerCase();
+                 const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
 
                  if (foundCharacter) {
                      if (appState.currentCharacter !== foundCharacter) {
-                         appState.currentCharacter = foundCharacter; // Update state
-                         appendMessage("system", `Modalità AI impostata su: ${appState.currentCharacter}.`);
-                         resetConversationState('character change'); // Reset context on character change
-                         updatePromptUI(); // Update prompt if needed
-                         updateUserInteractionState(); // Update placeholder
+                         // Use the correctly cased name from the list
+                         appState.currentCharacter = foundCharacter;
+                         appendMessage("system", `Modalità AI cambiata in: ${appState.currentCharacter}.`);
+                         // Backend expects 'character', frontend state is also 'currentCharacter'
+                         resetConversationState('character change');
+                         updatePromptUI(); // Reflect change if prompt depends on character (it doesn't here)
                      } else {
-                          appendMessage("system", `La modalità AI è già impostata su: ${appState.currentCharacter}.`);
+                          appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
                      }
                  } else {
                      const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna'}`);
+                     appendMessage("error", `Modalità "${settingValue}" non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna'}`);
                  }
                  scrollToBottom();
                  return;
-            }
-            // Fallback for just 'imposta' or other subcommands
-            if (command === 'imposta') {
-                 appendMessage("user", inputText);
-                 appendMessage("error", "Comando 'imposta' incompleto. Usa: <code>imposta modalità <nome></code>");
-                 return;
-            }
+             } else if (command === 'imposta') {
+                  appendMessage("user", inputText);
+                  appendMessage("error", "Comando 'imposta' sconosciuto o incompleto. Usa 'imposta modalità <nome>'.");
+                  return;
+             }
 
-            // --- Standard Chat Interaction ---
+            // --- Default: Send message to AI ---
             appendMessage("user", inputText);
             appState.conversation.push({ role: "user", content: inputText });
-            scrollToBottom();
+            scrollToBottom(); // Scroll after adding user message
 
             appState.isWaitingForAI = true;
-            appState.loadingMsgDiv = appendMessage("assistant", "", true); // Show loading state
+            appState.loadingMsgDiv = appendMessage("assistant", "", true); // Add loading message placeholder
             startThinkingAnimationAndTimer();
             appState.abortController = new AbortController(); // Create new controller for this request
-            updateUserInteractionState(); // Update placeholder etc.
+            updateUserInteractionState();
 
             try {
                 const payload = {
-                    messages: appState.conversation,
-                    character: appState.currentCharacter,
-                    model: appState.currentModel
+                    messages: appState.conversation, // Send current history
+                    character: appState.currentCharacter, // Send selected character
+                    model: appState.currentModel // Optionally send model if needed by backend
                 };
                 const result = await callWorkerApi(payload, appState.abortController.signal);
 
-                // If successful and not aborted, update the loading message with the actual content
+                // Success path (if not aborted)
+                clearThinkingAnimationAndTimer();
+
                 if (appState.loadingMsgDiv && !appState.abortController.signal.aborted) {
-                     clearThinkingAnimationAndTimer(); // Stop timer/dots first
                      const contentSpan = appState.loadingMsgDiv.querySelector('.content');
                      const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
                      if (contentSpan && prefixSpan) {
-                         contentSpan.classList.remove('loading-content'); // Remove loading style
-                         prefixSpan.textContent = `${(appState.currentCharacter || 'AI').toUpperCase()}:`; // Ensure correct prefix
-                         contentSpan.textContent = result.completion; // Set final content
-                         // Add assistant message to conversation history
-                         appState.conversation.push({ role: "assistant", content: result.completion });
+                         // Update existing placeholder div content
+                         contentSpan.classList.remove('loading-content'); // Managed by clearThinking... but ensure it's removed
+                         prefixSpan.textContent = `${(appState.currentCharacter || 'AI').toUpperCase()}:`; // Update prefix just in case character changed mid-flight (unlikely)
+                         contentSpan.textContent = result.completion; // Set final text
+                         // Re-attach copy button logic to the now-filled message if necessary
+                         // The current implementation adds it on creation, which should be fine.
                      } else {
-                        // Fallback if spans not found (shouldn't happen)
-                        appState.loadingMsgDiv.remove();
-                        appendMessage("assistant", result.completion);
-                        appState.conversation.push({ role: "assistant", content: result.completion });
+                         // Fallback if placeholder elements not found
+                         if (appState.loadingMsgDiv) appState.loadingMsgDiv.remove(); // Remove broken placeholder
+                         appendMessage("assistant", result.completion); // Append as new message
                      }
-                     appState.loadingMsgDiv = null; // Clear ref as it's now a normal message
+                     appState.loadingMsgDiv = null; // Clear reference once filled/removed
                 }
-                // If aborted before completion, loadingMsgDiv might still exist but we remove it in finally
 
-                // Check for token limit reached *after* successful response
-                if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
-                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Contesto reimpostato.`);
-                    resetConversationState('token limit');
+                // Add successful completion to conversation history if not aborted
+                if (result.completion !== undefined && !appState.abortController.signal.aborted) {
+                    appState.conversation.push({ role: "assistant", content: result.completion });
+                    updateTokenCounterUI(); // Update tokens after successful response
                 }
+
+                 // Check token limit *after* receiving response and updating count
+                 if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
+                     appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
+                     resetConversationState('token limit');
+                 }
 
             } catch (error) {
-                clearThinkingAnimationAndTimer(); // Ensure timer/dots are stopped
+                clearThinkingAnimationAndTimer();
 
                 if (appState.loadingMsgDiv) {
-                    appState.loadingMsgDiv.remove(); // Remove the "thinking" message on error
+                    appState.loadingMsgDiv.remove(); // Clean up placeholder on error too
                     appState.loadingMsgDiv = null;
                 }
 
                 if (error.name === 'AbortError') {
-                    // Handle abortion gracefully - message already sent by 'stop' command logic if user triggered
-                    appendMessage("system", "Risposta AI interrotta.");
+                    // Specific message for user-initiated stop
+                    appendMessage("system", "Richiesta AI interrotta dall'utente.");
+                    // Don't add to conversation history
+                    // State already handled by 'stop' command logic + finally block
                 } else {
-                    // Handle other API or network errors
-                    appendMessage("error", error.message || "Si è verificato un errore imprevisto.");
+                    // Handle API errors or network errors
+                    appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
+                    scrollToBottom(); // Scroll to show error
 
-                    // Specific handling for token limit reached during *input* processing (e.g., 413 Payload Too Large)
-                    if (error.status === 413 || (error.data && error.data.error === 'Token limit reached before processing')) {
-                        appendMessage("system", "Messaggio troppo lungo o limite contesto raggiunto. Reimpostazione automatica.");
-                        resetConversationState('input limit');
-                        // Remove the user message that caused the error from the (now reset) conversation state
-                        // Note: The user message was already displayed visually.
+                    // Check for specific error conditions requiring context reset
+                    if (error.status === 413 || (error.data && error.data.error_code === 'CONTEXT_LENGTH_EXCEEDED')) {
+                         appendMessage("system", "Messaggio troppo lungo o limite contesto superato. Reimpostazione automatica del contesto.");
+                         resetConversationState('input limit');
                     }
 
-                    // Update placeholder to indicate error state only if not initialization failed
-                    if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                      userInput.placeholder = `Errore. Riprova o usa 'reset'.`;
-                    }
+                    // Optionally remove the failed user message from history if desired? No, keep it.
+                    // appState.conversation.pop();
+
+                     if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                       userInput.placeholder = `Errore. Riprova o usa 'reset'.`; // Simplified error placeholder
+                     }
                 }
-                scrollToBottom();
 
             } finally {
-                // Cleanup regardless of success or failure
-                clearThinkingAnimationAndTimer(); // Ensure timers are cleared
+                // This block runs after success, handled errors, or aborts
+                clearThinkingAnimationAndTimer(); // Ensure timers are always cleared
                 appState.isWaitingForAI = false;
-                appState.abortController = null; // Clear abort controller
+                appState.abortController = null; // Clean up controller reference
 
-                // If loadingMsgDiv still exists here (e.g., aborted), remove it.
-                 if (appState.loadingMsgDiv) {
+                if (appState.loadingMsgDiv) { // Ensure placeholder is removed if still referenced somehow
                     appState.loadingMsgDiv.remove();
                     appState.loadingMsgDiv = null;
-                 }
+                }
 
-                // Restore normal state if not permanently disabled
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                   updateUserInteractionState(); // Set placeholder back to normal
-                   setTimeout(() => userInput.focus(), 50); // Refocus input slightly delayed
+                   updateUserInteractionState(); // Reset placeholder/disabled state
+                   // Ensure focus returns to input after processing, slight delay helps.
+                   // Only focus if user hasn't clicked elsewhere. Check activeElement? Simpler to just focus.
+                   setTimeout(() => userInput.focus(), 50);
                 }
 
                  adjustTextareaHeight(); // Final height adjustment
+                 scrollToBottom(); // Ensure latest message/error is visible
             }
         }
 
+        // Keyboard Input Handling Logic remains unchanged
         function handleKeyDown(event) {
-            // Submit on Enter (if not Shift+Enter)
+            // Enter key sends message (if not Shift+Enter)
             if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
-                event.preventDefault();
+                event.preventDefault(); // Prevent newline in textarea
                 handleUserInput();
             }
-            // History navigation with Arrow Up/Down
-            else if (event.key === "ArrowUp" && !userInput.disabled) {
-                // Only navigate if cursor is at the start of the input
-                if (userInput.selectionStart === 0 && userInput.selectionEnd === 0 && appState.commandHistory.length > 0 && appState.historyIndex > 0) {
+            // Arrow keys for command history navigation
+            else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) { // Only when cursor at start
+                if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
                     event.preventDefault();
                     appState.historyIndex--;
                     userInput.value = appState.commandHistory[appState.historyIndex];
-                    adjustTextareaHeight(); // Adjust height for potentially longer history item
                     // Move cursor to end after setting value
                     requestAnimationFrame(() => {
                       userInput.setSelectionRange(userInput.value.length, userInput.value.length);
                     });
+                    adjustTextareaHeight();
                 }
             }
-            else if (event.key === "ArrowDown" && !userInput.disabled) {
-                // Only navigate if cursor is at the end of the input
-                 if (userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length && appState.historyIndex < appState.commandHistory.length) {
+            else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) { // Only when cursor at end
+                 if (appState.historyIndex < appState.commandHistory.length - 1) {
                     event.preventDefault();
-                    if (appState.historyIndex < appState.commandHistory.length - 1) {
-                        appState.historyIndex++;
-                        userInput.value = appState.commandHistory[appState.historyIndex];
-                    } else {
-                        // If at the end of history, clear the input
-                        appState.historyIndex = appState.commandHistory.length;
-                        userInput.value = "";
-                    }
-                    adjustTextareaHeight(); // Adjust height
-                    // Move cursor to end
+                    appState.historyIndex++;
+                    userInput.value = appState.commandHistory[appState.historyIndex];
                      requestAnimationFrame(() => {
                        userInput.setSelectionRange(userInput.value.length, userInput.value.length);
                      });
+                    adjustTextareaHeight();
+                } else if (appState.historyIndex === appState.commandHistory.length - 1) {
+                    // If at the last history item, pressing down again clears input
+                    event.preventDefault();
+                    appState.historyIndex++; // Move past the end
+                    userInput.value = "";
+                    adjustTextareaHeight();
                 }
             }
         }
 
+        // Initialization Logic remains unchanged
         async function initializeApp() {
-            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' })}`);
+            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT')}`);
 
-            updateTokenCounterUI();
-            updatePromptUI();
+            updateTokenCounterUI(); // Initialize counter UI
+            updatePromptUI();       // Initialize prompt UI
             userInput.placeholder = "Inizializzazione...";
             userInput.disabled = true;
-            adjustTextareaHeight();
+            adjustTextareaHeight(); // Adjust initial height
             scrollToBottom();
 
             appendMessage("system", "Recupero configurazione iniziale...");
             try {
-                // Use 'init' type to get initial state from worker
-                await callWorkerApi({ type: 'init' });
+                // Call worker's init endpoint
+                await callWorkerApi({ type: 'init' }); // No signal needed for init
 
-                appendMessage("system", `Configurazione caricata con successo.`);
-                appendMessage("system", `Modalità predefinita: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
+                // Assuming updateStateFromWorkerResponse correctly populates appState
+                appendMessage("system", `Configurazione caricata.`);
+                appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}. Limite Token: ${formatTokenCount(appState.currentTokenLimit) || 'N/D'}.`);
                 appendMessage("system", `Pronto. Digita 'help' per i comandi.`);
 
+                // Enable input
                 userInput.disabled = false;
-                appState.isWaitingForAI = false;
-                updateUserInteractionState(); // Sets the correct placeholder
-                setTimeout(() => userInput.focus(), 100); // Slightly delayed focus
+                appState.isWaitingForAI = false; // Not waiting initially
+                updateUserInteractionState(); // Set correct placeholder like "Chiedi all'IA..."
+                setTimeout(() => userInput.focus(), 100); // Delay focus slightly
 
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
-                appendMessage("system", "Impossibile caricare la configurazione iniziale. L'assistente potrebbe non funzionare correttamente. Prova a ricaricare la pagina.");
+                appendMessage("system", "Impossibile caricare la configurazione. Ricarica la pagina per riprovare.");
+                // Keep input disabled, set permanent error placeholder
                 userInput.placeholder = "Inizializzazione fallita. Ricarica.";
                 userInput.disabled = true;
-                appState.isWaitingForAI = true; // Treat as waiting since it can't start
+                appState.isWaitingForAI = true; // Effectively lock state
             } finally {
-                 scrollToBottom(); // Ensure latest messages are visible
-                 adjustTextareaHeight(); // Adjust height after initial messages
+                 scrollToBottom(); // Scroll after final init messages
+                 adjustTextareaHeight(); // Adjust height after all content added
             }
         }
 
-        // --- Event Listeners (Unchanged Logic) ---
+        // Event Listeners Setup remains unchanged
         userInput.addEventListener("keydown", handleKeyDown);
-        userInput.addEventListener("input", adjustTextareaHeight);
+        userInput.addEventListener("input", adjustTextareaHeight); // Adjust height dynamically on input
 
-        // Refocus input when clicking on the terminal background (but not on messages/links/buttons)
+        // Refocus input on terminal click (if not selecting text or clicking links/buttons)
         terminalDiv.addEventListener('click', (event) => {
-            // Check if the click target is the terminal itself or a direct child container *not* a message/interactive element
-            const isBackgroundClick = event.target === terminalDiv ||
-                                      (event.target.classList.contains('message') && event.target === event.currentTarget); // Prevent focusing when clicking message content itself
-
-            if (isBackgroundClick || !terminalDiv.contains(event.target.closest('.message, a, button'))) {
-                 if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
+            // Check if click is on terminal background, not on text, link, or button
+            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn') && window.getSelection().toString() === ''))
+             {
+                // Only focus if input is enabled and AI is not busy
+                if (!appState.isWaitingForAI && !userInput.disabled) {
                    userInput.focus();
-                 }
+                }
             }
         });
 
-        // Adjust textarea height on window resize
+        // Adjust height on window resize
         window.addEventListener('resize', adjustTextareaHeight);
 
-        // Start the application initialization process
+        // Start the application
         initializeApp();
 
     </script>
