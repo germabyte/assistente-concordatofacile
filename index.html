@@ -5,41 +5,31 @@
     <title>Assistente ConcordatoFacile</title>
 	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
           --bg-color: #f8f9fa;
-          --text-color: #212529;
+          --text-color: #343a40;
           --input-bg-color: #ffffff;
           --border-color: #dee2e6;
-          --shadow-color: rgba(0, 0, 0, 0.05);
 
-          --prompt-color: #495057;
-          --user-prefix-color: #0d6efd;
-          --assistant-prefix-color: #198754;
+          --prompt-color: #007bff;
+          --user-prefix-color: var(--prompt-color);
+          --assistant-color: #6f42c1;
           --system-color: #6c757d;
-          --command-color: var(--system-color);
+          --command-color: #0056b3;
           --error-color: #dc3545;
-          --highlight-color: #0d6efd;
-          --scrollbar-thumb-color: #adb5bd;
-          --scrollbar-track-color: var(--input-bg-color);
+          --highlight-color: var(--prompt-color);
+          --scrollbar-thumb-color: #ced4da;
+          --scrollbar-track-color: #e9ecef;
 
-          --user-bubble-bg: #e7f1ff;
-          --assistant-bubble-bg: #e8f5e9;
-          --system-bubble-bg: #f8f9fa;
-          --error-bubble-bg: #f8d7da;
-
-          --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-          --font-size-base: 15px;
-          --font-size-mobile: 14px;
+          --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          --font-size-base: 17px;
+          --font-size-mobile: 16px;
           --line-height: 1.6;
 
-          --padding-base: 16px;
+          --padding-base: 18px;
           --padding-mobile: 12px;
-          --border-radius-base: 8px;
-          --border-radius-bubble: 12px;
+          --border-radius-base: 10px;
         }
 
         *, *::before, *::after {
@@ -65,115 +55,91 @@
 
         main#terminal {
           flex-grow: 1;
-		  padding: var(--padding-base) var(--padding-base) 80px var(--padding-base);
+		  padding: var(--padding-base) var(--padding-base) 75px var(--padding-base);
           overflow-y: auto;
+          white-space: pre-wrap;
           word-wrap: break-word;
           line-height: var(--line-height);
         }
 
-        main#terminal::-webkit-scrollbar { width: 8px; }
+        main#terminal::-webkit-scrollbar { width: 10px; }
         main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
-        main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 4px; border: 2px solid var(--scrollbar-track-color); }
-        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #868e96; }
+        main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
         main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
-
 
         footer#inputArea {
           display: flex;
-          align-items: flex-end;
+          align-items: stretch;
           background-color: var(--input-bg-color);
-          padding: calc(var(--padding-base) * 0.75) var(--padding-base);
+          padding: calc(var(--padding-base) / 1.5) var(--padding-base);
           border-top: 1px solid var(--border-color);
-          box-shadow: 0 -2px 10px var(--shadow-color);
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
           flex-shrink: 0;
           position: relative;
           z-index: 10;
         }
 
-        #tokenCounter, .floatingToggle {
+        #tokenCounter {
           position: fixed;
-          bottom: 85px;
+          bottom: 80px;
+          right: 20px;
           background-color: rgba(255, 255, 255, 0.85);
-          color: var(--system-color);
+          color: var(--text-color);
           padding: 6px 12px;
           border: 1px solid var(--border-color);
           border-radius: var(--border-radius-base);
           z-index: 1000;
           font-family: var(--font-family);
-          font-size: 13px;
+          font-size: 14px;
           backdrop-filter: blur(3px);
           -webkit-backdrop-filter: blur(3px);
           transition: bottom 0.2s ease-out;
-          box-shadow: 0 1px 3px var(--shadow-color);
-        }
-
-        #tokenCounter {
-          right: 20px;
-        }
-        .floatingToggle {
-          left: 20px;
-          cursor: pointer;
-          user-select: none;
         }
 
         .message {
           position: relative;
-		  margin-bottom: calc(var(--padding-base) * 0.75);
+		  margin-bottom: calc(var(--padding-base) * 0.8);
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          padding: calc(var(--padding-base) / 1.5);
-          border-radius: var(--border-radius-bubble);
+          padding: calc(var(--padding-base) / 1.2);
+          border-radius: var(--border-radius-base);
           max-width: 95%;
         }
 
         .prefix {
-          font-weight: 500;
+          font-weight: bold;
           flex-shrink: 0;
           margin-bottom: 0.3em;
           user-select: none;
+          white-space: pre;
           font-size: 0.9em;
           opacity: 0.9;
         }
 
         .content {
           flex-grow: 1;
+          word-break: break-word;
         }
 
-        .message.user {
-          background-color: var(--user-bubble-bg);
-          align-self: flex-end;
-          margin-left: auto;
-        }
         .user .prefix { color: var(--user-prefix-color); }
         .user .content { color: var(--text-color); }
+        .user { background-color: rgba(0, 123, 255, 0.08); align-self: flex-end; }
 
-        .message.assistant {
-          background-color: var(--assistant-bubble-bg);
-          align-self: flex-start;
-        }
-        .assistant .prefix { color: var(--assistant-prefix-color); }
+        .assistant .prefix { color: var(--assistant-color); }
         .assistant .content { color: var(--text-color); }
+        .assistant { background-color: rgba(111, 66, 193, 0.08); align-self: flex-start; }
 
-        .message.system {
-          background-color: var(--system-bubble-bg);
-          align-self: center;
-          text-align: center;
-          width: auto;
-          max-width: 80%;
-          font-size: 0.9em;
-          border: 1px dashed var(--border-color);
-        }
         .system .prefix { color: var(--system-color); }
         .system .content { color: var(--system-color); opacity: 0.9; }
+        .system { background-color: rgba(108, 117, 125, 0.08); font-size: 0.95em; align-self: center; max-width: 90%; text-align: center; }
 
         .system.help-output {
-            background-color: var(--system-bubble-bg);
-            color: var(--command-color);
             text-align: left;
             align-self: flex-start;
             max-width: 95%;
-            border: 1px solid var(--border-color);
+            background-color: rgba(108, 117, 125, 0.08);
         }
         .system.help-output .prefix,
         .system.help-output .content {
@@ -181,36 +147,32 @@
             opacity: 1;
         }
 		.system.help-output .content a {
-			color: var(--assistant-prefix-color);
+			color: var(--assistant-color);
 			text-decoration: underline;
 		}
 		.system.help-output code {
-			background-color: rgba(108,117,125,0.1);
-            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-			padding: 3px 5px;
-			border-radius: 4px;
-			font-size: 0.9em;
+			background-color: rgba(0, 0, 0, 0.05);
             color: var(--text-color);
+			padding: 2px 5px;
+			border-radius: 4px;
+			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+			font-size: 0.9em;
+            border: 1px solid var(--border-color);
 		}
 
-
-        .message.error {
-           background-color: var(--error-bubble-bg);
-           align-self: flex-start;
-           border: 1px solid var(--error-color);
-        }
         .error .prefix { color: var(--error-color); }
-        .error .content { color: var(--error-color); font-weight: 500; }
+        .error .content { color: var(--error-color); font-weight: bold; }
+        .error { background-color: rgba(220, 53, 69, 0.08); align-self: center; text-align: center; max-width: 90%; }
 
         #prompt {
           color: var(--prompt-color);
           margin-right: 0.6em;
-          font-weight: 500;
+          font-weight: bold;
           line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
           user-select: none;
           align-self: flex-start;
-          padding-top: 7px;
-          flex-shrink: 0;
+          padding-top: 10px;
         }
 
         #userInput {
@@ -222,15 +184,14 @@
           font-family: var(--font-family);
           font-size: inherit;
           line-height: var(--line-height);
-          padding: 8px 0;
-          caret-color: var(--user-prefix-color);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          caret-color: var(--prompt-color);
           resize: none;
           overflow-y: hidden;
-          min-height: calc(var(--line-height) * 1em + 16px);
-          max-height: 150px;
+          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 4px);
         }
-        #userInput::placeholder { color: #adb5bd; font-style: italic; }
-        #userInput:disabled { cursor: not-allowed; opacity: 0.7; }
+        #userInput::placeholder { color: #999; font-style: italic; opacity: 0.8; }
+        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
 
         .loading-content {
             display: inline-flex;
@@ -245,39 +206,68 @@
             white-space: nowrap;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
           html { font-size: var(--font-size-mobile); }
 		  main#terminal {
             padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
           }
-          footer#inputArea { padding: calc(var(--padding-mobile) * 0.75) var(--padding-mobile); }
-          #prompt { padding-top: 6px; }
-          #userInput { padding: 6px 0; min-height: calc(var(--line-height) * 1em + 12px); }
-          .message { margin-bottom: calc(var(--padding-mobile) * 1); max-width: 98%; }
-          .message.user, .message.assistant, .message.system, .message.error { padding: var(--padding-mobile); }
-          main#terminal::-webkit-scrollbar { width: 6px; }
+          footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
+          #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 8px; }
+          #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
+          .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
+          .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 1.1); }
+          main#terminal::-webkit-scrollbar { width: 8px; }
           main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
-          #tokenCounter, .floatingToggle { bottom: 70px; font-size: 12px; padding: 5px 10px;}
-          #tokenCounter { right: 15px; }
-          .floatingToggle { left: 15px; }
+          #tokenCounter { bottom: 70px; right: 15px; font-size: 13px; padding: 5px 10px; }
+          .message { max-width: 100%; }
+          .system, .error { max-width: 95%; }
         }
+
+		.floatingToggle {
+		  position: fixed;
+		  bottom: 80px;
+		  left: 20px;
+		  background-color: rgba(255, 255, 255, 0.85);
+		  color: var(--text-color);
+		  padding: 6px 12px;
+		  border: 1px solid var(--border-color);
+		  border-radius: var(--border-radius-base);
+		  z-index: 1000;
+		  font-family: var(--font-family);
+		  font-size: 14px;
+		  backdrop-filter: blur(3px);
+		  -webkit-backdrop-filter: blur(3px);
+		  transition: bottom 0.2s ease-out;
+		  cursor: pointer;
+		  user-select: none;
+		}
+
+		@media (max-width: 600px) {
+		  #scrollToggle {
+			bottom: 70px;
+			left: 15px;
+			font-size: 13px;
+            padding: 5px 10px;
+		  }
+		}
 
 		.copy-btn {
 		  position: absolute;
 		  top: 6px;
-		  right: 8px;
+		  right: 6px;
 		  border: none;
 		  background: rgba(0,0,0,0.05);
-		  color: var(--system-color);
+		  color: var(--highlight-color);
+          padding: 3px 6px;
           border-radius: 4px;
 		  font-family: var(--font-family);
-          font-weight: 500;
-		  font-size: 0.8em;
+		  font-size: 0.75em;
 		  cursor: pointer;
 		  opacity: 0;
 		  user-select: none;
-          padding: 2px 6px;
 		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
+          line-height: 1.2;
+          text-align: center;
 		}
 		.message:hover .copy-btn { opacity: 0.7; }
         .copy-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
@@ -288,9 +278,9 @@
 <body>
     <main id="terminal"></main>
     <div id="tokenCounter">Token: 0</div>
-	<div id="scrollToggle" class="floatingToggle">🔽 Scorrimento Automatico: ON</div>
+	<div id="scrollToggle" class="floatingToggle">🔽 Scroll Automatico: ON</div>
     <footer id="inputArea">
-        <span id="prompt">❯</span>
+        <span id="prompt">></span>
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
@@ -298,22 +288,23 @@
         const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
 		const COMMAND_INFO = [
-		  { name: "help",             desc: "help   - Mostra questo messaggio di aiuto." },
-		  { name: "reset",            desc: "reset  - Resetta il contesto della chat." },
-		  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (resetta contesto)." },
-		  { name: "stop",             desc: "stop   - Interrompe la risposta corrente dell'IA." }
+		  { name: "help",            desc: "help             - Mostra questo messaggio di aiuto." },
+		  { name: "reset",           desc: "reset            - Reimposta il contesto della chat." },
+		  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità AI (reimposta contesto)." },
+		  { name: "stop",            desc: "stop             - Interrompe la risposta corrente dell'AI." }
 		];
 
         const terminalDiv = document.getElementById("terminal");
         const userInput = document.getElementById("userInput");
         const tokenCounterDiv = document.getElementById("tokenCounter");
+
 		let autoScrollEnabled = true;
 		const scrollToggleDiv = document.getElementById("scrollToggle");
 		scrollToggleDiv.addEventListener("click", () => {
 		  autoScrollEnabled = !autoScrollEnabled;
 		  scrollToggleDiv.textContent = autoScrollEnabled
-			? "🔽 Scorrimento Automatico: ON"
-			: "⏸️ Scorrimento Automatico: OFF";
+			? "🔽 Scroll Automatico: ON"
+			: "⏸️ Scroll Automatico: OFF";
 		});
 
         const promptSpan = document.getElementById("prompt");
@@ -374,7 +365,7 @@
 					extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
 					break;
                 case 'error':
-                    prefixSpan.textContent = "ERRORE:";
+                    prefixSpan.textContent = "ERRORE!";
                     contentSpan.textContent = text;
                     break;
                 default:
@@ -398,16 +389,17 @@
 				copyBtn.textContent = "Copiato!";
 				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
 			  }).catch(() => {
-				copyBtn.textContent = "Errore copia";
+				copyBtn.textContent = "Errore";
 				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
 			  });
 			});
 
 			msgDiv.appendChild(copyBtn);
+
 			terminalDiv.appendChild(msgDiv);
 			scrollToBottom();
 			return msgDiv;
-			}
+		}
 
 		function scrollToBottom() {
 		  if (!autoScrollEnabled) return;
@@ -419,7 +411,7 @@
         function adjustTextareaHeight() {
             userInput.style.height = 'auto';
             let newHeight = userInput.scrollHeight;
-            const maxHeight = 150;
+            const maxHeight = 180;
             if (newHeight > maxHeight) {
                 newHeight = maxHeight;
                 userInput.style.overflowY = 'auto';
@@ -429,12 +421,12 @@
             userInput.style.height = newHeight + 'px';
 
             const inputArea = document.getElementById('inputArea');
+
 			if (inputArea) {
 			  const inputAreaHeight = inputArea.offsetHeight;
-			  const newBottom = `${inputAreaHeight + 10}px`;
-              const minBottom = window.innerWidth <= 768 ? '70px' : '85px';
-			  tokenCounterDiv.style.bottom = `max(${newBottom}, ${minBottom})`;
-			  scrollToggleDiv.style.bottom = `max(${newBottom}, ${minBottom})`;
+			  const newBottom = `${inputAreaHeight + 15}px`;
+			  tokenCounterDiv.style.bottom    = newBottom;
+			  scrollToggleDiv.style.bottom    = newBottom;
 			}
         }
 
@@ -444,19 +436,18 @@
 			tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
 		}
 
-
         function updatePromptUI() {
-            promptSpan.textContent = "❯ ";
+            promptSpan.textContent = "> ";
         }
 
         function updateUserInteractionState() {
-             const isDisabled = userInput.placeholder === "Inizializzazione fallita. Aggiorna.";
+             const isDisabled = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
              userInput.disabled = isDisabled;
 
              if (appState.isWaitingForAI) {
                  userInput.placeholder = `Digita 'stop' per interrompere`;
              } else if (isDisabled) {
-                 // keep placeholder
+                 // Keep disabled placeholder
              } else if (!appState.currentCharacter) {
                  userInput.placeholder = "Caricamento config...";
              } else {
@@ -473,7 +464,6 @@
             if (!dotsSpan || !timerSpan) return;
 
             let dotCount = 1;
-            dotsSpan.textContent = "Sto pensando.";
             appState.thinkingIntervalId = setInterval(() => {
                 dotCount = (dotCount % 3) + 1;
                 dotsSpan.textContent = "Sto pensando" + ".".repeat(dotCount);
@@ -518,10 +508,18 @@
         }
 
         function resetConversationState(reason) {
+            const reasonMap = {
+                'user command': 'comando utente',
+                'character change': 'cambio modalità',
+                'token limit': 'limite token',
+                'input limit': 'limite input'
+            };
+            const italianReason = reasonMap[reason] || reason;
+
             appState.conversation = [];
             appState.currentTokenCount = 0;
             updateTokenCounterUI();
-            appendMessage("system", `Contesto chat resettato (${reason}). Nuova conversazione avviata.`);
+            appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
             scrollToBottom();
         }
 
@@ -579,7 +577,6 @@
             }
         }
 
-
         async function handleUserInput() {
             const inputText = userInput.value.trim();
             userInput.value = "";
@@ -592,7 +589,7 @@
                     appendMessage("user", inputText);
                     if (appState.abortController) {
                         appState.abortController.abort();
-                        appendMessage("system", "Comando 'stop' ricevuto. Richiesta IA interrotta.");
+                        appendMessage("system", "Comando stop ricevuto. Richiesta AI interrotta.");
                         clearThinkingAnimationAndTimer();
                         if (appState.loadingMsgDiv) {
                             appState.loadingMsgDiv.remove();
@@ -602,16 +599,15 @@
                         appState.abortController = null;
                         updateUserInteractionState();
                     } else {
-                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
+                        appendMessage("error", "Impossibile fermare: Nessun processo AI attivo trovato.");
                     }
                 } else {
                     appendMessage("user", inputText);
-                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`);
+                    appendMessage("system", `Input "${inputText}" ignorato: AI occupata. Digita 'stop' per interrompere.`);
                 }
                 scrollToBottom();
                 return;
             }
-
 
             if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== inputText) {
                 appState.commandHistory.push(inputText);
@@ -620,12 +616,12 @@
 
             const commandArgs = inputText.toLowerCase().split(/\s+/);
             const command = commandArgs[0];
-			const fullCommand = commandArgs.slice(0, 2).join(' ');
+            const subCommand = commandArgs.slice(0,2).join(' ');
             const originalArgs = inputText.split(/\s+/);
 
             if (command === 'reset') {
                 appendMessage("user", inputText);
-                resetConversationState('comando utente');
+                resetConversationState('user command');
                 return;
             }
 
@@ -636,55 +632,55 @@
 					a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
 				);
 
-				let helpOutput = "<strong>COMANDI:</strong>\n";
+				let helpOutput = "<b>COMANDI:</b>\n";
 				commandsSorted.forEach(c => {
 					helpOutput += `  <code>${c.desc}</code>\n`;
 				});
-				helpOutput += "\n<strong>MODALITÀ DISPONIBILI:</strong>\n";
+				helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
 				const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-				helpOutput += `  ${chars.length ? chars.map(c => `<code>${c}</code>`).join(', ') : 'Nessuna disponibile'}\n\n`;
-				helpOutput += "<strong>STATO ATTUALE:</strong>\n";
-				helpOutput += `  Modalità: <code>${appState.currentCharacter || 'N/D'}</code>\n`;
-				helpOutput += `  Modello:  <code>${appState.currentModel || 'N/D'}</code>\n\n`;
-				helpOutput += `<strong>COME CHATTARE:</strong>\n`;
-				helpOutput += "  • Digita semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n\n";
-				appendMessage("system", helpOutput.replace(/\n/g, '<br>'), false, "help-output");
+				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`;
+				helpOutput += "<b>STATO ATTUALE:</b>\n";
+				helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
+				helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
+				helpOutput += `<b>COME CHATTARE:</b>\n`;
+				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità AI corrente.\n\n";
+				appendMessage("system", helpOutput, false, "help-output");
 				scrollToBottom();
 				return;
             }
 
-			// Check for "imposta modalità"
-            if (fullCommand === 'imposta modalità') {
+            if (command === 'imposta') {
                 appendMessage("user", inputText);
                 if (originalArgs.length < 3) {
-                     appendMessage("error", "Uso: imposta modalità <nome>");
+                     appendMessage("error", "Utilizzo: imposta modalità <nome>");
                      return;
                 }
+                const settingType = commandArgs[1]; // Should be 'modalità'
                 const settingValue = originalArgs.slice(2).join(' ');
-                const characterNameLower = settingValue.toLowerCase();
-                const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
 
-                if (foundCharacter) {
-                     if (appState.currentCharacter !== foundCharacter) {
-                         appState.currentCharacter = foundCharacter;
-                         appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
-                         resetConversationState('cambio modalità');
-                         updatePromptUI();
+                if (settingType === 'modalità') {
+                     const characterNameLower = settingValue.toLowerCase();
+                     const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
+
+                     if (foundCharacter) {
+                         if (appState.currentCharacter !== foundCharacter) {
+                             appState.currentCharacter = foundCharacter;
+                             appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
+                             resetConversationState('character change'); // Internal key remains 'character change'
+                             updatePromptUI();
+                         } else {
+                              appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
+                         }
                      } else {
-                          appendMessage("system", `Modalità già impostata su: ${appState.currentCharacter}.`);
+                         const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
+                         appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
                      }
                 } else {
-                     const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
+                     appendMessage("error", "Tipo di impostazione sconosciuto. Usa 'modalità'.");
                 }
-                scrollToBottom();
-                return;
-            } else if (command === 'imposta') { // Catch incomplete command
-                 appendMessage("user", inputText);
-                 appendMessage("error", "Comando sconosciuto o incompleto. Forse intendevi 'imposta modalità <nome>'?");
+                 scrollToBottom();
                  return;
             }
-
 
             appendMessage("user", inputText);
             appState.conversation.push({ role: "user", content: inputText });
@@ -699,7 +695,7 @@
             try {
                 const payload = {
                     messages: appState.conversation,
-                    character: appState.currentCharacter,
+                    character: appState.currentCharacter, // Backend expects 'character' key
                     model: appState.currentModel
                 };
                 const result = await callWorkerApi(payload, appState.abortController.signal);
@@ -727,8 +723,8 @@
                 }
 
                 if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
-                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reset automatico del contesto.`);
-                    resetConversationState('limite token');
+                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
+                    resetConversationState('token limit');
                 }
 
             } catch (error) {
@@ -743,11 +739,11 @@
                     appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
 
                     if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
-                        appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reset automatico del contesto.");
-                        resetConversationState('limite input');
+                        appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
+                        resetConversationState('input limit');
                     }
 
-                    if (userInput.placeholder !== "Inizializzazione fallita. Aggiorna.") {
+                    if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
                       userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
                     }
                 }
@@ -762,7 +758,7 @@
                     appState.loadingMsgDiv = null;
                 }
 
-                if (userInput.placeholder !== "Inizializzazione fallita. Aggiorna.") {
+                if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
                    updateUserInteractionState();
                    setTimeout(() => userInput.focus(), 50);
                 }
@@ -830,8 +826,8 @@
 
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
-                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova ad aggiornare la pagina.");
-                userInput.placeholder = "Inizializzazione fallita. Aggiorna.";
+                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
+                userInput.placeholder = "Inizializzazione fallita. Ricarica.";
                 userInput.disabled = true;
                 appState.isWaitingForAI = true;
             } finally {
@@ -842,7 +838,7 @@
         userInput.addEventListener("keydown", handleKeyDown);
         userInput.addEventListener("input", adjustTextareaHeight);
         terminalDiv.addEventListener('click', (event) => {
-            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && event.target.tagName !== 'BUTTON' && !event.target.closest('button'))) {
+            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn'))) {
                 if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
                    userInput.focus();
                 }
