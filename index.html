@@ -3,196 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <title>Assistente ConcordatoFacile</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
     <style>
         :root {
-            --bg-color: #F3F5FA;
-            --text-color: #2D3748;
-            --input-bg-color: #ffffff;
-            --border-color: #E2E8F0;
-            --prompt-color: #3182CE;
-            --assistant-color: #805AD5;
-            --system-color: #718096;
-            --error-color: #E53E3E;
-            --font-family: 'Inter', sans-serif;
-            --font-size-base: 16px;
-            --line-height: 1.6;
-            --padding: 16px;
-            --border-radius: 12px;
-            --shadow: 0 4px 10px rgba(0,0,0,0.05);
+          --bg-color: #f8f9fa;
+          --text-color: #343a40;
+          --input-bg-color: #ffffff;
+          --border-color: #dee2e6;
+
+          --prompt-color: #007bff;
+          --user-prefix-color: var(--prompt-color);
+          --assistant-color: #6f42c1;
+          --system-color: #6c757d;
+          --command-color: #0056b3;
+          --error-color: #dc3545;
+          --highlight-color: var(--prompt-color);
+          --scrollbar-thumb-color: #ced4da;
+          --scrollbar-track-color: #e9ecef;
+
+          --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          --font-size-base: 17px;
+          --font-size-mobile: 16px;
+          --line-height: 1.6;
+
+          --padding-base: 18px;
+          --padding-mobile: 12px;
+          --border-radius-base: 10px;
         }
 
         *, *::before, *::after {
-            box-sizing: border-box;
+          box-sizing: border-box;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            font-size: var(--font-size-base);
-            background: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            overflow: hidden;
+        html {
+          font-size: var(--font-size-base);
         }
 
-        #terminal {
-            flex: 1;
-            padding: var(--padding);
-            overflow-y: auto;
-            scroll-behavior: smooth;
+        body {
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          font-family: var(--font-family);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
         }
 
-        #terminal::-webkit-scrollbar {
-            width: 8px;
+        main#terminal {
+          flex-grow: 1;
+		  padding: var(--padding-base) var(--padding-base) 75px var(--padding-base);
+          overflow-y: auto;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          line-height: var(--line-height);
         }
 
-        #terminal::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        main#terminal::-webkit-scrollbar { width: 10px; }
+        main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
+        main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
 
-        #terminal::-webkit-scrollbar-thumb {
-            background: rgba(113,128,150,0.3);
-            border-radius: var(--border-radius);
-        }
-
-        #inputArea {
-            display: flex;
-            align-items: center;
-            padding: var(--padding);
-            background: var(--input-bg-color);
-            box-shadow: var(--shadow);
-            border-top: 1px solid var(--border-color);
-        }
-
-        #prompt {
-            margin-right: 8px;
-            font-weight: 600;
-            color: var(--prompt-color);
-        }
-
-        #userInput {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: none;
-            font-family: inherit;
-            font-size: inherit;
-            resize: none;
-            padding: 6px;
-            overflow-y: auto;
-            color: var(--text-color);
-        }
-
-        .message {
-            padding: var(--padding);
-            margin-bottom: 12px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            position: relative;
-            transition: transform 0.15s;
-        }
-
-        .message:hover {
-            transform: translateY(-2px);
-        }
-
-        .prefix {
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .user {
-            background-color: rgba(49,130,206,0.1);
-            align-self: flex-end;
-        }
-
-        .assistant {
-            background-color: rgba(128,90,213,0.1);
-        }
-
-        .system, .error {
-            background-color: rgba(113,128,150,0.1);
-            text-align: center;
-        }
-
-        .error {
-            background-color: rgba(229,62,62,0.1);
-            color: var(--error-color);
-            font-weight: 500;
-        }
-
-        #tokenCounter, #scrollToggle {
-            position: fixed;
-            bottom: 90px;
-            background: rgba(255,255,255,0.9);
-            padding: 8px 14px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            font-size: 14px;
-            cursor: pointer;
-            user-select: none;
+        footer#inputArea {
+          display: flex;
+          align-items: stretch;
+          background-color: var(--input-bg-color);
+          padding: calc(var(--padding-base) / 1.5) var(--padding-base);
+          border-top: 1px solid var(--border-color);
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+          flex-shrink: 0;
+          position: relative;
+          z-index: 10;
         }
 
         #tokenCounter {
-            right: 20px;
+          position: fixed;
+          bottom: 80px;
+          right: 20px;
+          background-color: rgba(255, 255, 255, 0.85);
+          color: var(--text-color);
+          padding: 6px 12px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius-base);
+          z-index: 1000;
+          font-family: var(--font-family);
+          font-size: 14px;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          transition: bottom 0.2s ease-out;
         }
 
-        #scrollToggle {
-            left: 20px;
+        .message {
+          position: relative;
+		  margin-bottom: calc(var(--padding-base) * 0.8);
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: calc(var(--padding-base) / 1.2);
+          border-radius: var(--border-radius-base);
+          max-width: 95%;
         }
 
-        .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: var(--border-radius);
-            background-color: rgba(113,128,150,0.15);
-            color: var(--text-color);
-            opacity: 0;
-            cursor: pointer;
-            border: none;
-            transition: opacity 0.15s;
+        .prefix {
+          font-weight: bold;
+          flex-shrink: 0;
+          margin-bottom: 0.3em;
+          user-select: none;
+          white-space: pre;
+          font-size: 0.9em;
+          opacity: 0.9;
         }
 
-        .message:hover .copy-btn {
+        .content {
+          flex-grow: 1;
+          word-break: break-word;
+        }
+
+        .user .prefix { color: var(--user-prefix-color); }
+        .user .content { color: var(--text-color); }
+        .user { background-color: rgba(0, 123, 255, 0.08); align-self: flex-end; }
+
+        .assistant .prefix { color: var(--assistant-color); }
+        .assistant .content { color: var(--text-color); }
+        .assistant { background-color: rgba(111, 66, 193, 0.08); align-self: flex-start; }
+
+        .system .prefix { color: var(--system-color); }
+        .system .content { color: var(--system-color); opacity: 0.9; }
+        .system { background-color: rgba(108, 117, 125, 0.08); font-size: 0.95em; align-self: center; max-width: 90%; text-align: center; }
+
+        .system.help-output {
+            text-align: left;
+            align-self: flex-start;
+            max-width: 95%;
+            background-color: rgba(108, 117, 125, 0.08);
+        }
+        .system.help-output .prefix,
+        .system.help-output .content {
+            color: var(--command-color);
             opacity: 1;
+        }
+		.system.help-output .content a {
+			color: var(--assistant-color);
+			text-decoration: underline;
+		}
+		.system.help-output code {
+			background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+			padding: 2px 5px;
+			border-radius: 4px;
+			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+			font-size: 0.9em;
+            border: 1px solid var(--border-color);
+		}
+
+        .error .prefix { color: var(--error-color); }
+        .error .content { color: var(--error-color); font-weight: bold; }
+        .error { background-color: rgba(220, 53, 69, 0.08); align-self: center; text-align: center; max-width: 90%; }
+
+        #prompt {
+          color: var(--prompt-color);
+          margin-right: 0.6em;
+          font-weight: bold;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          user-select: none;
+          align-self: flex-start;
+          padding-top: 10px;
+        }
+
+        #userInput {
+          flex-grow: 1;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: var(--text-color);
+          font-family: var(--font-family);
+          font-size: inherit;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          caret-color: var(--prompt-color);
+          resize: none;
+          overflow-y: hidden;
+          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 4px);
+        }
+        #userInput::placeholder { color: #999; font-style: italic; opacity: 0.8; }
+        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
+
+        .loading-content {
+            display: inline-flex;
+            align-items: baseline;
+        }
+
+        .thinking-timer-span {
+            margin-left: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: var(--system-color);
+            white-space: nowrap;
         }
 
         @media (max-width: 600px) {
-            #inputArea, #terminal {
-                padding: 12px;
-            }
-            #tokenCounter, #scrollToggle {
-                bottom: 80px;
-                padding: 6px 10px;
-                font-size: 13px;
-            }
+          html { font-size: var(--font-size-mobile); }
+		  main#terminal {
+            padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
+          }
+          footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
+          #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 8px; }
+          #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
+          .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
+          .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 1.1); }
+          main#terminal::-webkit-scrollbar { width: 8px; }
+          main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
+          #tokenCounter { bottom: 70px; right: 15px; font-size: 13px; padding: 5px 10px; }
+          .message { max-width: 100%; }
+          .system, .error { max-width: 95%; }
         }
+
+		.floatingToggle {
+		  position: fixed;
+		  bottom: 80px;
+		  left: 20px;
+		  background-color: rgba(255, 255, 255, 0.85);
+		  color: var(--text-color);
+		  padding: 6px 12px;
+		  border: 1px solid var(--border-color);
+		  border-radius: var(--border-radius-base);
+		  z-index: 1000;
+		  font-family: var(--font-family);
+		  font-size: 14px;
+		  backdrop-filter: blur(3px);
+		  -webkit-backdrop-filter: blur(3px);
+		  transition: bottom 0.2s ease-out;
+		  cursor: pointer;
+		  user-select: none;
+		}
+
+		@media (max-width: 600px) {
+		  #scrollToggle {
+			bottom: 70px;
+			left: 15px;
+			font-size: 13px;
+            padding: 5px 10px;
+		  }
+		}
+
+		.copy-btn {
+		  position: absolute;
+		  top: 6px;
+		  right: 6px;
+		  border: none;
+		  background: rgba(0,0,0,0.05);
+		  color: var(--highlight-color);
+          padding: 3px 6px;
+          border-radius: 4px;
+		  font-family: var(--font-family);
+		  font-size: 0.75em;
+		  cursor: pointer;
+		  opacity: 0;
+		  user-select: none;
+		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
+          line-height: 1.2;
+          text-align: center;
+		}
+		.message:hover .copy-btn { opacity: 0.7; }
+        .copy-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+		.copy-btn:focus { outline: none; }
+
     </style>
 </head>
 <body>
     <main id="terminal"></main>
-
     <div id="tokenCounter">Token: 0</div>
-    <div id="scrollToggle">🔽 Scroll Automatico: ON</div>
-
+	<div id="scrollToggle" class="floatingToggle">🔽 Scroll Automatico: ON</div>
     <footer id="inputArea">
-        <span id="prompt">&gt;</span>
+        <span id="prompt">></span>
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
-    <!-- Existing JavaScript remains unchanged here. -->
     <script>
         const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
@@ -758,6 +849,6 @@
 
         initializeApp();
 
-    </script>	
+    </script>
 </body>
 </html>
