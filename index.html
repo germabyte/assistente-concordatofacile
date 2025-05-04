@@ -13,8 +13,7 @@
           --input-bg-color: #ffffff;
           --border-color: #dee2e6;
 
-```
-      --prompt-color: #007bff;
+--prompt-color: #007bff;
       --user-prefix-color: var(--prompt-color);
       --assistant-color: #6f42c1;
       --system-color: #6c757d;
@@ -276,7 +275,6 @@
 	.copy-btn:focus { outline: none; }
 
 </style>
-```
 
 </head>
 <body>
@@ -288,14 +286,13 @@
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
-```
 <script>
     const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
 	const COMMAND_INFO = [
 	  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
 	  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-	  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità AI (reimposta contesto)." },
+	  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità AI (reimposta contesto)." },
 	  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'AI." }
 	];
 
@@ -855,7 +852,5 @@
     initializeApp();
 
 </script>
-```
-
 </body>
 </html>
