@@ -1,34 +1,34 @@
 <!DOCTYPE html>
-<html lang="it"> {/* Changed language to Italian */}
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <title>Assistente ConcordatoFacile</title>
-	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Import font "Inter" -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         /* --- Modern Light Theme Variables --- */
         :root {
           /* Core Palette */
-          --bg-color: #f8f9fa; /* Light grey background */
-          --text-color: #212529; /* Dark text for contrast */
-          --input-bg-color: #ffffff; /* White input background */
-          --border-color: #dee2e6; /* Light grey border */
+          --bg-color: #ffffff;
+          --text-color: #333333;
+          --input-bg-color: #f5f5f5;
+          --border-color: #dddddd;
 
           /* Accent Palette */
-          --prompt-color: #0d6efd; /* Bootstrap primary blue */
-          --user-prefix-color: #495057; /* Muted grey for user prefix */
-          --assistant-color: #198754; /* Bootstrap success green */
-          --system-color: #6c757d; /* Bootstrap secondary grey */
-          --command-color: #ffc107; /* Bootstrap warning yellow */
-          --error-color: #dc3545; /* Bootstrap danger red */
-          --link-color: #0d6efd; /* Standard link blue */
-          --highlight-color: var(--command-color); /* Use command color for highlights */
-          --scrollbar-thumb-color: #adb5bd; /* Lighter grey scrollbar thumb */
-          --scrollbar-track-color: #e9ecef; /* Very light grey scrollbar track */
+          --prompt-color: #0066cc;
+          --user-prefix-color: var(--prompt-color);
+          --assistant-color: #cc0066;
+          --system-color: #666666;
+          --command-color: #0066cc;
+          --error-color: #d93025;
+          --highlight-color: #0066cc;
+          --scrollbar-thumb-color: #cccccc;
+          --scrollbar-track-color: var(--input-bg-color);
 
           /* Typography */
-          --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Modern sans-serif stack */
-          --font-family-mono: 'SF Mono', Monaco, Consolas, 'Ubuntu Mono', monospace; /* Keep monospace for specific elements if needed */
+          --font-family: 'Inter', sans-serif;
           --font-size-base: 16px;
           --font-size-mobile: 15px;
           --line-height: 1.6;
@@ -36,941 +36,212 @@
           /* Spacing */
           --padding-base: 15px;
           --padding-mobile: 10px;
-          --border-radius-base: 8px; /* Rounded corners */
         }
-
-        *, *::before, *::after {
-          box-sizing: border-box;
-        }
-
-        html {
-          font-size: var(--font-size-base);
-        }
-
+        *, *::before, *::after { box-sizing: border-box; }
+        html { font-size: var(--font-size-base); }
         body {
           background-color: var(--bg-color);
           color: var(--text-color);
           font-family: var(--font-family);
-          margin: 0;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-          height: 100vh;
-          height: 100dvh; /* Use dvh for better mobile viewport handling */
-          overflow: hidden; /* Prevent body scrolling */
+          margin: 0; padding: 0;
+          display: flex; flex-direction: column;
+          height: 100dvh; overflow: hidden;
         }
-
         main#terminal {
           flex-grow: 1;
-		  padding: var(--padding-base) var(--padding-base) 65px var(--padding-base);
+          padding: var(--padding-base) var(--padding-base) 65px var(--padding-base);
           overflow-y: auto;
-          white-space: pre-wrap;
-          word-wrap: break-word; /* Ensure long words break */
+          white-space: pre-wrap; word-wrap: break-word;
           line-height: var(--line-height);
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
-
-        /* Consistent Scrollbar Styling */
+        /* Scrollbar */
         main#terminal::-webkit-scrollbar { width: 10px; }
         main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
         main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
-        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #889097; } /* Slightly darker hover */
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #aaaaaa; }
         main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
-
-
         footer#inputArea {
-          display: flex;
-          align-items: stretch; /* Make items fill height */
+          display: flex; align-items: stretch;
           background-color: var(--input-bg-color);
-          padding: calc(var(--padding-base) / 2) var(--padding-base);
+          padding: calc(var(--padding-base)/2) var(--padding-base);
           border-top: 1px solid var(--border-color);
-          flex-shrink: 0; /* Prevent shrinking */
         }
-
-        /* Token Counter Styling */
         #tokenCounter {
-          position: fixed; /* Use fixed to position relative to viewport */
-          bottom: 70px; /* Initial position, will be adjusted by JS */
-          right: 20px;
-          background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
+          position: fixed; bottom: 70px; right: 20px;
+          background-color: rgba(245,245,245,0.85);
           color: var(--text-color);
           padding: 5px 10px;
           border: 1px solid var(--border-color);
-          border-radius: var(--border-radius-base);
-          z-index: 1000;
+          border-radius: 5px;
           font-family: var(--font-family);
           font-size: 14px;
-          backdrop-filter: blur(2px); /* Optional: glassy effect */
-          -webkit-backdrop-filter: blur(2px);
-          transition: bottom 0.2s ease-out; /* Smooth transition */
+          backdrop-filter: blur(2px);
+          transition: bottom 0.2s ease-out;
         }
-
-        /* Message Styling */
-        .message {
-          position: relative;
-		  margin-bottom: calc(var(--padding-base) * 0.75);
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          border-radius: var(--border-radius-base);
-          padding: calc(var(--padding-base) / 1.5); /* Slightly smaller padding for bubbles */
-        }
-
-        .prefix {
-          font-weight: bold;
-          flex-shrink: 0;
-          margin-bottom: 0.25em;
-          user-select: none;
-          white-space: pre; /* Keep prefix on a single line */
-          font-size: 0.9em; /* Slightly smaller prefix */
-          opacity: 0.9;
-        }
-
-        .content {
-          flex-grow: 1;
-        }
-
-        /* Role-specific colors & backgrounds */
+        .message { margin-bottom: calc(var(--padding-base)*0.75); display: flex; flex-direction: column; align-items: flex-start; padding: calc(var(--padding-base)/1.5); border-radius: 8px; }
+        .prefix { font-weight: bold; margin-bottom: 0.25em; user-select: none; white-space: pre; }
+        .content { flex-grow: 1; }
         .user .prefix { color: var(--user-prefix-color); }
-        .user .content { color: var(--text-color); }
-        .message.user { background-color: rgba(13, 110, 253, 0.08); } /* Light blue tint */
-
         .assistant .prefix { color: var(--assistant-color); }
-        .assistant .content { color: var(--text-color); }
-        .message.assistant { background-color: rgba(25, 135, 84, 0.08); } /* Light green tint */
-
         .system .prefix { color: var(--system-color); }
-        .system .content { color: var(--system-color); opacity: 0.9; }
-        .message.system { background-color: rgba(108, 117, 125, 0.08); } /* Light grey tint */
-
-        /* Special style for 'help' output */
-        .system.help-output .prefix { color: var(--command-color); }
-        .system.help-output .content { color: var(--text-color); opacity: 1; } /* Use main text color for readability */
-        .message.system.help-output { background-color: rgba(255, 193, 7, 0.08); } /* Light yellow tint */
-
-		/* Make links in help-output blue */
-		.system.help-output .content a {
-			color: var(--link-color);
-			text-decoration: underline;
-		}
-
-		/* Make inline code look nice in help-output */
-		.system.help-output code {
-			background-color: rgba(0,0,0,0.06); /* Subtle dark background */
-            color: var(--text-color);
-			padding: 2px 5px;
-			border-radius: 4px;
-			font-family: var(--font-family-mono); /* Use monospace for code */
-			font-size: 0.9em;
-            border: 1px solid rgba(0,0,0,0.08);
-		}
-
         .error .prefix { color: var(--error-color); }
-        .error .content { color: var(--error-color); font-weight: bold; }
-        .message.error { background-color: rgba(220, 53, 69, 0.08); } /* Light red tint */
-
-        /* Input Prompt Styling */
-        #prompt {
-          color: var(--prompt-color);
-          margin-right: 0.5em;
-          font-weight: bold;
-          line-height: var(--line-height);
-          padding: calc(var(--padding-base) / 3) 0; /* Vertical padding */
-          user-select: none;
-          align-self: flex-start; /* Align prompt to the top */
-          padding-top: 8px; /* Fine-tune alignment with textarea */
-        }
-
-        /* Textarea Input Styling */
-        #userInput {
-          flex-grow: 1;
-          background-color: transparent;
-          border: none;
-          outline: none;
-          color: var(--text-color);
-          font-family: var(--font-family);
-          font-size: inherit;
-          line-height: var(--line-height);
-          padding: calc(var(--padding-base) / 3) 0; /* Match prompt padding */
-          caret-color: var(--prompt-color);
-          resize: none; /* Disable manual resize */
-          overflow-y: hidden; /* Hide scrollbar initially */
-          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 3) * 2);
-        }
-        #userInput::placeholder { color: #6c757d; font-style: italic; opacity: 0.8; } /* Muted grey placeholder */
-        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
-
-        /* Style for loading state content */
-        .loading-content {
-            display: inline-flex;
-            align-items: baseline;
-        }
-
-        /* Style for Timer Span */
-        .thinking-timer-span {
-            margin-left: 8px;
-            font-size: 0.9em;
-            opacity: 0.8;
-            color: var(--system-color); /* Use system color for timer */
-            white-space: nowrap;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
+        .message.user { background-color: rgba(0,102,204,0.05); }
+        .message.assistant { background-color: rgba(204,0,102,0.05); }
+        .message.system { background-color: rgba(102,102,102,0.05); }
+        .message.error { background-color: rgba(217,48,37,0.05); }
+        #prompt { color: var(--prompt-color); margin-right: 0.5em; font-weight: bold; padding-top: 8px; user-select: none; }
+        #userInput { flex-grow: 1; background: transparent; border: none; outline: none; color: var(--text-color); font-family: var(--font-family); font-size: inherit; line-height: var(--line-height); padding: calc(var(--padding-base)/3) 0; caret-color: var(--prompt-color); resize: none; overflow-y: hidden; min-height: calc(var(--line-height)*1em + (var(--padding-base)/3)*2); }
+        #userInput::placeholder { color: #999; font-style: italic; }
+        .floatingToggle { position: fixed; bottom: 70px; left: 20px; background-color: rgba(245,245,245,0.85); color: var(--text-color); padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 5px; font-family: var(--font-family); font-size: 14px; backdrop-filter: blur(2px); cursor: pointer; user-select: none; }
+        .copy-btn { position: absolute; top: 4px; right: 4px; border: none; background: transparent; color: var(--highlight-color); font-family: var(--font-family); font-size: 0.8em; cursor: pointer; opacity: 0; transition: opacity 0.15s ease-in; }
+        .message:hover .copy-btn { opacity: 0.8; }
+        .message system.help-output .content a { color: var(--assistant-color); text-decoration: underline; }
+        @media (max-width:600px) {
           html { font-size: var(--font-size-mobile); }
-		  main#terminal {
-            padding: var(--padding-mobile) var(--padding-mobile) 60px var(--padding-mobile);
-          }
-          footer#inputArea { padding: calc(var(--padding-mobile) / 1.5) var(--padding-mobile); }
-          #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 6px; }
-          #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
-          .message { margin-bottom: calc(var(--padding-mobile) * 1); }
-          .message { padding: calc(var(--padding-mobile)); }
+          main#terminal { padding: var(--padding-mobile) var(--padding-mobile) 60px var(--padding-mobile); }
+          footer#inputArea { padding: calc(var(--padding-mobile)/1.5) var(--padding-mobile); }
+          #prompt { padding-top: 6px; }
+          #userInput { min-height: calc(var(--line-height)*1em + var(--padding-mobile)); }
           main#terminal::-webkit-scrollbar { width: 6px; }
-          main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
           #tokenCounter { bottom: 60px; right: 15px; font-size: 13px; }
+          .floatingToggle { bottom: 60px; left: 15px; font-size: 13px; }
         }
-
-		/* Auto-Scroll Toggle (matches token counter style) */
-		.floatingToggle {
-		  position: fixed;
-		  bottom: 70px;
-		  left: 20px;
-		  background-color: rgba(255, 255, 255, 0.85); /* Match token counter */
-		  color: var(--text-color);
-		  padding: 5px 10px;
-		  border: 1px solid var(--border-color);
-		  border-radius: var(--border-radius-base);
-		  z-index: 1000;
-		  font-family: var(--font-family);
-		  font-size: 14px;
-		  backdrop-filter: blur(2px);
-		  -webkit-backdrop-filter: blur(2px);
-		  transition: bottom 0.2s ease-out;
-		  cursor: pointer;
-		  user-select: none;
-		}
-
-		/* Mobile tweak */
-		@media (max-width: 600px) {
-		  #scrollToggle {
-			bottom: 60px;
-			left: 15px;
-			font-size: 13px;
-		  }
-		}
-
-		/* Copy-button */
-		.copy-btn {
-		  position: absolute;
-		  top: 4px;
-		  right: 4px;
-		  border: none;
-		  background: rgba(0, 0, 0, 0.05); /* Subtle background */
-          color: var(--system-color); /* Use system grey color */
-		  font-family: var(--font-family);
-		  font-size: 0.8em;
-          padding: 3px 6px;
-          border-radius: 4px;
-		  cursor: pointer;
-		  opacity: 0;
-		  user-select: none;
-		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
-		}
-		.message:hover .copy-btn { opacity: 0.7; }
-        .copy-btn:hover { opacity: 1; background-color: rgba(0, 0, 0, 0.1); }
-		.copy-btn:focus { outline: none; }
-
     </style>
 </head>
 <body>
     <main id="terminal"></main>
-    <div id="tokenCounter">Token: 0</div> {/* Changed label to Italian */}
-	<div id="scrollToggle" class="floatingToggle">🔽 Scroll Automatico: ON</div> {/* Changed label to Italian */}
+    <div id="tokenCounter">Token: 0</div>
+    <div id="scrollToggle" class="floatingToggle">🔽 Scorrimento automatico: ON</div>
     <footer id="inputArea">
         <span id="prompt">></span>
-        <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea> {/* Changed placeholder to Italian */}
+        <textarea id="userInput" rows="1" placeholder="Inizializzazione in corso..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
-    <!-- Introduction Text Block REMOVED -->
-
     <script>
-        // --- Configuration ---
-        const WORKER_URL = "https://germabyte-assistente-80.deno.dev/"; // CHANGE THIS TO YOUR WORKER URL
-		// PRIVACY_NOTICE REMOVED
-		// fetchPrivacyPolicy REMOVED
-
-		/* ---------- COMMAND CATALOGUE (auto-sorted in help) ---------- */
-		const COMMAND_INFO = [
-		  // { name: "arena", desc: "arena <char1,char2,...>|<topic>|[rounds]|[model] - Starts a multi-AI debate." }, // REMOVED
-		  // { name: "clear", desc: "clear  - Clears the terminal and resets chat context." }, // REMOVED
-		  // { name: "exit", desc: "exit   - Disables input (refresh page to restart)." }, // REMOVED
-		  // { name: "flush", desc: "flush  - Deletes all server-side chat logs." }, // REMOVED
-		  // { name: "export", desc: "export - Downloads the current on-screen chat as a .txt file." }, // REMOVED
-		  { name: "help",           desc: "help             - Mostra questo messaggio di aiuto." }, // Italian desc
-		  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (resetta contesto)." }, // Italian name & desc
-		  // { name: "privacy", desc: "privacy - Displays the privacy policy." }, // REMOVED
-		  { name: "reset",          desc: "reset            - Resetta il contesto della chat." }, // Italian desc
-		  // { name: "set model", desc: "set model <name>     - Switches AI model (resets context)." }, // REMOVED
-		  { name: "stop",           desc: "stop             - Interrompe la risposta corrente dell'IA." } // Italian desc
-		];
-		/* ------------------------------------------------------------- */
-
-
-        // --- DOM Elements ---
+        const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
+        const COMMAND_INFO = [
+          { name: "help", desc: "help   - Visualizza questo messaggio di aiuto." },
+          { name: "reset", desc: "reset  - Ripristina il contesto della chat." },
+          { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia modalità AI (reimposta contesto)." },
+          { name: "stop", desc: "stop   - Interrompe la risposta corrente dell'AI." }
+        ];
         const terminalDiv = document.getElementById("terminal");
         const userInput = document.getElementById("userInput");
         const tokenCounterDiv = document.getElementById("tokenCounter");
-		// ── Auto-Scroll Toggle State & Button ──
-		let autoScrollEnabled = true;
-		const scrollToggleDiv = document.getElementById("scrollToggle");
-		scrollToggleDiv.addEventListener("click", () => {
-		  autoScrollEnabled = !autoScrollEnabled;
-		  scrollToggleDiv.textContent = autoScrollEnabled
-			? "🔽 Scroll Automatico: ON" // Italian text
-			: "⏸️ Scroll Automatico: OFF"; // Italian text
-		});
-
+        let autoScrollEnabled = true;
+        const scrollToggleDiv = document.getElementById("scrollToggle");
+        scrollToggleDiv.addEventListener("click", () => {
+          autoScrollEnabled = !autoScrollEnabled;
+          scrollToggleDiv.textContent = autoScrollEnabled
+            ? "🔽 Scorrimento automatico: ON"
+            : "⏸️ Scorrimento automatico: OFF";
+        });
         const promptSpan = document.getElementById("prompt");
-
-        // --- Centralized Application State ---
         const appState = {
-            conversation: [],
-            commandHistory: [],
-            historyIndex: -1,
-            isWaitingForAI: false,
-            currentCharacter: null,
-            currentModel: null, // Will hold the single hardcoded model name
-            availableCharacters: [],
-            // availableModels: REMOVED
-            currentTokenCount: 0,
-            currentTokenLimit: null,
-            thinkingIntervalId: null,
-            timerIntervalId: null,
-            thinkingStartTime: null,
-            abortController: null,
-            loadingMsgDiv: null,
-            // arena: REMOVED
+            conversation: [], commandHistory: [], historyIndex: -1,
+            isWaitingForAI: false, currentCharacter: null, currentModel: null,
+            availableCharacters: [], currentTokenCount: 0,
+            currentTokenLimit: null, thinkingIntervalId: null,
+            timerIntervalId: null, thinkingStartTime: null,
+            abortController: null, loadingMsgDiv: null
         };
-
-        // --- Helper Functions ---
         function formatTokenCount(num) {
             if (num === undefined || num === null) return '?';
             if (num < 1000) return num.toString();
-            // Italian uses comma as decimal separator
-            return (num / 1000).toFixed(1).replace('.', ',').replace(/,0$/, '') + "k";
+            return (num/1000).toFixed(1).replace(/\.0$/,'')+"k";
         }
-
-		// sanitizeModelList REMOVED (no longer needed)
-
-        // --- MODIFIED: Added optional overridePrefix parameter ---
-        function appendMessage(role, text, isLoading = false, extraClass = null, overridePrefix = null) {
-            const msgDiv = document.createElement("div");
-            msgDiv.classList.add("message", role);
-
-            if (extraClass) {
-                msgDiv.classList.add(extraClass);
-            }
-
-            const prefixSpan = document.createElement("span");
-            prefixSpan.classList.add("prefix");
-
-            const contentSpan = document.createElement("span");
-            contentSpan.classList.add("content");
-
+        function appendMessage(role, text, isLoading=false, extraClass=null, overridePrefix=null) {
+            const msgDiv = document.createElement("div"); msgDiv.classList.add("message", role);
+            if(extraClass) msgDiv.classList.add(extraClass);
+            const prefixSpan = document.createElement("span"); prefixSpan.classList.add("prefix");
+            const contentSpan = document.createElement("span"); contentSpan.classList.add("content");
             switch(role) {
-                case 'user':
-                    prefixSpan.textContent = "UTENTE:"; // Italian prefix
-                    contentSpan.textContent = text; // Use textContent, links not needed
-                    break;
-                case 'assistant':
-                    // Italian: Use character name or "ASSISTENTE" as default
-                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'ASSISTENTE').toUpperCase()}:`;
-                    if (isLoading) {
-                        contentSpan.classList.add("loading-content");
-                        // Italian "Thinking"
-                        contentSpan.innerHTML = `<span class="thinking-dots-span">Pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
-                    } else {
-                        contentSpan.textContent = text; // Use textContent, links not needed
-                    }
-                    break;
-				case 'system':
-					prefixSpan.textContent = "SISTEMA:"; // Italian prefix
-					extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
-					break;
-                case 'error':
-                    prefixSpan.textContent = "ERRORE!"; // Italian prefix
-                    contentSpan.textContent = text;
-                    break;
-                default:
-                    prefixSpan.textContent = "???:";
-                    contentSpan.textContent = text;
-                    break;
+                case 'user': prefixSpan.textContent = "UTENTE:"; contentSpan.textContent = text; break;
+                case 'assistant': prefixSpan.textContent = overridePrefix ?? `\${(appState.currentCharacter||'AI').toUpperCase()}:`; if(isLoading){contentSpan.classList.add("loading-content"); contentSpan.innerHTML = `<span class="thinking-dots-span">Pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;} else contentSpan.textContent = text; break;
+                case 'system': prefixSpan.textContent = "SIS:"; contentSpan.textContent = text; break;
+                case 'error': prefixSpan.textContent = "ERR!"; contentSpan.textContent = text; break;
+                default: prefixSpan.textContent = "???:"; contentSpan.textContent = text;
             }
-
-			msgDiv.appendChild(prefixSpan);
-			msgDiv.appendChild(contentSpan);
-
-			/* ── NEW “copy message” text button ─────────────────────── */
-			const copyBtn = document.createElement("button");
-			copyBtn.classList.add("copy-btn");
-			copyBtn.setAttribute("title", "Copia questo messaggio"); // Italian title
-			copyBtn.textContent = "Copia"; // Italian text
-
-			copyBtn.addEventListener("click", (e) => {
-			  e.stopPropagation(); // Don’t steal focus from textarea
-			  const txt = contentSpan.textContent || "";
-			  navigator.clipboard.writeText(txt).then(() => {
-				copyBtn.textContent = "Copiato!"; // Italian text
-				setTimeout(() => (copyBtn.textContent = "Copia"), 1500); // Italian text
-			  }).catch(() => {
-				copyBtn.textContent = "Errore copia"; // Italian text
-				setTimeout(() => (copyBtn.textContent = "Copia"), 1500); // Italian text
-			  });
-			});
-
-			msgDiv.appendChild(copyBtn);
-			/* ───────────────────────────────────────────────────────── */
-
-			terminalDiv.appendChild(msgDiv);
-			scrollToBottom();
-			return msgDiv;
-			}
-
-		function scrollToBottom() {
-		  if (!autoScrollEnabled) return;
-		  requestAnimationFrame(() => {
-			terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
-		  });
-		}
-
-		// downloadChatHistory REMOVED
-
+            msgDiv.appendChild(prefixSpan); msgDiv.appendChild(contentSpan);
+            const copyBtn = document.createElement("button"); copyBtn.classList.add("copy-btn"); copyBtn.setAttribute("title","Copia questo messaggio"); copyBtn.textContent="Clicca qui per copiare";
+            copyBtn.addEventListener("click",e=>{e.stopPropagation();navigator.clipboard.writeText(contentSpan.textContent||"").then(()=>{copyBtn.textContent="Copiato!";setTimeout(()=>copyBtn.textContent="Clicca qui per copiare",1500)}).catch(()=>{copyBtn.textContent="Errore copia";setTimeout(()=>copyBtn.textContent="Clicca qui per copiare",1500)});});
+            msgDiv.appendChild(copyBtn);
+            terminalDiv.appendChild(msgDiv);
+            if(autoScrollEnabled) requestAnimationFrame(()=>terminalDiv.scrollTo({top:terminalDiv.scrollHeight,behavior:'smooth'}));
+            return msgDiv;
+        }
         function adjustTextareaHeight() {
-            userInput.style.height = 'auto';
+            userInput.style.height='auto';
             let newHeight = userInput.scrollHeight;
-            const maxHeight = 150; // Keep max height reasonable
-            if (newHeight > maxHeight) {
-                newHeight = maxHeight;
-                userInput.style.overflowY = 'auto';
-            } else {
-                userInput.style.overflowY = 'hidden';
-            }
-            userInput.style.height = newHeight + 'px';
-
+            const maxHeight = 150;
+            if(newHeight>maxHeight){newHeight=maxHeight; userInput.style.overflowY='auto';} else userInput.style.overflowY='hidden';
+            userInput.style.height = newHeight+'px';
             const inputArea = document.getElementById('inputArea');
-
-			if (inputArea) {
-			  const inputAreaHeight = inputArea.offsetHeight;
-			  const newBottom = `${inputAreaHeight + 10}px`;
-			  tokenCounterDiv.style.bottom    = newBottom;
-			  scrollToggleDiv.style.bottom    = newBottom;
-			}
+            if(inputArea){const inputAreaHeight = inputArea.offsetHeight; const newBottom = `${inputAreaHeight+10}px`;
+              tokenCounterDiv.style.bottom = newBottom; scrollToggleDiv.style.bottom=newBottom;}
         }
-
-        // --- UI Update Functions ---
-		function updateTokenCounterUI() {
-			const countStr = formatTokenCount(appState.currentTokenCount);
-			const limitStr = formatTokenCount(appState.currentTokenLimit);
-            // Italian label
-			tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
-		}
-
-
-        function updatePromptUI() {
-            promptSpan.textContent = "> ";
+        function updateTokenCounterUI(){ const count=formatTokenCount(appState.currentTokenCount); const limit=appState.currentTokenLimit!==null?'/'+formatTokenCount(appState.currentTokenLimit):''; tokenCounterDiv.textContent=`Token: \${count}\${limit}`; }
+        function updatePromptUI(){ promptSpan.textContent = "> "; }
+        function updateUserInteractionState(){ const isDisabled=userInput.placeholder==="Inizializzazione non riuscita. Ricarica la pagina."; userInput.disabled=isDisabled;
+            if(appState.isWaitingForAI){userInput.placeholder="Digita 'stop' per interrompere";} 
+            else if(isDisabled){} 
+            else if(!appState.currentCharacter){userInput.placeholder="Caricamento...";} 
+            else {userInput.placeholder="Chiedi all'AI...";} 
+            adjustTextareaHeight(); }
+        function startThinkingAnimationAndTimer(){ if(!appState.loadingMsgDiv) return;
+            const dots=appState.loadingMsgDiv.querySelector('.thinking-dots-span'); const timer=appState.loadingMsgDiv.querySelector('.thinking-timer-span'); if(!dots||!timer) return;
+            let dotCount=1; appState.thinkingIntervalId=setInterval(()=>{ dotCount=(dotCount%3)+1; dots.textContent=`Pensando${'.'.repeat(dotCount)}`; },400);
+            appState.thinkingStartTime=Date.now(); timer.textContent=`(0.0s)`; appState.timerIntervalId=setInterval(()=>{ const elapsed=Date.now()-appState.thinkingStartTime; timer.textContent=`(${(elapsed/1000).toFixed(1)}s)`; },100);
         }
-
-        function updateUserInteractionState() {
-             const isDisabled = userInput.placeholder === "Inizializzazione fallita. Aggiorna."; // Italian text
-             userInput.disabled = isDisabled;
-
-             if (appState.isWaitingForAI) {
-                 userInput.placeholder = `Digita 'stop' per interrompere`; // Italian text
-             } else if (isDisabled) {
-                 // keep disabled placeholder
-             } else if (!appState.currentCharacter) {
-                 userInput.placeholder = "Caricamento configurazione..."; // Italian text
-             } else {
-                 userInput.placeholder = `Chiedi all'IA...`; // Italian text
-             }
-             adjustTextareaHeight();
-        }
-
-        // --- Thinking Animation and Timer ---
-        function startThinkingAnimationAndTimer() {
-            if (!appState.loadingMsgDiv) return;
-
-            const dotsSpan = appState.loadingMsgDiv.querySelector('.thinking-dots-span');
-            const timerSpan = appState.loadingMsgDiv.querySelector('.thinking-timer-span');
-            if (!dotsSpan || !timerSpan) return;
-
-            let dotCount = 1;
-            appState.thinkingIntervalId = setInterval(() => {
-                dotCount = (dotCount % 3) + 1;
-                dotsSpan.textContent = "Pensando" + ".".repeat(dotCount); // Italian text
-            }, 400);
-
-            appState.thinkingStartTime = Date.now();
-            timerSpan.textContent = `(0.0s)`;
-            appState.timerIntervalId = setInterval(() => {
-                const elapsedMilliseconds = Date.now() - appState.thinkingStartTime;
-                const elapsedSecondsFormatted = (elapsedMilliseconds / 1000).toFixed(1);
-                timerSpan.textContent = `(${elapsedSecondsFormatted}s)`;
-            }, 100);
-        }
-
-        function clearThinkingAnimationAndTimer() {
-            if (appState.thinkingIntervalId) {
-                clearInterval(appState.thinkingIntervalId);
-                appState.thinkingIntervalId = null;
-            }
-            if (appState.timerIntervalId) {
-                clearInterval(appState.timerIntervalId);
-                appState.timerIntervalId = null;
-            }
-            appState.thinkingStartTime = null;
-            if (appState.loadingMsgDiv) {
-                const contentSpan = appState.loadingMsgDiv.querySelector('.content');
-                if (contentSpan) {
-                    contentSpan.classList.remove('loading-content');
-                }
-            }
-        }
-
-        // --- RE-ADDED: State Modification Functions (from Code 1) ---
-        function updateStateFromWorkerResponse(data) {
-            // Update state only if data is provided in the response
-            if (data.activeCharacter) appState.currentCharacter = data.activeCharacter;
-            if (data.activeModel) appState.currentModel = data.activeModel; // Expecting the hardcoded model name
-            if (data.availableCharacters) appState.availableCharacters = data.availableCharacters;
-			// if (data.availableModels) appState.availableModels = sanitizeModelList(data.availableModels); // REMOVED
-            if (typeof data.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
-            if (typeof data.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
-
-            // Update relevant UI elements
-            updateTokenCounterUI();
-            updatePromptUI(); // Prompt might change if character changes implicitly via API
-        }
-
-        // --- RE-ADDED: Helper Function to Reset Conversation (from Code 1) ---
-        function resetConversationState(reasonKey) {
-            appState.conversation = [];
-            appState.currentTokenCount = 0; // Reset token count state
-            updateTokenCounterUI(); // Update display
-
-            // Italian reasons
-            const reasons = {
-                'user command': 'comando utente',
-                'character change': 'cambio modalità',
-                'token limit': 'limite token',
-                'input limit': 'limite input'
-            };
-            const reasonText = reasons[reasonKey] || reasonKey; // Fallback to key if not found
-
-            // Italian messages
-            appendMessage("system", `Contesto chat resettato (${reasonText}). Nuova conversazione iniziata.`);
-            scrollToBottom();
-            // Arena state REMOVED
-        }
-
-        // --- API Call ---
-        async function callWorkerApi(payload, signal) { // Accept signal
-            let response;
-            try {
-                response = await fetch(WORKER_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                    signal // Pass signal to fetch
-                });
-
-                const data = await response.json(); // Parse JSON regardless of response.ok
-
-                if (!response.ok) {
-                    // Italian error message prefix
-                    let errorMsg = `Errore API (${response.status})`;
-                    errorMsg += `: ${data?.error || response.statusText}`;
-                    if (data?.details) console.error("API Error Details:", data.details);
-                    console.error("Full API Error Response:", data);
-
-                    // --- RE-ADDED: Update state from error response if possible (from Code 1) ---
-                    if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
-					// if (data?.availableModels) appState.availableModels = sanitizeModelList(data.availableModels); // REMOVED
-                    if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
-                    if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount; // Update token count even on error if provided
-                    updateTokenCounterUI(); // Update UI after potential error state updates
-                    // --- End Re-added Block ---
-
-                    const error = new Error(errorMsg);
-                    error.status = response.status;
-                    error.data = data; // Attach potentially useful data to the error
-                    throw error;
-                }
-
-                // Basic validation for expected successful response structure
-                if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
-                     console.error("Unexpected API response structure:", data);
-                     // Italian error message
-                     throw new Error("Ricevuto formato risposta inatteso dall'API.");
-                }
-
-                // --- MODIFIED: Use helper function to update state (from Code 1) ---
-                updateStateFromWorkerResponse(data); // Update state on success using helper
-
-                return data;
-
-            } catch (error) {
-                // Check specifically for AbortError
-                if (error.name === 'AbortError') {
-                    console.log("Fetch aborted by user.");
-                    // Re-throw the specific error so handleUserInput can identify it
-                    throw error;
-                }
-
-                console.error("Fetch/API Error:", error);
-                // Network errors often manifest as TypeErrors in fetch
-                if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-                     // Italian error message
-                     const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
-                     networkError.status = 0; // Indicate network error
-                     throw networkError;
-                }
-                throw error; // Re-throw other errors (including API errors thrown above)
-            }
-        }
-
-
-        // --- ARENA MODE FUNCTIONS REMOVED ---
-        // parseArenaLine REMOVED
-        // sendArenaTurn REMOVED
-        // runArena REMOVED
-
-        // --- User Input Handling ---
-        async function handleUserInput() {
-            const inputText = userInput.value.trim();
-            userInput.value = "";
-            adjustTextareaHeight();
-
-            if (inputText === "") return; // Ignore empty input
-
-            // --- Handle STOP command while waiting ---
-            if (appState.isWaitingForAI) {
-                if (inputText.toLowerCase() === 'stop') {
-                    appendMessage("user", inputText);
-                    if (appState.abortController) {
-                        appState.abortController.abort(); // Signal abort
-                        // Italian message
-                        appendMessage("system", "Comando 'stop' ricevuto. Richiesta IA interrotta.");
-                        clearThinkingAnimationAndTimer(); // Clear visuals
-                        if (appState.loadingMsgDiv) { // Remove loading bubble
-                            appState.loadingMsgDiv.remove();
-                            appState.loadingMsgDiv = null;
-                        }
-                        // No arena state to manage
-                        appState.isWaitingForAI = false;
-                        appState.abortController = null;
-                        updateUserInteractionState();
-                    } else {
-                        // Italian message
-                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
-                    }
-                } else {
-                    appendMessage("user", inputText);
-                    // Italian message
-                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`);
-                }
-                scrollToBottom();
-                return;
-            }
-
-            // Arena stop/reject logic REMOVED
-
-            // --- Process input when NOT waiting ---
-
-            // Add to command history
-            if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== inputText) {
-                appState.commandHistory.push(inputText);
-            }
-            appState.historyIndex = appState.commandHistory.length; // Reset history index
-
-            const commandArgs = inputText.toLowerCase().split(/\s+/);
-            const command = commandArgs[0];
-            const originalArgs = inputText.split(/\s+/); // Keep original args for values like char names
-
-            // Arena command REMOVED
-
-            // --- Existing commands (reset, help, imposta modalità, stop) ---
-            // clear REMOVED
-            // exit REMOVED
-            // flush REMOVED
-            // export REMOVED
-            // privacy REMOVED
-            // set model REMOVED
-
-            if (command === 'reset') {
-                appendMessage("user", inputText);
-                resetConversationState('user command');
-                return;
-            }
-
-            if (command === 'help') {
-                appendMessage("user", inputText);
-
-				const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
-					a.name.localeCompare(b.name, 'it', { sensitivity: "base" }) // Italian locale sort
-				);
-
-				let helpOutput = "COMANDI:\n"; // Italian
-				commandsSorted.forEach(c => {
-                    // Pad name for alignment (adjust padding as needed)
-                    const paddedName = c.name.padEnd(17, ' ');
-					helpOutput += `  <code>${paddedName}</code> ${c.desc.substring(c.desc.indexOf('-') + 1).trim()}\n`; // Use code tag, format desc
-				});
-				helpOutput += "\nMODALITÀ DISPONIBILI:\n"; // Italian
-				const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b, 'it')); // Italian sort
-				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`; // Italian
-				// AVAILABLE MODELS REMOVED
-				helpOutput += "STATO ATTUALE:\n"; // Italian
-				helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`; // Italian
-				helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`; // Italian
-				helpOutput += `COME CHATTARE:\n`; // Italian
-				helpOutput += "  • Scrivi qualsiasi cosa che non sia un comando per chattare con la modalità IA attuale.\n\n"; // Italian
-				appendMessage("system", helpOutput, false, "help-output");
-				scrollToBottom();
-				return;
-            }
-
-            // --- UPDATED: Handle "imposta modalità" command ---
-            if (command === 'imposta') {
-                appendMessage("user", inputText);
-                // Expecting "imposta modalità <name>"
-                if (originalArgs.length < 3 || commandArgs[1] !== 'modalità') {
-                     // Italian usage message
-                     appendMessage("error", "Uso: imposta modalità <nome>");
-                     return;
-                }
-                const settingType = commandArgs[1]; // Should be 'modalità'
-                const settingValue = originalArgs.slice(2).join(' '); // The character name
-
-                // Although we checked commandArgs[1], double-check for clarity/future-proofing
-                if (settingType === 'modalità') {
-                     const characterNameLower = settingValue.toLowerCase();
-                     const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
-
-                     if (foundCharacter) {
-                         if (appState.currentCharacter !== foundCharacter) {
-                             appState.currentCharacter = foundCharacter; // Store canonical name
-                             // Italian message
-                             appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
-                             resetConversationState('character change'); // Use internal key 'character change'
-                             updatePromptUI();
-                         } else {
-                              // Italian message
-                              appendMessage("system", `Modalità già impostata su: ${appState.currentCharacter}.`);
-                         }
-                     } else {
-                         const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b, 'it')); // Italian sort
-                         // Italian message
-                         appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
-                     }
-                }
-                 // No 'else' needed because we checked `commandArgs[1] === 'modalità'` earlier
-                 scrollToBottom();
-                 return; // Don't fall through
-            }
-
-            // --- Fallback: Process regular message to AI ---
-            appendMessage("user", inputText);
-            appState.conversation.push({ role: "user", content: inputText });
-            scrollToBottom();
-
-            appState.isWaitingForAI = true;
-            appState.loadingMsgDiv = appendMessage("assistant", "", true); // Standard loading message
+        function clearThinkingAnimationAndTimer(){ clearInterval(appState.thinkingIntervalId); clearInterval(appState.timerIntervalId); appState.thinkingIntervalId=null; appState.timerIntervalId=null; appState.thinkingStartTime=null; if(appState.loadingMsgDiv){const content=appState.loadingMsgDiv.querySelector('.content'); if(content) content.classList.remove('loading-content'); }}
+        function updateStateFromWorkerResponse(data){ if(data.activeCharacter) appState.currentCharacter=data.activeCharacter; if(data.activeModel) appState.currentModel=data.activeModel; if(Array.isArray(data.availableCharacters)) appState.availableCharacters=data.availableCharacters; if(typeof data.tokenCount==='number') appState.currentTokenCount=data.tokenCount; if(typeof data.tokenLimit==='number') appState.currentTokenLimit=data.tokenLimit; updateTokenCounterUI(); updatePromptUI(); }
+        function resetConversationState(reason){ appState.conversation=[]; appState.currentTokenCount=0; updateTokenCounterUI(); appendMessage("system","Contesto chat reimpostato ("+reason+"). Nuova conversazione iniziata."); }
+        async function callWorkerApi(payload, signal){ let response; try{ response=await fetch(WORKER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),signal}); const data=await response.json(); if(!response.ok){ let errMsg=`Errore API ("+response.status+")`; errMsg+=`: ${data?.error||response.statusText}`; console.error(data); const error=new Error(errMsg); error.status=response.status; throw error;} if(!data||(payload.messages&&typeof data.completion!=='string'&&!signal?.aborted)){ throw new Error("Risposta API inattesa."); } updateStateFromWorkerResponse(data); return data;}catch(err){ if(err.name==='AbortError'){ throw err;} if(err instanceof TypeError&&err.message.includes('Failed to fetch')){ const netErr=new Error("Errore di rete. Impossibile raggiungere il worker API."); netErr.status=0; throw netErr;} throw err;} }
+        async function handleUserInput(){ const text=userInput.value.trim(); userInput.value=""; adjustTextareaHeight(); if(!text) return;
+            if(appState.isWaitingForAI){ if(text.toLowerCase()==='stop'){ appendMessage("user",text); if(appState.abortController){ appState.abortController.abort(); appendMessage("system","Comando di stop ricevuto. Richiesta AI interrotta."); clearThinkingAnimationAndTimer(); if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove(); appState.loadingMsgDiv=null;} appState.isWaitingForAI=false; appState.abortController=null; updateUserInteractionState(); } else appendMessage("error","Nessuna richiesta AI attiva."); } else { appendMessage("user",text); appendMessage("system",`Input "${text}" ignorato: AI occupata. Digita 'stop' per interrompere.`);} return; }
+            if(appState.commandHistory.slice(-1)[0]!==text) appState.commandHistory.push(text); appState.historyIndex=appState.commandHistory.length;
+            const args=text.toLowerCase().split(/\s+/); const cmd=args[0]; const orig=text.split(/\s+/);
+            if(cmd==='reset'){ appendMessage("user",text); resetConversationState('comando utente'); return; }
+            if(cmd==='help'){ appendMessage("user",text);
+                const sorted=[...COMMAND_INFO].sort((a,b)=>a.name.localeCompare(b.name)); let out="COMANDI:\n";
+                sorted.forEach(c=>{out+=`  ${c.desc}\n`;}); out+="\nMODALITÀ DISPONIBILI:\n  "; const chars=[...(appState.availableCharacters||[])].sort(); out+=(chars.length?chars.join(', '):'Nessuna')+"\n\nSTATO ATTUALE:\n  Modalità: "+(appState.currentCharacter||'N/A')+"\n  Modello:     "+(appState.currentModel||'N/A')+"\n\nCOME CHATTARE:\n  • Digita semplicemente qualsiasi testo che non sia un comando per chattare con la modalità AI corrente.\n\n";
+                appendMessage("system",out,false,"help-output"); return; }
+            if(cmd==='set'){ appendMessage("user",text); if(orig.length<3){ appendMessage("error","Uso: imposta modalità <nome>"); return;} const type=args[1]; const value=orig.slice(2).join(' ');
+                if(type==='character'){ const found=appState.availableCharacters.find(c=>c.toLowerCase()===value.toLowerCase()); if(found){ if(appState.currentCharacter!==found){ appState.currentCharacter=found; appendMessage("system","Modalità impostata su: "+found+"."); resetConversationState('cambio modalità'); updatePromptUI(); } else appendMessage("system","La modalità è già impostata su: "+found+"."); } else{ const available=appState.availableCharacters.sort((a,b)=>a.localeCompare(b)); appendMessage("error","Modalità '"+value+"' non trovata. Disponibili: "+(available.join(',')||'Nessuna')); } } else{ appendMessage("error","Tipo di impostazione sconosciuto. Usa 'modalità'."); } return; }
+            appendMessage("user",text);
+            appState.conversation.push({role:"user",content:text});
+            appState.isWaitingForAI=true;
+            appState.loadingMsgDiv=appendMessage("assistant","",true);
             startThinkingAnimationAndTimer();
-            appState.abortController = new AbortController();
-            updateUserInteractionState();
-
-            try {
-                const payload = {
-                    messages: appState.conversation,
-                    character: appState.currentCharacter, // Backend expects 'character'
-                    model: appState.currentModel // Send the hardcoded model name
-                };
-                const result = await callWorkerApi(payload, appState.abortController.signal);
-
-                clearThinkingAnimationAndTimer(); // Stop timer/dots
-
-                // Update the loading message bubble with the actual response
-                if (appState.loadingMsgDiv && !appState.abortController.signal.aborted) {
-                     const contentSpan = appState.loadingMsgDiv.querySelector('.content');
-                     const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
-                     if (contentSpan && prefixSpan) {
-                         contentSpan.classList.remove('loading-content');
-                         // Italian default prefix if character is null
-                         prefixSpan.textContent = `${(appState.currentCharacter || 'ASSISTENTE').toUpperCase()}:`;
-                         contentSpan.textContent = result.completion; // Use textContent
-                     } else {
-                         appState.loadingMsgDiv.remove();
-                         appendMessage("assistant", result.completion);
-                     }
-                } else if (appState.loadingMsgDiv) {
-                    appState.loadingMsgDiv.remove(); // Remove if aborted
-                }
-                appState.loadingMsgDiv = null; // Clear reference
-
-                // Add response to conversation history if successful and not aborted
-                if (result.completion !== undefined && !appState.abortController.signal.aborted) {
-                    appState.conversation.push({ role: "assistant", content: result.completion });
-                }
-
-                // Check token limit AFTER successful response and state update
-                if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
-                    // Italian message
-                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reset automatico del contesto.`);
-                    resetConversationState('token limit');
-                }
-
-            } catch (error) {
-                clearThinkingAnimationAndTimer(); // Ensure cleared on error
-
-                if (appState.loadingMsgDiv) { // Remove loading message if exists
-                    appState.loadingMsgDiv.remove();
-                    appState.loadingMsgDiv = null;
-                }
-
-                if (error.name !== 'AbortError') { // Only show error if not user-aborted
-                    // Italian "unknown error"
-                    appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
-
-                    if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
-                        // Italian message
-                        appendMessage("system", "Messaggio input troppo lungo o limite contesto raggiunto. Reset automatico del contesto.");
-                        resetConversationState('input limit');
-                    }
-
-                    // Provide generic error feedback in placeholder (Italian)
-                    if (userInput.placeholder !== "Inizializzazione fallita. Aggiorna.") {
-                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
-                    }
-                }
-                scrollToBottom();
-
-            } finally {
-                // Ensure state is consistent after try/catch/abort
-                clearThinkingAnimationAndTimer(); // Defensive call
-                appState.isWaitingForAI = false;
-                appState.abortController = null; // Clear controller reference
-                if (appState.loadingMsgDiv) { // Defensive removal
-                    appState.loadingMsgDiv.remove();
-                    appState.loadingMsgDiv = null;
-                }
-
-                // Refocus input field if not in a failed init state
-                if (userInput.placeholder !== "Inizializzazione fallita. Aggiorna.") { // Italian text
-                   updateUserInteractionState(); // Update placeholder based on final state
-                   setTimeout(() => userInput.focus(), 50); // Refocus input field
-                }
-
-                 adjustTextareaHeight();
-            }
+            appState.abortController=new AbortController(); updateUserInteractionState();
+            try{
+                const payload={messages:appState.conversation,character:appState.currentCharacter,model:appState.currentModel};
+                const res=await callWorkerApi(payload,appState.abortController.signal);
+                clearThinkingAnimationAndTimer();
+                if(appState.loadingMsgDiv&&!appState.abortController.signal.aborted){ const content=appState.loadingMsgDiv.querySelector('.content'); const prefix=appState.loadingMsgDiv.querySelector('.prefix'); if(content&&prefix){ content.classList.remove('loading-content'); prefix.textContent=`\${(appState.currentCharacter||'AI').toUpperCase()}:`; content.textContent=res.completion; } else{ appState.loadingMsgDiv.remove(); appendMessage("assistant",res.completion);} } else if(appState.loadingMsgDiv){ appState.loadingMsgDiv.remove(); }
+                appState.loadingMsgDiv=null;
+                if(res.completion!==undefined&&!appState.abortController.signal.aborted) appState.conversation.push({role:"assistant",content:res.completion});
+                if(appState.currentTokenLimit!==null&&appState.currentTokenCount>=appState.currentTokenLimit){ appendMessage("system","Token limite (\${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Contesto reimpostato automaticamente."); resetConversationState('token limit'); }
+            }catch(err){ clearThinkingAnimationAndTimer(); if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove(); appState.loadingMsgDiv=null;} if(err.name!=='AbortError'){ appendMessage("error",err.message||"Si è verificato un errore.");
+                    if(err.status===413||(err.message&&err.message.includes("Token limit reached"))){ appendMessage("system","Messaggio troppo lungo o limite contesto raggiunto. Contesto reimpostato automaticamente."); resetConversationState('input limit'); }
+                    userInput.placeholder="Errore. Riprova o usa 'reset'."; }
+                appState.isWaitingForAI=false; appState.abortController=null; updateUserInteractionState(); setTimeout(()=>userInput.focus(),50);
+            } finally{ adjustTextareaHeight(); }
         }
-
-        // --- Keyboard Event Handling ---
-        function handleKeyDown(event) {
-            if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
-                event.preventDefault();
-                handleUserInput();
-            }
-            // History navigation only works when cursor is at start/end of input
-            else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
-                if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
-                    event.preventDefault();
-                    appState.historyIndex--;
-                    userInput.value = appState.commandHistory[appState.historyIndex];
-                    requestAnimationFrame(() => {
-                      userInput.setSelectionRange(userInput.value.length, userInput.value.length);
-                    });
-                    adjustTextareaHeight();
-                }
-            }
-            else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
-                 if (appState.historyIndex < appState.commandHistory.length - 1) {
-                    event.preventDefault();
-                    appState.historyIndex++;
-                    userInput.value = appState.commandHistory[appState.historyIndex];
-                     requestAnimationFrame(() => {
-                       userInput.setSelectionRange(userInput.value.length, userInput.value.length);
-                     });
-                    adjustTextareaHeight();
-                } else if (appState.historyIndex === appState.commandHistory.length - 1) {
-                    event.preventDefault();
-                    appState.historyIndex++;
-                    userInput.value = "";
-                    adjustTextareaHeight();
-                }
-            }
+        function handleKeyDown(e){ if(e.key==="Enter"&&!e.shiftKey&&!userInput.disabled){ e.preventDefault(); handleUserInput(); } else if(e.key==="ArrowUp"&&!userInput.disabled&&userInput.selectionStart===0&&userInput.selectionEnd===0){ if(appState.commandHistory.length>0&&appState.historyIndex>0){ e.preventDefault(); appState.historyIndex--; userInput.value=appState.commandHistory[appState.historyIndex]; requestAnimationFrame(()=>userInput.setSelectionRange(userInput.value.length,userInput.value.length)); adjustTextareaHeight(); } } else if(e.key==="ArrowDown"&&!userInput.disabled&&userInput.selectionStart===userInput.value.length&&userInput.selectionEnd===userInput.value.length){ if(appState.historyIndex<appState.commandHistory.length-1){ e.preventDefault(); appState.historyIndex++; userInput.value=appState.commandHistory[appState.historyIndex]; requestAnimationFrame(()=>userInput.setSelectionRange(userInput.value.length,userInput.value.length)); adjustTextareaHeight(); } else if(appState.historyIndex===appState.commandHistory.length-1){ e.preventDefault(); appState.historyIndex++; userInput.value=""; adjustTextareaHeight(); } } }
+        async function initializeApp(){ appendMessage("system","Sessione avviata: "+new Date().toLocaleString()); updateTokenCounterUI(); updatePromptUI(); userInput.placeholder="Inizializzazione in corso..."; userInput.disabled=true; adjustTextareaHeight(); appendMessage("system","Recupero configurazione...");
+            try{ await callWorkerApi({type:'init'});
+                appendMessage("system","Configurazione caricata."); appendMessage("system","Modalità: "+appState.currentCharacter+". Modello: "+appState.currentModel+"."); appendMessage("system","Digita 'help' per i comandi.");
+                userInput.disabled=false; updateUserInteractionState(); setTimeout(()=>userInput.focus(),0);
+            }catch(err){ appendMessage("error","Inizializzazione non riuscita: "+err.message); appendMessage("system","Impossibile caricare la configurazione. Funzionalità limitate. Ricarica la pagina."); userInput.placeholder="Inizializzazione non riuscita. Ricarica la pagina."; userInput.disabled=true; appState.isWaitingForAI=true; }
         }
-
-        // --- Initialization ---
-        async function initializeApp() {
-            // Initial messages (Italian)
-            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT')}`); // Use Italian locale for date
-
-			// PRIVACY NOTICE REMOVED
-			// Disclaimer REMOVED
-
-            // Initial UI state (Italian placeholder)
-            updateTokenCounterUI();
-            updatePromptUI();
-            userInput.placeholder = "Inizializzazione...";
-            userInput.disabled = true;
-            adjustTextareaHeight();
-            scrollToBottom();
-
-            appendMessage("system", "Recupero configurazione..."); // Italian
-            try {
-                // Fetch initial config - using callWorkerApi updates state automatically
-                await callWorkerApi({ type: 'init' });
-
-                appendMessage("system", `Configurazione caricata.`); // Italian
-                // Italian labels
-                appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
-                appendMessage("system", `Digita 'help' per i comandi.`); // Italian
-
-                userInput.disabled = false;
-                appState.isWaitingForAI = false;
-                updateUserInteractionState(); // Set correct placeholder (will become "Chiedi all'IA...")
-                setTimeout(() => userInput.focus(), 0); // Focus on load
-
-            } catch (error) {
-                // Italian messages
-                appendMessage("error", `Inizializzazione fallita: ${error.message}`);
-                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova ad aggiornare la pagina.");
-                userInput.placeholder = "Inizializzazione fallita. Aggiorna."; // Italian
-                userInput.disabled = true;
-                appState.isWaitingForAI = true; // Prevent interaction state updates
-            } finally {
-                 scrollToBottom(); // Ensure messages are visible
-            }
-        }
-
-        // --- Event Listeners ---
-        userInput.addEventListener("keydown", handleKeyDown);
-        userInput.addEventListener("input", adjustTextareaHeight);
-        terminalDiv.addEventListener('click', (event) => {
-            // Keep focus logic, no language change needed
-            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn'))) { // Avoid focus steal from copy button
-                if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
-                   userInput.focus();
-                }
-            }
-        });
-
-        window.addEventListener('resize', adjustTextareaHeight); // Adjust input height on resize
-
-        // --- Start Application ---
+        userInput.addEventListener("keydown",handleKeyDown);
+        userInput.addEventListener("input",adjustTextareaHeight);
+        terminalDiv.addEventListener("click",e=>{ if((e.target===terminalDiv||(terminalDiv.contains(e.target)&&e.target.tagName!=='A'))&&window.getSelection().toString()===''&&!appState.isWaitingForAI&&!userInput.disabled){ userInput.focus(); } });
+        window.addEventListener("resize",adjustTextareaHeight);
         initializeApp();
-
     </script>
 </body>
 </html>
