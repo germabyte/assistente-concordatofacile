@@ -727,10 +727,6 @@
 				helpOutput += `  Model:     ${appState.currentModel || 'N/A'}\n\n`; // Still show the current (hardcoded) model
 				helpOutput += `HOW TO CHAT:\n`;
 				helpOutput += "  • Simply type anything that isn't a command to chat with the current AI character.\n\n";
-				helpOutput += "TIPS:\n";
-                // Arena tips removed
-                helpOutput += "  • New to this AI stuff? Ask Proteus to explain how characters, models, and tokens work.\n";
-				helpOutput += "  • Want new characters? Contact: <a href=\"https://t.me/pseudea\" target=\"_blank\">t.me/pseudea</a> or <a href=\"https://www.instagram.com/pseudea.xyz/\" target=\"_blank\">instagram.com/pseudea.xyz</a>\n\n";
 				appendMessage("system", helpOutput, false, "help-output");
 				scrollToBottom();
 				return;
