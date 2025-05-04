@@ -290,8 +290,8 @@
 		const COMMAND_INFO = [
 		  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
 		  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-		  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità AI (reimposta contesto)." },
-		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'AI." }
+		  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità IA (reimposta contesto)." }, // Edited
+		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." } // Edited
 		];
 
         const terminalDiv = document.getElementById("terminal");
@@ -352,7 +352,7 @@
                     contentSpan.textContent = text;
                     break;
                 case 'assistant':
-                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
+                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase()}:`; // Edited
                     if (isLoading) {
                         contentSpan.classList.add("loading-content");
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
@@ -451,7 +451,7 @@
              } else if (!appState.currentCharacter) {
                  userInput.placeholder = "Caricamento config...";
              } else {
-                 userInput.placeholder = `Chiedi all'IA...`;
+                 userInput.placeholder = `Chiedi all'IA...`; // Already IA, no change needed
              }
              adjustTextareaHeight();
         }
@@ -589,7 +589,7 @@
                     appendMessage("user", inputText);
                     if (appState.abortController) {
                         appState.abortController.abort();
-                        appendMessage("system", "Comando stop ricevuto. Richiesta AI interrotta.");
+                        appendMessage("system", "Comando stop ricevuto. Richiesta IA interrotta."); // Edited
                         clearThinkingAnimationAndTimer();
                         if (appState.loadingMsgDiv) {
                             appState.loadingMsgDiv.remove();
@@ -599,11 +599,11 @@
                         appState.abortController = null;
                         updateUserInteractionState();
                     } else {
-                        appendMessage("error", "Impossibile fermare: Nessun processo AI attivo trovato.");
+                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato."); // Edited
                     }
                 } else {
                     appendMessage("user", inputText);
-                    appendMessage("system", `Input "${inputText}" ignorato: AI occupata. Digita 'stop' per interrompere.`);
+                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`); // Edited
                 }
                 scrollToBottom();
                 return;
@@ -643,7 +643,7 @@
 				helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
 				helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
 				helpOutput += `<b>COME CHATTARE:</b>\n`;
-				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità AI corrente.\n\n";
+				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n\n"; // Edited
 				appendMessage("system", helpOutput, false, "help-output");
 				scrollToBottom();
 				return;
@@ -707,7 +707,7 @@
                      const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
                      if (contentSpan && prefixSpan) {
                          contentSpan.classList.remove('loading-content');
-                         prefixSpan.textContent = `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
+                         prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase()}:`; // Edited
                          contentSpan.textContent = result.completion;
                      } else {
                          appState.loadingMsgDiv.remove();
@@ -744,7 +744,7 @@
                     }
 
                     if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
+                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`; // Already IA, no change needed
                     }
                 }
                 scrollToBottom();
