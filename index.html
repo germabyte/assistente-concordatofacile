@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -13,269 +12,268 @@
           --input-bg-color: #ffffff;
           --border-color: #dee2e6;
 
---prompt-color: #007bff;
-      --user-prefix-color: var(--prompt-color);
-      --assistant-color: #6f42c1;
-      --system-color: #6c757d;
-      --command-color: #0056b3;
-      --error-color: #dc3545;
-      --highlight-color: var(--prompt-color);
-      --scrollbar-thumb-color: #ced4da;
-      --scrollbar-track-color: #e9ecef;
+          --prompt-color: #007bff;
+          --user-prefix-color: var(--prompt-color);
+          --assistant-color: #6f42c1;
+          --system-color: #6c757d;
+          --command-color: #0056b3;
+          --error-color: #dc3545;
+          --highlight-color: var(--prompt-color);
+          --scrollbar-thumb-color: #ced4da;
+          --scrollbar-track-color: #e9ecef;
 
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      --font-size-base: 17px;
-      --font-size-mobile: 16px;
-      --line-height: 1.6;
+          --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          --font-size-base: 17px;
+          --font-size-mobile: 16px;
+          --line-height: 1.6;
 
-      --padding-base: 18px;
-      --padding-mobile: 12px;
-      --border-radius-base: 10px;
-    }
+          --padding-base: 18px;
+          --padding-mobile: 12px;
+          --border-radius-base: 10px;
+        }
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
 
-    html {
-      font-size: var(--font-size-base);
-    }
+        html {
+          font-size: var(--font-size-base);
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: var(--font-family);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
-    }
+        body {
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          font-family: var(--font-family);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
+        }
 
-    main#terminal {
-      flex-grow: 1;
-	  padding: var(--padding-base) var(--padding-base) 75px var(--padding-base);
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      line-height: var(--line-height);
-    }
+        main#terminal {
+          flex-grow: 1;
+		  padding: var(--padding-base) var(--padding-base) 75px var(--padding-base);
+          overflow-y: auto;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          line-height: var(--line-height);
+        }
 
-    main#terminal::-webkit-scrollbar { width: 10px; }
-    main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
-    main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
-    main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
-    main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar { width: 10px; }
+        main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
+        main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
 
-    footer#inputArea {
-      display: flex;
-      align-items: stretch;
-      background-color: var(--input-bg-color);
-      padding: calc(var(--padding-base) / 1.5) var(--padding-base);
-      border-top: 1px solid var(--border-color);
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-      flex-shrink: 0;
-      position: relative;
-      z-index: 10;
-    }
+        footer#inputArea {
+          display: flex;
+          align-items: stretch;
+          background-color: var(--input-bg-color);
+          padding: calc(var(--padding-base) / 1.5) var(--padding-base);
+          border-top: 1px solid var(--border-color);
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+          flex-shrink: 0;
+          position: relative;
+          z-index: 10;
+        }
 
-    #tokenCounter {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background-color: rgba(255, 255, 255, 0.85);
-      color: var(--text-color);
-      padding: 6px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-base);
-      z-index: 1000;
-      font-family: var(--font-family);
-      font-size: 14px;
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      transition: bottom 0.2s ease-out;
-    }
+        #tokenCounter {
+          position: fixed;
+          bottom: 80px;
+          right: 20px;
+          background-color: rgba(255, 255, 255, 0.85);
+          color: var(--text-color);
+          padding: 6px 12px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius-base);
+          z-index: 1000;
+          font-family: var(--font-family);
+          font-size: 14px;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          transition: bottom 0.2s ease-out;
+        }
 
-    .message {
-      position: relative;
-	  margin-bottom: calc(var(--padding-base) * 0.8);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: calc(var(--padding-base) / 1.2);
-      border-radius: var(--border-radius-base);
-      max-width: 95%;
-    }
+        .message {
+          position: relative;
+		  margin-bottom: calc(var(--padding-base) * 0.8);
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: calc(var(--padding-base) / 1.2);
+          border-radius: var(--border-radius-base);
+          max-width: 95%;
+        }
 
-    .prefix {
-      font-weight: bold;
-      flex-shrink: 0;
-      margin-bottom: 0.3em;
-      user-select: none;
-      white-space: pre;
-      font-size: 0.9em;
-      opacity: 0.9;
-    }
+        .prefix {
+          font-weight: bold;
+          flex-shrink: 0;
+          margin-bottom: 0.3em;
+          user-select: none;
+          white-space: pre;
+          font-size: 0.9em;
+          opacity: 0.9;
+        }
 
-    .content {
-      flex-grow: 1;
-      word-break: break-word;
-    }
+        .content {
+          flex-grow: 1;
+          word-break: break-word;
+        }
 
-    .user .prefix { color: var(--user-prefix-color); }
-    .user .content { color: var(--text-color); }
-    .user { background-color: rgba(0, 123, 255, 0.08); align-self: flex-end; }
+        .user .prefix { color: var(--user-prefix-color); }
+        .user .content { color: var(--text-color); }
+        .user { background-color: rgba(0, 123, 255, 0.08); align-self: flex-end; }
 
-    .assistant .prefix { color: var(--assistant-color); }
-    .assistant .content { color: var(--text-color); }
-    .assistant { background-color: rgba(111, 66, 193, 0.08); align-self: flex-start; }
+        .assistant .prefix { color: var(--assistant-color); }
+        .assistant .content { color: var(--text-color); }
+        .assistant { background-color: rgba(111, 66, 193, 0.08); align-self: flex-start; }
 
-    .system .prefix { color: var(--system-color); }
-    .system .content { color: var(--system-color); opacity: 0.9; }
-    .system { background-color: rgba(108, 117, 125, 0.08); font-size: 0.95em; align-self: center; max-width: 90%; text-align: center; }
+        .system .prefix { color: var(--system-color); }
+        .system .content { color: var(--system-color); opacity: 0.9; }
+        .system { background-color: rgba(108, 117, 125, 0.08); font-size: 0.95em; align-self: center; max-width: 90%; text-align: center; }
 
-    .system.help-output {
-        text-align: left;
-        align-self: flex-start;
-        max-width: 95%;
-        background-color: rgba(108, 117, 125, 0.08);
-    }
-    .system.help-output .prefix,
-    .system.help-output .content {
-        color: var(--command-color);
-        opacity: 1;
-    }
-	.system.help-output .content a {
-		color: var(--assistant-color);
-		text-decoration: underline;
-	}
-	.system.help-output code {
-		background-color: rgba(0, 0, 0, 0.05);
-        color: var(--text-color);
-		padding: 2px 5px;
-		border-radius: 4px;
-		font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-		font-size: 0.9em;
-        border: 1px solid var(--border-color);
-	}
+        .system.help-output {
+            text-align: left;
+            align-self: flex-start;
+            max-width: 95%;
+            background-color: rgba(108, 117, 125, 0.08);
+        }
+        .system.help-output .prefix,
+        .system.help-output .content {
+            color: var(--command-color);
+            opacity: 1;
+        }
+		.system.help-output .content a {
+			color: var(--assistant-color);
+			text-decoration: underline;
+		}
+		.system.help-output code {
+			background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+			padding: 2px 5px;
+			border-radius: 4px;
+			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+			font-size: 0.9em;
+            border: 1px solid var(--border-color);
+		}
 
-    .error .prefix { color: var(--error-color); }
-    .error .content { color: var(--error-color); font-weight: bold; }
-    .error { background-color: rgba(220, 53, 69, 0.08); align-self: center; text-align: center; max-width: 90%; }
+        .error .prefix { color: var(--error-color); }
+        .error .content { color: var(--error-color); font-weight: bold; }
+        .error { background-color: rgba(220, 53, 69, 0.08); align-self: center; text-align: center; max-width: 90%; }
 
-    #prompt {
-      color: var(--prompt-color);
-      margin-right: 0.6em;
-      font-weight: bold;
-      line-height: var(--line-height);
-      padding: calc(var(--padding-base) / 2.5) 0;
-      user-select: none;
-      align-self: flex-start;
-      padding-top: 10px;
-    }
+        #prompt {
+          color: var(--prompt-color);
+          margin-right: 0.6em;
+          font-weight: bold;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          user-select: none;
+          align-self: flex-start;
+          padding-top: 10px;
+        }
 
-    #userInput {
-      flex-grow: 1;
-      background-color: transparent;
-      border: none;
-      outline: none;
-      color: var(--text-color);
-      font-family: var(--font-family);
-      font-size: inherit;
-      line-height: var(--line-height);
-      padding: calc(var(--padding-base) / 2.5) 0;
-      caret-color: var(--prompt-color);
-      resize: none;
-      overflow-y: hidden;
-      min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 4px);
-    }
-    #userInput::placeholder { color: #999; font-style: italic; opacity: 0.8; }
-    #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
+        #userInput {
+          flex-grow: 1;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: var(--text-color);
+          font-family: var(--font-family);
+          font-size: inherit;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          caret-color: var(--prompt-color);
+          resize: none;
+          overflow-y: hidden;
+          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 4px);
+        }
+        #userInput::placeholder { color: #999; font-style: italic; opacity: 0.8; }
+        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
 
-    .loading-content {
-        display: inline-flex;
-        align-items: baseline;
-    }
+        .loading-content {
+            display: inline-flex;
+            align-items: baseline;
+        }
 
-    .thinking-timer-span {
-        margin-left: 8px;
-        font-size: 0.9em;
-        opacity: 0.8;
-        color: var(--system-color);
-        white-space: nowrap;
-    }
+        .thinking-timer-span {
+            margin-left: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: var(--system-color);
+            white-space: nowrap;
+        }
 
-    @media (max-width: 600px) {
-      html { font-size: var(--font-size-mobile); }
-	  main#terminal {
-        padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
-      }
-      footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
-      #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 8px; }
-      #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
-      .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
-      .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 1.1); }
-      main#terminal::-webkit-scrollbar { width: 8px; }
-      main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
-      #tokenCounter { bottom: 70px; right: 15px; font-size: 13px; padding: 5px 10px; }
-      .message { max-width: 100%; }
-      .system, .error { max-width: 95%; }
-    }
+        @media (max-width: 600px) {
+          html { font-size: var(--font-size-mobile); }
+		  main#terminal {
+            padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
+          }
+          footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
+          #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 8px; }
+          #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
+          .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
+          .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 1.1); }
+          main#terminal::-webkit-scrollbar { width: 8px; }
+          main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
+          #tokenCounter { bottom: 70px; right: 15px; font-size: 13px; padding: 5px 10px; }
+          .message { max-width: 100%; }
+          .system, .error { max-width: 95%; }
+        }
 
-	.floatingToggle {
-	  position: fixed;
-	  bottom: 80px;
-	  left: 20px;
-	  background-color: rgba(255, 255, 255, 0.85);
-	  color: var(--text-color);
-	  padding: 6px 12px;
-	  border: 1px solid var(--border-color);
-	  border-radius: var(--border-radius-base);
-	  z-index: 1000;
-	  font-family: var(--font-family);
-	  font-size: 14px;
-	  backdrop-filter: blur(3px);
-	  -webkit-backdrop-filter: blur(3px);
-	  transition: bottom 0.2s ease-out;
-	  cursor: pointer;
-	  user-select: none;
-	}
+		.floatingToggle {
+		  position: fixed;
+		  bottom: 80px;
+		  left: 20px;
+		  background-color: rgba(255, 255, 255, 0.85);
+		  color: var(--text-color);
+		  padding: 6px 12px;
+		  border: 1px solid var(--border-color);
+		  border-radius: var(--border-radius-base);
+		  z-index: 1000;
+		  font-family: var(--font-family);
+		  font-size: 14px;
+		  backdrop-filter: blur(3px);
+		  -webkit-backdrop-filter: blur(3px);
+		  transition: bottom 0.2s ease-out;
+		  cursor: pointer;
+		  user-select: none;
+		}
 
-	@media (max-width: 600px) {
-	  #scrollToggle {
-		bottom: 70px;
-		left: 15px;
-		font-size: 13px;
-        padding: 5px 10px;
-	  }
-	}
+		@media (max-width: 600px) {
+		  #scrollToggle {
+			bottom: 70px;
+			left: 15px;
+			font-size: 13px;
+            padding: 5px 10px;
+		  }
+		}
 
-	.copy-btn {
-	  position: absolute;
-	  top: 6px;
-	  right: 6px;
-	  border: none;
-	  background: rgba(0,0,0,0.05);
-	  color: var(--highlight-color);
-      padding: 3px 6px;
-      border-radius: 4px;
-	  font-family: var(--font-family);
-	  font-size: 0.75em;
-	  cursor: pointer;
-	  opacity: 0;
-	  user-select: none;
-	  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
-      line-height: 1.2;
-      text-align: center;
-	}
-	.message:hover .copy-btn { opacity: 0.7; }
-    .copy-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
-	.copy-btn:focus { outline: none; }
+		.copy-btn {
+		  position: absolute;
+		  top: 6px;
+		  right: 6px;
+		  border: none;
+		  background: rgba(0,0,0,0.05);
+		  color: var(--highlight-color);
+          padding: 3px 6px;
+          border-radius: 4px;
+		  font-family: var(--font-family);
+		  font-size: 0.75em;
+		  cursor: pointer;
+		  opacity: 0;
+		  user-select: none;
+		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
+          line-height: 1.2;
+          text-align: center;
+		}
+		.message:hover .copy-btn { opacity: 0.7; }
+        .copy-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+		.copy-btn:focus { outline: none; }
 
-</style>
-
+    </style>
 </head>
 <body>
     <main id="terminal"></main>
@@ -286,571 +284,571 @@
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
-<script>
-    const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
+    <script>
+        const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
-	const COMMAND_INFO = [
-	  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
-	  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-	  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità AI (reimposta contesto)." },
-	  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'AI." }
-	];
+		const COMMAND_INFO = [
+		  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
+		  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
+		  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità AI (reimposta contesto)." },
+		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'AI." }
+		];
 
-    const terminalDiv = document.getElementById("terminal");
-    const userInput = document.getElementById("userInput");
-    const tokenCounterDiv = document.getElementById("tokenCounter");
+        const terminalDiv = document.getElementById("terminal");
+        const userInput = document.getElementById("userInput");
+        const tokenCounterDiv = document.getElementById("tokenCounter");
 
-	let autoScrollEnabled = true;
-	const scrollToggleDiv = document.getElementById("scrollToggle");
-	scrollToggleDiv.addEventListener("click", () => {
-	  autoScrollEnabled = !autoScrollEnabled;
-	  scrollToggleDiv.textContent = autoScrollEnabled
-		? "🔽 Scroll Automatico: ON"
-		: "⏸️ Scroll Automatico: OFF";
-	});
-
-    const promptSpan = document.getElementById("prompt");
-
-    const appState = {
-        conversation: [],
-        commandHistory: [],
-        historyIndex: -1,
-        isWaitingForAI: false,
-        currentCharacter: null,
-        currentModel: null,
-        availableCharacters: [],
-        currentTokenCount: 0,
-        currentTokenLimit: null,
-        thinkingIntervalId: null,
-        timerIntervalId: null,
-        thinkingStartTime: null,
-        abortController: null,
-        loadingMsgDiv: null,
-    };
-
-    function formatTokenCount(num) {
-        if (num === undefined || num === null) return '?';
-        if (num < 1000) return num.toString();
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
-    }
-
-    function appendMessage(role, text, isLoading = false, extraClass = null, overridePrefix = null) {
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message", role);
-
-        if (extraClass) {
-            msgDiv.classList.add(extraClass);
-        }
-
-        const prefixSpan = document.createElement("span");
-        prefixSpan.classList.add("prefix");
-
-        const contentSpan = document.createElement("span");
-        contentSpan.classList.add("content");
-
-        switch(role) {
-            case 'user':
-                prefixSpan.textContent = "UTENTE:";
-                contentSpan.textContent = text;
-                break;
-            case 'assistant':
-                prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
-                if (isLoading) {
-                    contentSpan.classList.add("loading-content");
-                    contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
-                } else {
-                    contentSpan.textContent = text;
-                }
-                break;
-			case 'system':
-				prefixSpan.textContent = "SISTEMA:";
-				extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
-				break;
-            case 'error':
-                prefixSpan.textContent = "ERRORE!";
-                contentSpan.textContent = text;
-                break;
-            default:
-                prefixSpan.textContent = "???:";
-                contentSpan.textContent = text;
-                break;
-        }
-
-		msgDiv.appendChild(prefixSpan);
-		msgDiv.appendChild(contentSpan);
-
-		const copyBtn = document.createElement("button");
-		copyBtn.classList.add("copy-btn");
-		copyBtn.setAttribute("title", "Copia questo messaggio");
-		copyBtn.textContent = "Copia";
-
-		copyBtn.addEventListener("click", (e) => {
-		  e.stopPropagation();
-		  const txt = contentSpan.textContent || "";
-		  navigator.clipboard.writeText(txt).then(() => {
-			copyBtn.textContent = "Copiato!";
-			setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
-		  }).catch(() => {
-			copyBtn.textContent = "Errore";
-			setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
-		  });
+		let autoScrollEnabled = true;
+		const scrollToggleDiv = document.getElementById("scrollToggle");
+		scrollToggleDiv.addEventListener("click", () => {
+		  autoScrollEnabled = !autoScrollEnabled;
+		  scrollToggleDiv.textContent = autoScrollEnabled
+			? "🔽 Scroll Automatico: ON"
+			: "⏸️ Scroll Automatico: OFF";
 		});
 
-		msgDiv.appendChild(copyBtn);
+        const promptSpan = document.getElementById("prompt");
 
-		terminalDiv.appendChild(msgDiv);
-		scrollToBottom();
-		return msgDiv;
-	}
-
-	function scrollToBottom() {
-	  if (!autoScrollEnabled) return;
-	  requestAnimationFrame(() => {
-		terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
-	  });
-	}
-
-    function adjustTextareaHeight() {
-        userInput.style.height = 'auto';
-        let newHeight = userInput.scrollHeight;
-        const maxHeight = 180;
-        if (newHeight > maxHeight) {
-            newHeight = maxHeight;
-            userInput.style.overflowY = 'auto';
-        } else {
-            userInput.style.overflowY = 'hidden';
-        }
-        userInput.style.height = newHeight + 'px';
-
-        const inputArea = document.getElementById('inputArea');
-
-		if (inputArea) {
-		  const inputAreaHeight = inputArea.offsetHeight;
-		  const newBottom = `${inputAreaHeight + 15}px`;
-		  tokenCounterDiv.style.bottom    = newBottom;
-		  scrollToggleDiv.style.bottom    = newBottom;
-		}
-    }
-
-	function updateTokenCounterUI() {
-		const countStr = formatTokenCount(appState.currentTokenCount);
-		const limitStr = formatTokenCount(appState.currentTokenLimit);
-		tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
-	}
-
-    function updatePromptUI() {
-        promptSpan.textContent = "> ";
-    }
-
-    function updateUserInteractionState() {
-         const isDisabled = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
-         userInput.disabled = isDisabled;
-
-         if (appState.isWaitingForAI) {
-             userInput.placeholder = `Digita 'stop' per interrompere`;
-         } else if (isDisabled) {
-             // Keep disabled placeholder
-         } else if (!appState.currentCharacter) {
-             userInput.placeholder = "Caricamento config...";
-         } else {
-             userInput.placeholder = `Chiedi all'IA...`;
-         }
-         adjustTextareaHeight();
-    }
-
-    function startThinkingAnimationAndTimer() {
-        if (!appState.loadingMsgDiv) return;
-
-        const dotsSpan = appState.loadingMsgDiv.querySelector('.thinking-dots-span');
-        const timerSpan = appState.loadingMsgDiv.querySelector('.thinking-timer-span');
-        if (!dotsSpan || !timerSpan) return;
-
-        let dotCount = 1;
-        appState.thinkingIntervalId = setInterval(() => {
-            dotCount = (dotCount % 3) + 1;
-            dotsSpan.textContent = "Sto pensando" + ".".repeat(dotCount);
-        }, 400);
-
-        appState.thinkingStartTime = Date.now();
-        timerSpan.textContent = `(0.0s)`;
-        appState.timerIntervalId = setInterval(() => {
-            const elapsedMilliseconds = Date.now() - appState.thinkingStartTime;
-            const elapsedSecondsFormatted = (elapsedMilliseconds / 1000).toFixed(1);
-            timerSpan.textContent = `(${elapsedSecondsFormatted}s)`;
-        }, 100);
-    }
-
-    function clearThinkingAnimationAndTimer() {
-        if (appState.thinkingIntervalId) {
-            clearInterval(appState.thinkingIntervalId);
-            appState.thinkingIntervalId = null;
-        }
-        if (appState.timerIntervalId) {
-            clearInterval(appState.timerIntervalId);
-            appState.timerIntervalId = null;
-        }
-        appState.thinkingStartTime = null;
-        if (appState.loadingMsgDiv) {
-            const contentSpan = appState.loadingMsgDiv.querySelector('.content');
-            if (contentSpan) {
-                contentSpan.classList.remove('loading-content');
-            }
-        }
-    }
-
-    function updateStateFromWorkerResponse(data) {
-        if (data.activeCharacter) appState.currentCharacter = data.activeCharacter;
-        if (data.activeModel) appState.currentModel = data.activeModel;
-        if (data.availableCharacters) appState.availableCharacters = data.availableCharacters;
-        if (typeof data.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
-        if (typeof data.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
-
-        updateTokenCounterUI();
-        updatePromptUI();
-    }
-
-    function resetConversationState(reason) {
-        const reasonMap = {
-            'user command': 'comando utente',
-            'character change': 'cambio modalità',
-            'token limit': 'limite token',
-            'input limit': 'limite input'
+        const appState = {
+            conversation: [],
+            commandHistory: [],
+            historyIndex: -1,
+            isWaitingForAI: false,
+            currentCharacter: null,
+            currentModel: null,
+            availableCharacters: [],
+            currentTokenCount: 0,
+            currentTokenLimit: null,
+            thinkingIntervalId: null,
+            timerIntervalId: null,
+            thinkingStartTime: null,
+            abortController: null,
+            loadingMsgDiv: null,
         };
-        const italianReason = reasonMap[reason] || reason;
 
-        appState.conversation = [];
-        appState.currentTokenCount = 0;
-        updateTokenCounterUI();
-        appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
-        scrollToBottom();
-    }
-
-    async function callWorkerApi(payload, signal) {
-        let response;
-        try {
-            response = await fetch(WORKER_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-                signal
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                let errorMsg = `Errore API (${response.status})`;
-                errorMsg += `: ${data?.error || response.statusText}`;
-                if (data?.details) console.error("Dettagli Errore API:", data.details);
-                console.error("Risposta Errore API Completa:", data);
-
-                if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
-                if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
-                if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
-                updateTokenCounterUI();
-
-                const error = new Error(errorMsg);
-                error.status = response.status;
-                error.data = data;
-                throw error;
-            }
-
-            if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
-                 console.error("Struttura risposta API inattesa:", data);
-                 throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
-            }
-
-            updateStateFromWorkerResponse(data);
-
-            return data;
-
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.log("Fetch interrotto dall'utente.");
-                throw error;
-            }
-
-            console.error("Errore Fetch/API:", error);
-            if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-                 const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
-                 networkError.status = 0;
-                 throw networkError;
-            }
-            throw error;
+        function formatTokenCount(num) {
+            if (num === undefined || num === null) return '?';
+            if (num < 1000) return num.toString();
+            return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
         }
-    }
 
-    async function handleUserInput() {
-        const inputText = userInput.value.trim();
-        userInput.value = "";
-        adjustTextareaHeight();
+        function appendMessage(role, text, isLoading = false, extraClass = null, overridePrefix = null) {
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", role);
 
-        if (inputText === "") return;
+            if (extraClass) {
+                msgDiv.classList.add(extraClass);
+            }
 
-        if (appState.isWaitingForAI) {
-            if (inputText.toLowerCase() === 'stop') {
-                appendMessage("user", inputText);
-                if (appState.abortController) {
-                    appState.abortController.abort();
-                    appendMessage("system", "Comando stop ricevuto. Richiesta AI interrotta.");
-                    clearThinkingAnimationAndTimer();
-                    if (appState.loadingMsgDiv) {
-                        appState.loadingMsgDiv.remove();
-                        appState.loadingMsgDiv = null;
+            const prefixSpan = document.createElement("span");
+            prefixSpan.classList.add("prefix");
+
+            const contentSpan = document.createElement("span");
+            contentSpan.classList.add("content");
+
+            switch(role) {
+                case 'user':
+                    prefixSpan.textContent = "UTENTE:";
+                    contentSpan.textContent = text;
+                    break;
+                case 'assistant':
+                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
+                    if (isLoading) {
+                        contentSpan.classList.add("loading-content");
+                        contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
+                    } else {
+                        contentSpan.textContent = text;
                     }
-                    appState.isWaitingForAI = false;
-                    appState.abortController = null;
-                    updateUserInteractionState();
-                } else {
-                    appendMessage("error", "Impossibile fermare: Nessun processo AI attivo trovato.");
-                }
-            } else {
-                appendMessage("user", inputText);
-                appendMessage("system", `Input "${inputText}" ignorato: AI occupata. Digita 'stop' per interrompere.`);
+                    break;
+				case 'system':
+					prefixSpan.textContent = "SISTEMA:";
+					extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
+					break;
+                case 'error':
+                    prefixSpan.textContent = "ERRORE!";
+                    contentSpan.textContent = text;
+                    break;
+                default:
+                    prefixSpan.textContent = "???:";
+                    contentSpan.textContent = text;
+                    break;
             }
-            scrollToBottom();
-            return;
-        }
 
-        if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== inputText) {
-            appState.commandHistory.push(inputText);
-        }
-        appState.historyIndex = appState.commandHistory.length;
+			msgDiv.appendChild(prefixSpan);
+			msgDiv.appendChild(contentSpan);
 
-        const commandArgs = inputText.toLowerCase().split(/\s+/);
-        const command = commandArgs[0];
-        const subCommand = commandArgs.slice(0,2).join(' ');
-        const originalArgs = inputText.split(/\s+/);
+			const copyBtn = document.createElement("button");
+			copyBtn.classList.add("copy-btn");
+			copyBtn.setAttribute("title", "Copia questo messaggio");
+			copyBtn.textContent = "Copia";
 
-        if (command === 'reset') {
-            appendMessage("user", inputText);
-            resetConversationState('user command');
-            return;
-        }
-
-        if (command === 'help') {
-            appendMessage("user", inputText);
-
-			const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
-				a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-			);
-
-			let helpOutput = "<b>COMANDI:</b>\n";
-			commandsSorted.forEach(c => {
-				helpOutput += `  <code>${c.desc}</code>\n`;
+			copyBtn.addEventListener("click", (e) => {
+			  e.stopPropagation();
+			  const txt = contentSpan.textContent || "";
+			  navigator.clipboard.writeText(txt).then(() => {
+				copyBtn.textContent = "Copiato!";
+				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
+			  }).catch(() => {
+				copyBtn.textContent = "Errore";
+				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
+			  });
 			});
-			helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
-			const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-			helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`;
-			helpOutput += "<b>STATO ATTUALE:</b>\n";
-			helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
-			helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
-			helpOutput += `<b>COME CHATTARE:</b>\n`;
-			helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità AI corrente.\n\n";
-			appendMessage("system", helpOutput, false, "help-output");
+
+			msgDiv.appendChild(copyBtn);
+
+			terminalDiv.appendChild(msgDiv);
 			scrollToBottom();
-			return;
+			return msgDiv;
+		}
+
+		function scrollToBottom() {
+		  if (!autoScrollEnabled) return;
+		  requestAnimationFrame(() => {
+			terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
+		  });
+		}
+
+        function adjustTextareaHeight() {
+            userInput.style.height = 'auto';
+            let newHeight = userInput.scrollHeight;
+            const maxHeight = 180;
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                userInput.style.overflowY = 'auto';
+            } else {
+                userInput.style.overflowY = 'hidden';
+            }
+            userInput.style.height = newHeight + 'px';
+
+            const inputArea = document.getElementById('inputArea');
+
+			if (inputArea) {
+			  const inputAreaHeight = inputArea.offsetHeight;
+			  const newBottom = `${inputAreaHeight + 15}px`;
+			  tokenCounterDiv.style.bottom    = newBottom;
+			  scrollToggleDiv.style.bottom    = newBottom;
+			}
         }
 
-        if (command === 'imposta') {
-            appendMessage("user", inputText);
-            if (originalArgs.length < 3) {
-                 appendMessage("error", "Utilizzo: imposta modalità <nome>");
+		function updateTokenCounterUI() {
+			const countStr = formatTokenCount(appState.currentTokenCount);
+			const limitStr = formatTokenCount(appState.currentTokenLimit);
+			tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
+		}
+
+        function updatePromptUI() {
+            promptSpan.textContent = "> ";
+        }
+
+        function updateUserInteractionState() {
+             const isDisabled = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
+             userInput.disabled = isDisabled;
+
+             if (appState.isWaitingForAI) {
+                 userInput.placeholder = `Digita 'stop' per interrompere`;
+             } else if (isDisabled) {
+                 // Keep disabled placeholder
+             } else if (!appState.currentCharacter) {
+                 userInput.placeholder = "Caricamento config...";
+             } else {
+                 userInput.placeholder = `Chiedi all'IA...`;
+             }
+             adjustTextareaHeight();
+        }
+
+        function startThinkingAnimationAndTimer() {
+            if (!appState.loadingMsgDiv) return;
+
+            const dotsSpan = appState.loadingMsgDiv.querySelector('.thinking-dots-span');
+            const timerSpan = appState.loadingMsgDiv.querySelector('.thinking-timer-span');
+            if (!dotsSpan || !timerSpan) return;
+
+            let dotCount = 1;
+            appState.thinkingIntervalId = setInterval(() => {
+                dotCount = (dotCount % 3) + 1;
+                dotsSpan.textContent = "Sto pensando" + ".".repeat(dotCount);
+            }, 400);
+
+            appState.thinkingStartTime = Date.now();
+            timerSpan.textContent = `(0.0s)`;
+            appState.timerIntervalId = setInterval(() => {
+                const elapsedMilliseconds = Date.now() - appState.thinkingStartTime;
+                const elapsedSecondsFormatted = (elapsedMilliseconds / 1000).toFixed(1);
+                timerSpan.textContent = `(${elapsedSecondsFormatted}s)`;
+            }, 100);
+        }
+
+        function clearThinkingAnimationAndTimer() {
+            if (appState.thinkingIntervalId) {
+                clearInterval(appState.thinkingIntervalId);
+                appState.thinkingIntervalId = null;
+            }
+            if (appState.timerIntervalId) {
+                clearInterval(appState.timerIntervalId);
+                appState.timerIntervalId = null;
+            }
+            appState.thinkingStartTime = null;
+            if (appState.loadingMsgDiv) {
+                const contentSpan = appState.loadingMsgDiv.querySelector('.content');
+                if (contentSpan) {
+                    contentSpan.classList.remove('loading-content');
+                }
+            }
+        }
+
+        function updateStateFromWorkerResponse(data) {
+            if (data.activeCharacter) appState.currentCharacter = data.activeCharacter;
+            if (data.activeModel) appState.currentModel = data.activeModel;
+            if (data.availableCharacters) appState.availableCharacters = data.availableCharacters;
+            if (typeof data.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
+            if (typeof data.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
+
+            updateTokenCounterUI();
+            updatePromptUI();
+        }
+
+        function resetConversationState(reason) {
+            const reasonMap = {
+                'user command': 'comando utente',
+                'character change': 'cambio modalità',
+                'token limit': 'limite token',
+                'input limit': 'limite input'
+            };
+            const italianReason = reasonMap[reason] || reason;
+
+            appState.conversation = [];
+            appState.currentTokenCount = 0;
+            updateTokenCounterUI();
+            appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
+            scrollToBottom();
+        }
+
+        async function callWorkerApi(payload, signal) {
+            let response;
+            try {
+                response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                    signal
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    let errorMsg = `Errore API (${response.status})`;
+                    errorMsg += `: ${data?.error || response.statusText}`;
+                    if (data?.details) console.error("Dettagli Errore API:", data.details);
+                    console.error("Risposta Errore API Completa:", data);
+
+                    if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
+                    if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
+                    if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
+                    updateTokenCounterUI();
+
+                    const error = new Error(errorMsg);
+                    error.status = response.status;
+                    error.data = data;
+                    throw error;
+                }
+
+                if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
+                     console.error("Struttura risposta API inattesa:", data);
+                     throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
+                }
+
+                updateStateFromWorkerResponse(data);
+
+                return data;
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log("Fetch interrotto dall'utente.");
+                    throw error;
+                }
+
+                console.error("Errore Fetch/API:", error);
+                if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+                     const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
+                     networkError.status = 0;
+                     throw networkError;
+                }
+                throw error;
+            }
+        }
+
+        async function handleUserInput() {
+            const inputText = userInput.value.trim();
+            userInput.value = "";
+            adjustTextareaHeight();
+
+            if (inputText === "") return;
+
+            if (appState.isWaitingForAI) {
+                if (inputText.toLowerCase() === 'stop') {
+                    appendMessage("user", inputText);
+                    if (appState.abortController) {
+                        appState.abortController.abort();
+                        appendMessage("system", "Comando stop ricevuto. Richiesta AI interrotta.");
+                        clearThinkingAnimationAndTimer();
+                        if (appState.loadingMsgDiv) {
+                            appState.loadingMsgDiv.remove();
+                            appState.loadingMsgDiv = null;
+                        }
+                        appState.isWaitingForAI = false;
+                        appState.abortController = null;
+                        updateUserInteractionState();
+                    } else {
+                        appendMessage("error", "Impossibile fermare: Nessun processo AI attivo trovato.");
+                    }
+                } else {
+                    appendMessage("user", inputText);
+                    appendMessage("system", `Input "${inputText}" ignorato: AI occupata. Digita 'stop' per interrompere.`);
+                }
+                scrollToBottom();
+                return;
+            }
+
+            if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== inputText) {
+                appState.commandHistory.push(inputText);
+            }
+            appState.historyIndex = appState.commandHistory.length;
+
+            const commandArgs = inputText.toLowerCase().split(/\s+/);
+            const command = commandArgs[0];
+            const subCommand = commandArgs.slice(0,2).join(' ');
+            const originalArgs = inputText.split(/\s+/);
+
+            if (command === 'reset') {
+                appendMessage("user", inputText);
+                resetConversationState('user command');
+                return;
+            }
+
+            if (command === 'help') {
+                appendMessage("user", inputText);
+
+				const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
+					a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+				);
+
+				let helpOutput = "<b>COMANDI:</b>\n";
+				commandsSorted.forEach(c => {
+					helpOutput += `  <code>${c.desc}</code>\n`;
+				});
+				helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
+				const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
+				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`;
+				helpOutput += "<b>STATO ATTUALE:</b>\n";
+				helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
+				helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
+				helpOutput += `<b>COME CHATTARE:</b>\n`;
+				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità AI corrente.\n\n";
+				appendMessage("system", helpOutput, false, "help-output");
+				scrollToBottom();
+				return;
+            }
+
+            if (command === 'imposta') {
+                appendMessage("user", inputText);
+                if (originalArgs.length < 3) {
+                     appendMessage("error", "Utilizzo: imposta modalità <nome>");
+                     return;
+                }
+                const settingType = commandArgs[1]; // Should be 'modalità'
+                const settingValue = originalArgs.slice(2).join(' ');
+
+                if (settingType === 'modalità') {
+                     const characterNameLower = settingValue.toLowerCase();
+                     const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
+
+                     if (foundCharacter) {
+                         if (appState.currentCharacter !== foundCharacter) {
+                             appState.currentCharacter = foundCharacter;
+                             appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
+                             resetConversationState('character change'); // Internal key remains 'character change'
+                             updatePromptUI();
+                         } else {
+                              appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
+                         }
+                     } else {
+                         const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
+                         appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
+                     }
+                } else {
+                     appendMessage("error", "Tipo di impostazione sconosciuto. Usa 'modalità'.");
+                }
+                 scrollToBottom();
                  return;
             }
-            const settingType = commandArgs[1]; // Should be 'modalità'
-            const settingValue = originalArgs.slice(2).join(' ');
 
-            if (settingType === 'modalità') {
-                 const characterNameLower = settingValue.toLowerCase();
-                 const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
+            appendMessage("user", inputText);
+            appState.conversation.push({ role: "user", content: inputText });
+            scrollToBottom();
 
-                 if (foundCharacter) {
-                     if (appState.currentCharacter !== foundCharacter) {
-                         appState.currentCharacter = foundCharacter;
-                         appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
-                         resetConversationState('character change'); // Internal key remains 'character change'
-                         updatePromptUI();
+            appState.isWaitingForAI = true;
+            appState.loadingMsgDiv = appendMessage("assistant", "", true);
+            startThinkingAnimationAndTimer();
+            appState.abortController = new AbortController();
+            updateUserInteractionState();
+
+            try {
+                const payload = {
+                    messages: appState.conversation,
+                    character: appState.currentCharacter, // Backend expects 'character' key
+                    model: appState.currentModel
+                };
+                const result = await callWorkerApi(payload, appState.abortController.signal);
+
+                clearThinkingAnimationAndTimer();
+
+                if (appState.loadingMsgDiv && !appState.abortController.signal.aborted) {
+                     const contentSpan = appState.loadingMsgDiv.querySelector('.content');
+                     const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
+                     if (contentSpan && prefixSpan) {
+                         contentSpan.classList.remove('loading-content');
+                         prefixSpan.textContent = `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
+                         contentSpan.textContent = result.completion;
                      } else {
-                          appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
+                         appState.loadingMsgDiv.remove();
+                         appendMessage("assistant", result.completion);
                      }
-                 } else {
-                     const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
-                 }
-            } else {
-                 appendMessage("error", "Tipo di impostazione sconosciuto. Usa 'modalità'.");
-            }
-             scrollToBottom();
-             return;
-        }
-
-        appendMessage("user", inputText);
-        appState.conversation.push({ role: "user", content: inputText });
-        scrollToBottom();
-
-        appState.isWaitingForAI = true;
-        appState.loadingMsgDiv = appendMessage("assistant", "", true);
-        startThinkingAnimationAndTimer();
-        appState.abortController = new AbortController();
-        updateUserInteractionState();
-
-        try {
-            const payload = {
-                messages: appState.conversation,
-                character: appState.currentCharacter, // Backend expects 'character' key
-                model: appState.currentModel
-            };
-            const result = await callWorkerApi(payload, appState.abortController.signal);
-
-            clearThinkingAnimationAndTimer();
-
-            if (appState.loadingMsgDiv && !appState.abortController.signal.aborted) {
-                 const contentSpan = appState.loadingMsgDiv.querySelector('.content');
-                 const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
-                 if (contentSpan && prefixSpan) {
-                     contentSpan.classList.remove('loading-content');
-                     prefixSpan.textContent = `${(appState.currentCharacter || 'AI').toUpperCase()}:`;
-                     contentSpan.textContent = result.completion;
-                 } else {
-                     appState.loadingMsgDiv.remove();
-                     appendMessage("assistant", result.completion);
-                 }
-            } else if (appState.loadingMsgDiv) {
-                appState.loadingMsgDiv.remove();
-            }
-            appState.loadingMsgDiv = null;
-
-            if (result.completion !== undefined && !appState.abortController.signal.aborted) {
-                appState.conversation.push({ role: "assistant", content: result.completion });
-            }
-
-            if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
-                appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
-                resetConversationState('token limit');
-            }
-
-        } catch (error) {
-            clearThinkingAnimationAndTimer();
-
-            if (appState.loadingMsgDiv) {
-                appState.loadingMsgDiv.remove();
+                } else if (appState.loadingMsgDiv) {
+                    appState.loadingMsgDiv.remove();
+                }
                 appState.loadingMsgDiv = null;
-            }
 
-            if (error.name !== 'AbortError') {
-                appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
+                if (result.completion !== undefined && !appState.abortController.signal.aborted) {
+                    appState.conversation.push({ role: "assistant", content: result.completion });
+                }
 
-                if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
-                    appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
-                    resetConversationState('input limit');
+                if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
+                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
+                    resetConversationState('token limit');
+                }
+
+            } catch (error) {
+                clearThinkingAnimationAndTimer();
+
+                if (appState.loadingMsgDiv) {
+                    appState.loadingMsgDiv.remove();
+                    appState.loadingMsgDiv = null;
+                }
+
+                if (error.name !== 'AbortError') {
+                    appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
+
+                    if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
+                        appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
+                        resetConversationState('input limit');
+                    }
+
+                    if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
+                    }
+                }
+                scrollToBottom();
+
+            } finally {
+                clearThinkingAnimationAndTimer();
+                appState.isWaitingForAI = false;
+                appState.abortController = null;
+                if (appState.loadingMsgDiv) {
+                    appState.loadingMsgDiv.remove();
+                    appState.loadingMsgDiv = null;
                 }
 
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                  userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
+                   updateUserInteractionState();
+                   setTimeout(() => userInput.focus(), 50);
+                }
+
+                 adjustTextareaHeight();
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
+                event.preventDefault();
+                handleUserInput();
+            }
+            else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
+                if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
+                    event.preventDefault();
+                    appState.historyIndex--;
+                    userInput.value = appState.commandHistory[appState.historyIndex];
+                    requestAnimationFrame(() => {
+                      userInput.setSelectionRange(userInput.value.length, userInput.value.length);
+                    });
+                    adjustTextareaHeight();
                 }
             }
+            else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
+                 if (appState.historyIndex < appState.commandHistory.length - 1) {
+                    event.preventDefault();
+                    appState.historyIndex++;
+                    userInput.value = appState.commandHistory[appState.historyIndex];
+                     requestAnimationFrame(() => {
+                       userInput.setSelectionRange(userInput.value.length, userInput.value.length);
+                     });
+                    adjustTextareaHeight();
+                } else if (appState.historyIndex === appState.commandHistory.length - 1) {
+                    event.preventDefault();
+                    appState.historyIndex++;
+                    userInput.value = "";
+                    adjustTextareaHeight();
+                }
+            }
+        }
+
+        async function initializeApp() {
+            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT')}`);
+
+            updateTokenCounterUI();
+            updatePromptUI();
+            userInput.placeholder = "Inizializzazione...";
+            userInput.disabled = true;
+            adjustTextareaHeight();
             scrollToBottom();
 
-        } finally {
-            clearThinkingAnimationAndTimer();
-            appState.isWaitingForAI = false;
-            appState.abortController = null;
-            if (appState.loadingMsgDiv) {
-                appState.loadingMsgDiv.remove();
-                appState.loadingMsgDiv = null;
-            }
+            appendMessage("system", "Recupero configurazione...");
+            try {
+                await callWorkerApi({ type: 'init' });
 
-            if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-               updateUserInteractionState();
-               setTimeout(() => userInput.focus(), 50);
-            }
+                appendMessage("system", `Configurazione caricata.`);
+                appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
+                appendMessage("system", `Digita 'help' per i comandi.`);
 
-             adjustTextareaHeight();
-        }
-    }
+                userInput.disabled = false;
+                appState.isWaitingForAI = false;
+                updateUserInteractionState();
+                setTimeout(() => userInput.focus(), 0);
 
-    function handleKeyDown(event) {
-        if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
-            event.preventDefault();
-            handleUserInput();
-        }
-        else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
-            if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
-                event.preventDefault();
-                appState.historyIndex--;
-                userInput.value = appState.commandHistory[appState.historyIndex];
-                requestAnimationFrame(() => {
-                  userInput.setSelectionRange(userInput.value.length, userInput.value.length);
-                });
-                adjustTextareaHeight();
+            } catch (error) {
+                appendMessage("error", `Inizializzazione fallita: ${error.message}`);
+                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
+                userInput.placeholder = "Inizializzazione fallita. Ricarica.";
+                userInput.disabled = true;
+                appState.isWaitingForAI = true;
+            } finally {
+                 scrollToBottom();
             }
         }
-        else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
-             if (appState.historyIndex < appState.commandHistory.length - 1) {
-                event.preventDefault();
-                appState.historyIndex++;
-                userInput.value = appState.commandHistory[appState.historyIndex];
-                 requestAnimationFrame(() => {
-                   userInput.setSelectionRange(userInput.value.length, userInput.value.length);
-                 });
-                adjustTextareaHeight();
-            } else if (appState.historyIndex === appState.commandHistory.length - 1) {
-                event.preventDefault();
-                appState.historyIndex++;
-                userInput.value = "";
-                adjustTextareaHeight();
+
+        userInput.addEventListener("keydown", handleKeyDown);
+        userInput.addEventListener("input", adjustTextareaHeight);
+        terminalDiv.addEventListener('click', (event) => {
+            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn'))) {
+                if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
+                   userInput.focus();
+                }
             }
-        }
-    }
+        });
 
-    async function initializeApp() {
-        appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT')}`);
+        window.addEventListener('resize', adjustTextareaHeight);
 
-        updateTokenCounterUI();
-        updatePromptUI();
-        userInput.placeholder = "Inizializzazione...";
-        userInput.disabled = true;
-        adjustTextareaHeight();
-        scrollToBottom();
+        initializeApp();
 
-        appendMessage("system", "Recupero configurazione...");
-        try {
-            await callWorkerApi({ type: 'init' });
-
-            appendMessage("system", `Configurazione caricata.`);
-            appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
-            appendMessage("system", `Digita 'help' per i comandi.`);
-
-            userInput.disabled = false;
-            appState.isWaitingForAI = false;
-            updateUserInteractionState();
-            setTimeout(() => userInput.focus(), 0);
-
-        } catch (error) {
-            appendMessage("error", `Inizializzazione fallita: ${error.message}`);
-            appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
-            userInput.placeholder = "Inizializzazione fallita. Ricarica.";
-            userInput.disabled = true;
-            appState.isWaitingForAI = true;
-        } finally {
-             scrollToBottom();
-        }
-    }
-
-    userInput.addEventListener("keydown", handleKeyDown);
-    userInput.addEventListener("input", adjustTextareaHeight);
-    terminalDiv.addEventListener('click', (event) => {
-        if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn'))) {
-            if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
-               userInput.focus();
-            }
-        }
-    });
-
-    window.addEventListener('resize', adjustTextareaHeight);
-
-    initializeApp();
-
-</script>
+    </script>
 </body>
 </html>
