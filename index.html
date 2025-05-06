@@ -136,6 +136,18 @@
             background-color: rgba(0,0,0,0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
+        /* Style for disabled action buttons */
+        .action-button:disabled, .action-select:disabled {
+            background-color: var(--md-bg-color);
+            color: var(--md-text-secondary);
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: var(--md-border-color);
+        }
+        .action-button:disabled:hover, .action-select:disabled:hover {
+             background-color: var(--md-bg-color); /* No hover effect when disabled */
+        }
+
         .action-select {
             flex-grow: 1; /* Allow select to take more space if needed */
             min-width: 150px;
@@ -151,85 +163,48 @@
             white-space: nowrap;
         }
 
-        /* NEW: Progress Bar Styling */
-        #uploadProgressBarContainer {
-            width: 100%;
-            margin-bottom: 8px;
-            background-color: var(--md-bg-color);
-            border-radius: var(--border-radius-small);
-            padding: 4px;
-            display: flex;
-            align-items: center;
-        }
-        #uploadProgressBar {
-            width: 0%;
-            height: 6px; /* Slightly thicker bar */
-            background-color: var(--md-primary-color);
-            border-radius: 3px;
-            transition: width 0.3s ease-out;
-        }
-        #uploadProgressText {
-            font-size: 0.85em;
-            color: var(--md-text-secondary);
-            margin-left: 8px;
-            white-space: nowrap;
-        }
-
 
         #fileListContainer {
             width: 100%;
             padding: 8px 0;
             font-size: 0.9em;
             color: var(--md-text-secondary);
+            /* display: none; -- Managed by JS */
+            /* Added for better alignment of button */
             display: flex;
             justify-content: space-between;
-            align-items: flex-start; /* Align items to top for multi-line chips */
-            gap: 8px; /* Gap between label and chips, and chips and button */
+            align-items: center;
         }
-        #fileListContainer > div:first-child { /* Container for "File allegati:" and chips */
+        #fileListContainer > div { /* Container for text */
              display: flex;
-             align-items: flex-start; /* Align label with first line of chips */
-             gap: 8px; /* Gap between "File allegati:" and the first chip */
-             flex-grow: 1;
+             align-items: center;
+             gap: 5px;
              overflow: hidden; /* Prevent text from pushing button */
         }
         #fileListContainer strong {
             font-weight: 500;
             color: var(--md-text-primary);
             flex-shrink: 0; /* Prevent strong from shrinking */
-            padding-top: 5px; /* Align with first row of chips */
         }
         #fileListDisplay {
-            display: flex; /* Changed from inline-block */
-            flex-wrap: wrap; /* Allow chips to wrap */
-            gap: 6px; /* Gap between chips */
-            /* max-height: 70px; Increased to allow 2 rows of chips before scroll */
-            /* overflow-y: auto; If chips exceed max-height */
-        }
-        /* NEW: File Chip Styling */
-        .file-chip {
+            /* margin-left: 5px; -- removed due to gap */
+            max-height: 45px; /* Allows for about 2 lines if names were to wrap, but nowrap is active */
+            overflow-y: auto; /* For vertical scroll if content somehow exceeds max-height */
+            display: inline-block;
+            vertical-align: middle;
             background-color: var(--md-bg-color);
-            padding: 4px 10px;
-            border-radius: 16px; /* Pill shape for chips */
-            font-size: 0.85em;
-            color: var(--md-text-primary);
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 220px; /* Max width for a single chip */
-            border: 1px solid var(--md-border-color);
-            transition: background-color 0.2s;
+            padding: 4px 8px;
+            border-radius: var(--border-radius-small);
+            white-space: nowrap; /* Prevent wrapping of file names */
+            overflow-x: auto; /* Allow horizontal scroll for long names or many files */
+            flex-grow: 1; /* Allow it to take available space */
         }
-        .file-chip:hover {
-            background-color: var(--md-border-color);
-        }
-
-
         #clearFilesBtn {
+            /* margin-left: 10px; -- removed due to justify-content */
             font-size: 1em; /* Relative to parent */
             padding: 6px 10px;
+            /* display: none; -- Managed by JS */
+            /* float: right; -- removed */
             background-color: var(--md-error-bg-color);
             color: var(--md-error-color);
             border: 1px solid var(--md-error-color);
@@ -239,15 +214,18 @@
             flex-shrink: 0; /* Prevent button from shrinking */
         }
         #clearFilesBtn:hover {
-            background-color: #f1b0b7;
+            background-color: #f1b0b7; /* Lighter red on hover */
         }
-        /* NEW: Disabled style for clearFilesBtn */
+        /* IMPROVEMENT: Specific disabled styles for clearFilesBtn */
         #clearFilesBtn:disabled {
             background-color: var(--md-bg-color);
             color: var(--md-text-secondary);
             border-color: var(--md-border-color);
+            opacity: 0.6;
             cursor: not-allowed;
-            opacity: 0.7;
+        }
+        #clearFilesBtn:disabled:hover {
+            background-color: var(--md-bg-color); /* No hover effect when disabled */
         }
 
 
@@ -308,6 +286,7 @@
         #userInput::placeholder { color: var(--md-text-secondary); opacity: 0.7; }
         #userInput:disabled { cursor: not-allowed; background-color: var(--md-bg-color); opacity: 0.7; }
 
+        /* Prompt span - hidden as per plan, can be re-enabled if needed */
         #prompt { display: none; }
 
 
@@ -352,11 +331,13 @@
         }
         .system.help-output .prefix,
         .system.help-output .content { color: var(--md-system-color); opacity: 1; }
+        /* Styling for <a> or <code> tags within .help-output .content are removed as content is now plain text */
 
 
         .error { background-color: var(--md-error-bg-color); align-self: center; text-align: center; max-width: 90%; border: 1px solid var(--md-error-color); }
         .error .prefix { color: var(--md-error-color); }
         .error .content { color: var(--md-error-color); font-weight: 500; }
+        /* Styling for <code> tags within .error .content are removed as content is now plain text */
 
 
         .loading-content { display: inline-flex; align-items: baseline; }
@@ -450,27 +431,18 @@
             <button id="resetButton" class="action-button" title="Reimposta chat e contesto">♻️ Reset</button>
             <button id="stopButton" class="action-button" title="Interrompi risposta IA" style="display: none; background-color: var(--md-error-bg-color); color: var(--md-error-color); border-color: var(--md-error-color);">🛑 Stop</button>
         </div>
-        
-        <!-- NEW: Progress Bar -->
-        <div id="uploadProgressBarContainer" style="display: none;">
-            <div id="uploadProgressBar"></div>
-            <span id="uploadProgressText"></span>
-        </div>
 
-        <div id="fileListContainer" style="display: none;">
-            <div> <!-- Wrapper for label and chips -->
-                <strong>File allegati:</strong>
-                <div id="fileListDisplay">
-                    <!-- File chips will be populated here by JS -->
-                </div>
+        <div id="fileListContainer" style="display: none;"> <!-- Initially hidden, JS manages -->
+            <div> <!-- Wrapper for text part -->
+                <strong>File allegati:</strong> <span id="fileListDisplay">Nessuno</span>
             </div>
-            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi</button>
+            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi</button> <!-- Initially hidden -->
         </div>
 
         <div id="inputControls">
             <button id="attachFilesBtn" class="emoji-button" title="Allega file (max 15)">📎</button>
             <input type="file" id="fileUploader" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" style="display:none;">
-            <span id="prompt">></span>
+            <span id="prompt">></span> <!-- Kept for JS logic but hidden via CSS -->
             <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
             <button id="sendButton" class="emoji-button" title="Invia messaggio">➡️</button>
         </div>
@@ -495,13 +467,8 @@
         const attachFilesBtn = document.getElementById("attachFilesBtn");
         const fileUploader = document.getElementById("fileUploader");
         const fileListContainer = document.getElementById("fileListContainer");
-        const fileListDisplay = document.getElementById("fileListDisplay"); // This is now a div for chips
+        const fileListDisplay = document.getElementById("fileListDisplay");
         const clearFilesBtn = document.getElementById("clearFilesBtn");
-        
-        // NEW: Progress bar elements
-        const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
-        const uploadProgressBar = document.getElementById('uploadProgressBar');
-        const uploadProgressText = document.getElementById('uploadProgressText');
 
         const sendButton = document.getElementById("sendButton");
         const helpButton = document.getElementById("helpButton");
@@ -536,7 +503,7 @@
             thinkingStartTime: null,
             abortController: null,
             loadingMsgDiv: null,
-            uploadedFiles: [], // Will store { name, type, dataUrl, size }
+            uploadedFiles: [],
         };
 
         function formatTokenCount(num) {
@@ -566,7 +533,7 @@
                         contentSpan.classList.add("loading-content");
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
                     } else {
-                        contentSpan.textContent = text; 
+                        contentSpan.textContent = text;
                     }
                     break;
                 case 'system':
@@ -671,33 +638,10 @@
                 modeSelector.disabled = true;
             }
         }
-        
-        // NEW: Function to update file chips display
-        function updateFileChipsDisplay() {
-            fileListDisplay.innerHTML = ''; // Clear previous chips
-            if (appState.uploadedFiles.length > 0) {
-                appState.uploadedFiles.forEach(file => {
-                    const chip = document.createElement('span');
-                    chip.classList.add('file-chip');
-                    chip.textContent = file.name;
-                    chip.title = file.name; // Full name on hover
-                    fileListDisplay.appendChild(chip);
-                });
-            } else {
-                const noFilesSpan = document.createElement('span');
-                noFilesSpan.textContent = "Nessuno";
-                // Optional: style noFilesSpan if it should also look like a chip or just plain text
-                // noFilesSpan.classList.add('file-chip', 'empty-chip-placeholder');
-                fileListDisplay.appendChild(noFilesSpan);
-            }
-        }
-
 
         function updateInteractiveElementsUI() {
             const isEstrazioneDati = appState.currentCharacter === 'estrazione-dati';
             attachFilesBtn.style.display = isEstrazioneDati ? 'inline-flex' : 'none';
-            
-            updateFileChipsDisplay(); // Update chips display
 
             if (isEstrazioneDati) {
                 userInput.placeholder = appState.uploadedFiles.length > 0
@@ -733,7 +677,9 @@
              modeSelector.disabled = effectivelyWaiting;
              helpButton.disabled = effectivelyWaiting;
              resetButton.disabled = effectivelyWaiting;
-             clearFilesBtn.disabled = effectivelyWaiting; // NEW: Disable clear button when AI is thinking
+             // IMPROVEMENT: Disable clearFilesBtn if AI is thinking or init failed
+             clearFilesBtn.disabled = effectivelyWaiting;
+
 
              stopButton.style.display = appState.isWaitingForAI && !isDisabledByInitFailure ? 'inline-flex' : 'none';
 
@@ -795,9 +741,9 @@
 
         function clearUploadedFiles() {
             appState.uploadedFiles = [];
-            fileUploader.value = null; // Reset file input
-            // updateFileChipsDisplay(); // Already called by updateInteractiveElementsUI
-            updateInteractiveElementsUI(); // This will hide container and update chips
+            fileUploader.value = null;
+            fileListDisplay.textContent = "Nessuno";
+            updateInteractiveElementsUI();
         }
 
         function resetConversationState(reason) {
@@ -870,6 +816,9 @@
                 userInput.value = ""; adjustTextareaHeight(); return;
             }
 
+            // This block handles the 'stop' command or informs user if AI is busy.
+            // Given userInput is disabled when isWaitingForAI, the else if (inputText !== "") path
+            // should not be reachable by typical user actions.
             if (appState.isWaitingForAI) {
                 if (inputText.toLowerCase() === 'stop') {
                     appendMessage("user", inputText); 
@@ -880,9 +829,11 @@
                         appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
                     }
                 } else if (inputText !== "") { 
+                    // This case should be rare if userInput is disabled.
+                    // Message kept concise as per general guideline.
                     appendMessage("user", inputText);
                     userInput.value = ""; adjustTextareaHeight();
-                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Usa 🛑 Stop per interrompere.`);
+                    appendMessage("system", "L'IA è occupata. Il tuo messaggio è stato ignorato. Usa 🛑 Stop per interrompere.");
                 }
                 scrollToBottom();
                 return;
@@ -921,7 +872,7 @@
                 helpOutput += `  ${chars.length ? chars.map(c => `${c}`).join(', ') : 'Nessuna caricata'}\n\n`;
                 
                 helpOutput += "STATO ATTUALE:\n";
-                helpOutput += `  Modalità: ${appState.currentCharacter ? `${appState.currentCharacter}` : 'N/D'}\n\n`;
+                helpOutput += `  Modalità: ${appState.currentCharacter ? `${appState.currentCharacter}` : 'Non impostata'}\n\n`;
                 
                 helpOutput += "COME CHATTARE:\n";
                 helpOutput += "  • Scrivi il tuo messaggio e premi Invio o il pulsante ➡️.\n";
@@ -978,9 +929,7 @@
                         if (file.type.startsWith('image/')) {
                             userMessageContentArray.push({ type: "image_url", image_url: { url: file.dataUrl } });
                         } else if (file.type === 'application/pdf') {
-                            // The backend expects 'file_data' for PDFs as base64 string (which dataUrl is, minus prefix)
-                            const base64Data = file.dataUrl.split(',')[1];
-                            userMessageContentArray.push({ type: "file", file: { filename: file.name, file_data: base64Data } });
+                            userMessageContentArray.push({ type: "file", file: { filename: file.name, file_data: file.dataUrl } });
                         }
                     });
                     userMessageForConversation = { role: "user", content: userMessageContentArray };
@@ -1100,108 +1049,71 @@
         }
 
         attachFilesBtn.addEventListener('click', () => fileUploader.click());
-        
         clearFilesBtn.addEventListener('click', () => {
-            if (appState.isWaitingForAI) return; // Extra safety, though disabled state should prevent
+            // Button is already disabled if appState.isWaitingForAI is true by updateUserInteractionState
+            if (appState.isWaitingForAI) return; 
             clearUploadedFiles();
             appendMessage("system", "File allegati rimossi.");
         });
-        
         fileUploader.addEventListener('change', (event) => {
-            const filesFromInput = event.target.files;
-            if (!filesFromInput || filesFromInput.length === 0) {
+            const files = event.target.files;
+            if (!files || files.length === 0) {
+                if (appState.uploadedFiles.length === 0) {
+                    fileListDisplay.textContent = "Nessuno";
+                }
                 updateInteractiveElementsUI(); return;
             }
-
-            if (appState.uploadedFiles.length + filesFromInput.length > MAX_FILES) {
-                appendMessage("error", `Puoi caricare un massimo di ${MAX_FILES} file in totale (già ${appState.uploadedFiles.length} allegati).`);
+            if (appState.uploadedFiles.length + files.length > MAX_FILES) {
+                appendMessage("error", `Puoi caricare un massimo di ${MAX_FILES} file in totale.`);
                 fileUploader.value = null; 
                 return;
             }
 
-            const newFilesToProcess = [];
-            let invalidFileMessages = [];
+            const fileReadPromises = [];
+            let invalidFileFound = false;
 
-            for (let i = 0; i < filesFromInput.length; i++) {
-                const file = filesFromInput[i];
-                // Check for duplicates based on name and size
-                if (appState.uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
-                    invalidFileMessages.push(`File "${file.name}" è già stato allegato o è identico a uno esistente.`);
-                    continue;
-                }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 if (!ALLOWED_MIMETYPES.includes(file.type)) {
-                    invalidFileMessages.push(`Tipo file non supportato: ${file.name} (${file.type}). Consentiti: PDF, PNG, JPG, WEBP.`);
-                    continue;
+                    appendMessage("error", `Tipo file non supportato: ${file.name} (${file.type}). Consentiti: PDF, PNG, JPG, WEBP.`);
+                    invalidFileFound = true; continue;
                 }
-                newFilesToProcess.push(file);
-            }
-
-            if (invalidFileMessages.length > 0) {
-                appendMessage("error", invalidFileMessages.join("\n"));
-            }
-
-            if (newFilesToProcess.length === 0) {
-                fileUploader.value = null; 
-                if (appState.uploadedFiles.length === 0 && invalidFileMessages.length > 0) {
-                    updateFileChipsDisplay(); // Ensure "Nessuno" is shown if only invalid files were selected
-                }
-                updateInteractiveElementsUI();
-                return;
-            }
-
-            uploadProgressBarContainer.style.display = 'flex';
-            uploadProgressBar.style.width = '0%';
-            uploadProgressText.textContent = `Caricamento 0 di ${newFilesToProcess.length}...`;
-
-            let filesProcessed = 0;
-            const totalFilesToRead = newFilesToProcess.length;
-
-            const fileReadPromises = newFilesToProcess.map(file => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
+                const reader = new FileReader();
+                const promise = new Promise((resolve, reject) => {
                     reader.onload = (e) => {
-                        // Add to appState.uploadedFiles (already checked for duplicates)
-                        appState.uploadedFiles.push({ 
-                            name: file.name, 
-                            type: file.type, 
-                            dataUrl: e.target.result, 
-                            size: file.size 
-                        });
-                        filesProcessed++;
-                        const currentProgress = (filesProcessed / totalFilesToRead) * 100;
-                        uploadProgressBar.style.width = `${currentProgress}%`;
-                        uploadProgressText.textContent = `Caricamento ${filesProcessed} di ${totalFilesToRead}...`;
+                        if (!appState.uploadedFiles.find(f => f.name === file.name)) {
+                            appState.uploadedFiles.push({ name: file.name, type: file.type, dataUrl: e.target.result });
+                        }
                         resolve();
                     };
-                    reader.onerror = (errEvent) => {
-                        console.error("Errore lettura file:", file.name, errEvent);
+                    reader.onerror = (e) => {
+                        console.error("Errore lettura file:", file.name, e);
                         appendMessage("error", `Errore durante la lettura del file: ${file.name}`);
-                        reject(errEvent); // This will cause Promise.all to reject for this file
+                        reject(e);
                     };
                     reader.readAsDataURL(file);
                 });
-            });
+                fileReadPromises.push(promise);
+            }
 
-            Promise.allSettled(fileReadPromises) // Use allSettled to process all files even if some fail
-                .then((results) => {
-                    const successfulReads = results.filter(r => r.status === 'fulfilled').length;
-                    if (successfulReads > 0) {
-                         uploadProgressText.textContent = `Caricati ${successfulReads} di ${totalFilesToRead} file.`;
-                    } else if (totalFilesToRead > 0) { // Some files attempted, all failed
-                         uploadProgressText.textContent = 'Errore durante il caricamento dei file.';
-                    } else { // No files were actually processed (e.g. all filtered out)
-                         uploadProgressText.textContent = 'Nessun nuovo file valido da caricare.';
+            Promise.all(fileReadPromises)
+                .then(() => {
+                    if (appState.uploadedFiles.length > 0) {
+                        // IMPROVEMENT: Join file names with " | "
+                        const names = appState.uploadedFiles.map(f => f.name).join(' | ');
+                        fileListDisplay.textContent = names;
+                        // IMPROVEMENT: Removed redundant "Totale allegati" system message
+                        // appendMessage("system", `Totale allegati: ${appState.uploadedFiles.length}.`);
+                    } else if (!invalidFileFound) { 
+                         fileListDisplay.textContent = "Nessuno";
                     }
-                    
-                    updateInteractiveElementsUI(); // This will call updateFileChipsDisplay
-
-                    setTimeout(() => { 
-                        uploadProgressBarContainer.style.display = 'none'; 
-                    }, successfulReads > 0 || totalFilesToRead === 0 ? 1500 : 3000); // Hide faster on success
+                    updateInteractiveElementsUI();
                 })
-                .finally(() => {
-                     fileUploader.value = null; // Clear the input regardless of outcome for this batch
+                .catch(() => {
+                    if (appState.uploadedFiles.length === 0) clearUploadedFiles(); 
+                    updateInteractiveElementsUI();
                 });
+            fileUploader.value = null; 
         });
 
         sendButton.addEventListener('click', handleUserInput);
@@ -1236,19 +1148,15 @@
 
         async function initializeApp() {
             appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' })}`);
-            updateTokenCounterUI();
-            updateFileChipsDisplay(); // Initialize with "Nessuno" or existing files if any (though should be none)
             updateUserInteractionState(); 
             adjustTextareaHeight();
-            scrollToBottom();
-
+            
             appendMessage("system", "Recupero configurazione iniziale...");
             try {
                 await callWorkerApi({ type: 'init' });
-                appendMessage("system", `Configurazione caricata con successo.`);
-                const defaultModeText = appState.currentCharacter ? appState.currentCharacter : 'N/D';
-                appendMessage("system", `Modalità predefinita: ${defaultModeText}.`);
-                appendMessage("system", `Digita un messaggio, usa ❓ Aiuto per i comandi o seleziona una modalità.`);
+                const defaultModeText = appState.currentCharacter ? appState.currentCharacter.replace(/-/g, ' ') : 'Non impostata';
+                // IMPROVEMENT: Condensed initial success messages
+                appendMessage("system", `Assistente pronto. Modalità predefinita: ${defaultModeText}. Digita un messaggio, usa ❓ Aiuto per i comandi, o seleziona una modalità dal menu.`);
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
                 appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
@@ -1258,6 +1166,7 @@
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
                     appState.isWaitingForAI = false; 
                 }
+                updateTokenCounterUI(); // Ensure token counter is updated after init
                 updateUserInteractionState(); 
                 if (!appState.isWaitingForAI) { 
                     setTimeout(() => userInput.focus(), 0);
