@@ -136,7 +136,6 @@
             background-color: rgba(0,0,0,0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
-        /* Style for disabled action buttons */
         .action-button:disabled, .action-select:disabled {
             background-color: var(--md-bg-color);
             color: var(--md-text-secondary);
@@ -145,11 +144,11 @@
             border-color: var(--md-border-color);
         }
         .action-button:disabled:hover, .action-select:disabled:hover {
-             background-color: var(--md-bg-color); /* No hover effect when disabled */
+             background-color: var(--md-bg-color);
         }
 
         .action-select {
-            flex-grow: 1; /* Allow select to take more space if needed */
+            flex-grow: 1;
             min-width: 150px;
         }
         .mode-selector-container {
@@ -163,70 +162,101 @@
             white-space: nowrap;
         }
 
-
+        /* --- ATTACHMENT UI IMPROVEMENTS START --- */
         #fileListContainer {
             width: 100%;
-            padding: 8px 0;
+            padding: var(--padding-base);
+            border: 2px dashed var(--md-border-color);
+            border-radius: var(--border-radius-base);
+            background-color: var(--md-surface-color); /* Or var(--md-bg-color) for more subtle contrast */
+            margin-bottom: calc(var(--padding-base) * 0.75); /* Space below it, before inputControls */
+            
             font-size: 0.9em;
-            color: var(--md-text-secondary);
-            /* display: none; -- Managed by JS */
-            /* Added for better alignment of button */
-            display: flex;
+            /* color: var(--md-text-secondary); -- Handled by children */
+            
+            /* display: none; -- JS manages this. Assumed to be 'flex' when in estrazione-dati mode. */
+            /* For best UX, this container should be 'flex' when estrazione-dati mode is active,
+               regardless of whether files are selected. JS would control this. */
+            display: flex; 
             justify-content: space-between;
             align-items: center;
+            transition: border-color 0.2s ease-in-out;
         }
-        #fileListContainer > div { /* Container for text */
+
+        #fileListContainer:hover {
+            /* Optional: slightly change border on hover if it's meant to feel like a drop target */
+            /* border-color: var(--md-primary-color-light); */
+        }
+
+        #fileListContainer > div { /* Wrapper for "File allegati: [files]" text */
              display: flex;
              align-items: center;
-             gap: 5px;
+             gap: 8px; 
              overflow: hidden; /* Prevent text from pushing button */
+             flex-grow: 1; /* Allow this part to take up available space */
         }
-        #fileListContainer strong {
+
+        #fileListContainer strong { /* "File allegati:" text */
             font-weight: 500;
             color: var(--md-text-primary);
-            flex-shrink: 0; /* Prevent strong from shrinking */
+            flex-shrink: 0; /* Prevent "File allegati:" from shrinking */
+            white-space: nowrap;
         }
+
         #fileListDisplay {
-            /* margin-left: 5px; -- removed due to gap */
-            max-height: 45px; /* Allows for about 2 lines if names were to wrap, but nowrap is active */
-            overflow-y: auto; /* For vertical scroll if content somehow exceeds max-height */
-            display: inline-block;
-            vertical-align: middle;
-            background-color: var(--md-bg-color);
-            padding: 4px 8px;
-            border-radius: var(--border-radius-small);
-            white-space: nowrap; /* Prevent wrapping of file names */
-            overflow-x: auto; /* Allow horizontal scroll for long names or many files */
-            flex-grow: 1; /* Allow it to take available space */
-        }
-        #clearFilesBtn {
-            /* margin-left: 10px; -- removed due to justify-content */
-            font-size: 1em; /* Relative to parent */
+            /* background-color: var(--md-bg-color); -- Removed for cleaner look, inherits container's bg */
             padding: 6px 10px;
-            /* display: none; -- Managed by JS */
-            /* float: right; -- removed */
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--md-border-color);
+            
+            white-space: nowrap; 
+            overflow-x: auto; 
+            flex-grow: 1; 
+            max-width: 100%; /* Ensure it doesn't overflow its parent if text is very long */
+            
+            max-height: 45px; 
+            overflow-y: auto; /* For rare cases if content somehow wraps despite nowrap */
+            
+            /* JS should set these styles for "Nessuno" text for better visual cue:
+               font-style: italic;
+               color: var(--md-text-secondary);
+               Otherwise, for actual file names:
+               font-style: normal;
+               color: var(--md-text-primary);
+            */
+            color: var(--md-text-primary); /* Default, JS can override for "Nessuno" */
+        }
+        
+        #clearFilesBtn {
+            font-size: 0.9em; /* Match action-button font-size */
+            padding: 8px 12px; /* Match action-button padding */
             background-color: var(--md-error-bg-color);
             color: var(--md-error-color);
-            border: 1px solid var(--md-error-color);
+            border: 1px solid transparent; /* Consistent with action-button border behavior */
             border-radius: var(--border-radius-small);
             cursor: pointer;
             font-weight: 500;
             flex-shrink: 0; /* Prevent button from shrinking */
+            margin-left: var(--padding-base); /* Space from the file list text */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            /* display: none; -- Managed by JS */
         }
         #clearFilesBtn:hover {
             background-color: #f1b0b7; /* Lighter red on hover */
+            border-color: var(--md-error-color); /* Show border on hover like action buttons */
         }
-        /* IMPROVEMENT: Specific disabled styles for clearFilesBtn */
         #clearFilesBtn:disabled {
             background-color: var(--md-bg-color);
             color: var(--md-text-secondary);
-            border-color: var(--md-border-color);
+            border-color: var(--md-border-color) !important; /* Ensure border always visible for disabled */
             opacity: 0.6;
             cursor: not-allowed;
         }
         #clearFilesBtn:disabled:hover {
             background-color: var(--md-bg-color); /* No hover effect when disabled */
+            border-color: var(--md-border-color) !important;
         }
+        /* --- ATTACHMENT UI IMPROVEMENTS END --- */
 
 
         #inputControls {
@@ -286,7 +316,6 @@
         #userInput::placeholder { color: var(--md-text-secondary); opacity: 0.7; }
         #userInput:disabled { cursor: not-allowed; background-color: var(--md-bg-color); opacity: 0.7; }
 
-        /* Prompt span - hidden as per plan, can be re-enabled if needed */
         #prompt { display: none; }
 
 
@@ -331,13 +360,11 @@
         }
         .system.help-output .prefix,
         .system.help-output .content { color: var(--md-system-color); opacity: 1; }
-        /* Styling for <a> or <code> tags within .help-output .content are removed as content is now plain text */
 
 
         .error { background-color: var(--md-error-bg-color); align-self: center; text-align: center; max-width: 90%; border: 1px solid var(--md-error-color); }
         .error .prefix { color: var(--md-error-color); }
         .error .content { color: var(--md-error-color); font-weight: 500; }
-        /* Styling for <code> tags within .error .content are removed as content is now plain text */
 
 
         .loading-content { display: inline-flex; align-items: baseline; }
@@ -390,7 +417,7 @@
           right: 20px;
         }
 
-        @media (max-width: 768px) { /* Increased breakpoint for better tablet experience */
+        @media (max-width: 768px) { 
           html { font-size: var(--font-size-mobile); }
           #appBar { padding: calc(var(--padding-mobile) * 0.8) var(--padding-mobile); font-size: 1.15em; }
           main#terminal { padding: var(--padding-mobile); }
@@ -405,9 +432,24 @@
           .emoji-button { font-size: 1.5em; padding: 8px; width: 40px; height: 40px; }
           #userInput { padding: 8px 10px; min-height: calc(var(--line-height) * 1em + 16px + 2px); }
           #actionsContainer { flex-direction: column; align-items: stretch; gap: 6px; }
-          .action-select { min-width: 0; } /* Allow select to shrink more on mobile */
-          #fileListContainer { flex-direction: column; align-items: stretch; gap: 5px;}
-          #clearFilesBtn { align-self: flex-end; }
+          .action-select { min-width: 0; } 
+          
+          /* Attachment UI Mobile Adjustments */
+          #fileListContainer {
+              padding: var(--padding-mobile);
+              /* These were already in the original code for mobile, ensuring they are kept if needed */
+              flex-direction: column; 
+              align-items: stretch; 
+              gap: 8px; /* Consistent gap for mobile */
+          }
+          #fileListContainer > div { /* Text wrapper */
+            gap: 6px; /* Slightly smaller gap for text part on mobile */
+          }
+          #clearFilesBtn { 
+            align-self: flex-end; /* Keep button to the right in column layout */
+            margin-left: 0; /* No left margin needed in column layout */
+            margin-top: 4px; /* Add some space above if it wraps under text */
+          }
         }
     </style>
 </head>
@@ -432,11 +474,13 @@
             <button id="stopButton" class="action-button" title="Interrompi risposta IA" style="display: none; background-color: var(--md-error-bg-color); color: var(--md-error-color); border-color: var(--md-error-color);">🛑 Stop</button>
         </div>
 
-        <div id="fileListContainer" style="display: none;"> <!-- Initially hidden, JS manages -->
+        <!-- Attachment Area: JS should ensure this is display:flex when in estrazione-dati mode -->
+        <div id="fileListContainer" style="display: none;">
             <div> <!-- Wrapper for text part -->
-                <strong>File allegati:</strong> <span id="fileListDisplay">Nessuno</span>
+                <strong>File allegati:</strong> 
+                <span id="fileListDisplay">Nessuno</span> <!-- JS updates this. "Nessuno" should be styled (e.g. italic, dimmed) by JS if no files -->
             </div>
-            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi</button> <!-- Initially hidden -->
+            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi Tutti</button> <!-- Text changed for clarity -->
         </div>
 
         <div id="inputControls">
@@ -643,15 +687,26 @@
             const isEstrazioneDati = appState.currentCharacter === 'estrazione-dati';
             attachFilesBtn.style.display = isEstrazioneDati ? 'inline-flex' : 'none';
 
+            // SUGGESTED JS ADJUSTMENT FOR ATTACHMENT UX:
+            // The fileListContainer should be visible whenever 'estrazione-dati' mode is active.
+            // Its content (file names or "Nessuno") and the clear button's visibility
+            // will still depend on whether files are actually uploaded.
             if (isEstrazioneDati) {
+                fileListContainer.style.display = 'flex'; // <-- Key change: make visible in this mode
+
                 userInput.placeholder = appState.uploadedFiles.length > 0
                     ? "Premi Invio o ➡️ per estrarre, o aggiungi una nota..."
                     : "Allega file (PDF, PNG, JPG) per l'estrazione...";
+                
                 if (appState.uploadedFiles.length > 0) {
-                    fileListContainer.style.display = 'flex'; 
+                    // fileListDisplay text is set by fileUploader event or clearUploadedFiles
+                    fileListDisplay.style.fontStyle = 'normal';
+                    fileListDisplay.style.color = 'var(--md-text-primary)'; // Or your default text color for files
                     clearFilesBtn.style.display = 'inline-block';
                 } else {
-                    fileListContainer.style.display = 'none';
+                    // fileListDisplay text is "Nessuno" (set by clearUploadedFiles or init)
+                    fileListDisplay.style.fontStyle = 'italic';
+                    fileListDisplay.style.color = 'var(--md-text-secondary)';
                     clearFilesBtn.style.display = 'none';
                 }
             } else {
@@ -677,8 +732,7 @@
              modeSelector.disabled = effectivelyWaiting;
              helpButton.disabled = effectivelyWaiting;
              resetButton.disabled = effectivelyWaiting;
-             // IMPROVEMENT: Disable clearFilesBtn if AI is thinking or init failed
-             clearFilesBtn.disabled = effectivelyWaiting;
+             clearFilesBtn.disabled = effectivelyWaiting || appState.uploadedFiles.length === 0; // Also disable if no files
 
 
              stopButton.style.display = appState.isWaitingForAI && !isDisabledByInitFailure ? 'inline-flex' : 'none';
@@ -742,8 +796,10 @@
         function clearUploadedFiles() {
             appState.uploadedFiles = [];
             fileUploader.value = null;
-            fileListDisplay.textContent = "Nessuno";
+            fileListDisplay.textContent = "Nessuno"; // JS sets this text
+            // updateInteractiveElementsUI will handle styling of "Nessuno" and button visibility
             updateInteractiveElementsUI();
+            updateUserInteractionState(); // To correctly update clearFilesBtn disabled state
         }
 
         function resetConversationState(reason) {
@@ -816,9 +872,6 @@
                 userInput.value = ""; adjustTextareaHeight(); return;
             }
 
-            // This block handles the 'stop' command or informs user if AI is busy.
-            // Given userInput is disabled when isWaitingForAI, the else if (inputText !== "") path
-            // should not be reachable by typical user actions.
             if (appState.isWaitingForAI) {
                 if (inputText.toLowerCase() === 'stop') {
                     appendMessage("user", inputText); 
@@ -829,8 +882,6 @@
                         appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
                     }
                 } else if (inputText !== "") { 
-                    // This case should be rare if userInput is disabled.
-                    // Message kept concise as per general guideline.
                     appendMessage("user", inputText);
                     userInput.value = ""; adjustTextareaHeight();
                     appendMessage("system", "L'IA è occupata. Il tuo messaggio è stato ignorato. Usa 🛑 Stop per interrompere.");
@@ -898,7 +949,7 @@
                          appState.currentCharacter = foundCharacter; 
                          modeSelector.value = foundCharacter; 
                          appendMessage("system", `Modalità impostata su: ${foundCharacter}.`);
-                         resetConversationState('character change');
+                         resetConversationState('character change'); // This will call updateInteractiveElementsUI
                      } else {
                           appendMessage("system", `La modalità è già: ${foundCharacter}.`);
                      }
@@ -977,7 +1028,7 @@
                 if (result.completion !== undefined) {
                     appState.conversation.push({ role: "assistant", content: result.completion });
                     if (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0) { 
-                        clearUploadedFiles();
+                        clearUploadedFiles(); // This now calls updateInteractiveElementsUI and updateUserInteractionState
                     }
                 }
 
@@ -1012,7 +1063,7 @@
                     appState.loadingMsgDiv = null;
                 }
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                   updateUserInteractionState();
+                   updateUserInteractionState(); // This will call updateInteractiveElementsUI
                    setTimeout(() => userInput.focus(), 50); 
                 }
             }
@@ -1050,7 +1101,6 @@
 
         attachFilesBtn.addEventListener('click', () => fileUploader.click());
         clearFilesBtn.addEventListener('click', () => {
-            // Button is already disabled if appState.isWaitingForAI is true by updateUserInteractionState
             if (appState.isWaitingForAI) return; 
             clearUploadedFiles();
             appendMessage("system", "File allegati rimossi.");
@@ -1061,7 +1111,9 @@
                 if (appState.uploadedFiles.length === 0) {
                     fileListDisplay.textContent = "Nessuno";
                 }
-                updateInteractiveElementsUI(); return;
+                updateInteractiveElementsUI(); 
+                updateUserInteractionState(); // Update button states
+                return;
             }
             if (appState.uploadedFiles.length + files.length > MAX_FILES) {
                 appendMessage("error", `Puoi caricare un massimo di ${MAX_FILES} file in totale.`);
@@ -1099,19 +1151,18 @@
             Promise.all(fileReadPromises)
                 .then(() => {
                     if (appState.uploadedFiles.length > 0) {
-                        // IMPROVEMENT: Join file names with " | "
                         const names = appState.uploadedFiles.map(f => f.name).join(' | ');
                         fileListDisplay.textContent = names;
-                        // IMPROVEMENT: Removed redundant "Totale allegati" system message
-                        // appendMessage("system", `Totale allegati: ${appState.uploadedFiles.length}.`);
                     } else if (!invalidFileFound) { 
                          fileListDisplay.textContent = "Nessuno";
                     }
                     updateInteractiveElementsUI();
+                    updateUserInteractionState(); // Update button states
                 })
                 .catch(() => {
                     if (appState.uploadedFiles.length === 0) clearUploadedFiles(); 
                     updateInteractiveElementsUI();
+                    updateUserInteractionState(); // Update button states
                 });
             fileUploader.value = null; 
         });
@@ -1148,14 +1199,16 @@
 
         async function initializeApp() {
             appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' })}`);
-            updateUserInteractionState(); 
+            // Initialize fileListDisplay to "Nessuno" before first UI update
+            fileListDisplay.textContent = "Nessuno";
+
+            updateUserInteractionState(); // Initial call to set disabled states
             adjustTextareaHeight();
             
             appendMessage("system", "Recupero configurazione iniziale...");
             try {
                 await callWorkerApi({ type: 'init' });
                 const defaultModeText = appState.currentCharacter ? appState.currentCharacter.replace(/-/g, ' ') : 'Non impostata';
-                // IMPROVEMENT: Condensed initial success messages
                 appendMessage("system", `Assistente pronto. Modalità predefinita: ${defaultModeText}. Digita un messaggio, usa ❓ Aiuto per i comandi, o seleziona una modalità dal menu.`);
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
@@ -1166,8 +1219,8 @@
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
                     appState.isWaitingForAI = false; 
                 }
-                updateTokenCounterUI(); // Ensure token counter is updated after init
-                updateUserInteractionState(); 
+                updateTokenCounterUI(); 
+                updateUserInteractionState(); // This will correctly call updateInteractiveElementsUI
                 if (!appState.isWaitingForAI) { 
                     setTimeout(() => userInput.focus(), 0);
                 }
