@@ -68,9 +68,45 @@
         main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
         main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
 
+        /* New styles for file attachment area */
+        #fileAttachmentArea {
+            padding: 8px var(--padding-base);
+            border-bottom: 1px solid var(--border-color);
+            background: var(--input-bg-color);
+            font-size: 0.9em;
+        }
+        #fileAttachmentArea #fileList {
+            font-size: 0.9em;
+            max-height: 70px; /* Increased slightly */
+            overflow-y: auto;
+            margin-top: 4px;
+            padding-left: 5px;
+        }
+        #fileAttachmentArea #fileList ul {
+            list-style-type: none;
+            padding-left: 10px;
+            margin: 0;
+        }
+        #fileAttachmentArea #fileList li {
+            padding: 2px 0;
+        }
+        #fileAttachmentArea #clearFilesButton {
+            font-size: 0.85em;
+            padding: 3px 6px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+            background-color: #f1f3f5;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #fileAttachmentArea #clearFilesButton:hover {
+            background-color: #e9ecef;
+        }
+
+
         footer#inputArea {
           display: flex;
-          align-items: stretch;
+          align-items: stretch; /* Changed from flex-start to stretch for button height */
           background-color: var(--input-bg-color);
           padding: calc(var(--padding-base) / 1.5) var(--padding-base);
           border-top: 1px solid var(--border-color);
@@ -79,6 +115,23 @@
           position: relative;
           z-index: 10;
         }
+
+        #uploadButton {
+            display: none; /* Hidden by default, shown via JS */
+            background: none;
+            border: none;
+            font-size: 1.6em; /* Slightly larger */
+            cursor: pointer;
+            color: var(--prompt-color);
+            padding: 0 calc(var(--padding-base) / 2) 0 0; /* Adjusted padding */
+            margin-right: calc(var(--padding-base) / 3);
+            align-self: center; /* Vertically align */
+            line-height: 1; /* Ensure icon is centered */
+        }
+        #uploadButton:hover {
+            opacity: 0.7;
+        }
+
 
         #tokenCounter {
           position: fixed;
@@ -171,7 +224,7 @@
           line-height: var(--line-height);
           padding: calc(var(--padding-base) / 2.5) 0;
           user-select: none;
-          align-self: flex-start;
+          align-self: flex-start; /* Keep as flex-start */
           padding-top: 10px;
         }
 
@@ -211,7 +264,11 @@
 		  main#terminal {
             padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
           }
+          #fileAttachmentArea { padding: 6px var(--padding-mobile); }
+          #fileAttachmentArea #fileList { max-height: 50px; }
+
           footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
+          #uploadButton { font-size: 1.5em; padding-right: calc(var(--padding-mobile) / 2.5); margin-right: calc(var(--padding-mobile) / 4); }
           #prompt { padding: calc(var(--padding-mobile) / 2) 0; padding-top: 8px; }
           #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
           .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
@@ -279,19 +336,31 @@
     <main id="terminal"></main>
     <div id="tokenCounter">Token: 0</div>
 	<div id="scrollToggle" class="floatingToggle">🔽 Scroll Automatico: ON</div>
+    
+    <div id="fileAttachmentArea" style="display: none;">
+        <span style="font-weight: bold;">File allegati (max 15):</span>
+        <div id="fileList">Nessun file selezionato.</div>
+        <button id="clearFilesButton" style="display: none;">Rimuovi Tutti</button>
+    </div>
+
     <footer id="inputArea">
+        <button id="uploadButton" title="Allega file (max 15)">📎</button>
+        <input type="file" id="fileUpload" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" style="display: none;">
         <span id="prompt">></span>
         <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
     </footer>
 
     <script>
         const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
+        const MAX_FILES_UPLOAD = 15;
+        const ALLOWED_FILE_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
+
 
 		const COMMAND_INFO = [
 		  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
 		  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-		  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità IA (reimposta contesto)." }, // Edited
-		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." } // Edited
+		  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (reimposta contesto)." },
+		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." }
 		];
 
         const terminalDiv = document.getElementById("terminal");
@@ -324,6 +393,7 @@
             thinkingStartTime: null,
             abortController: null,
             loadingMsgDiv: null,
+            selectedFiles: [], // For storing File objects
         };
 
         function formatTokenCount(num) {
@@ -352,7 +422,7 @@
                     contentSpan.textContent = text;
                     break;
                 case 'assistant':
-                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase()}:`; // Edited
+                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase()}:`;
                     if (isLoading) {
                         contentSpan.classList.add("loading-content");
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
@@ -421,14 +491,110 @@
             userInput.style.height = newHeight + 'px';
 
             const inputArea = document.getElementById('inputArea');
-
 			if (inputArea) {
 			  const inputAreaHeight = inputArea.offsetHeight;
-			  const newBottom = `${inputAreaHeight + 15}px`;
-			  tokenCounterDiv.style.bottom    = newBottom;
-			  scrollToggleDiv.style.bottom    = newBottom;
+              let bottomOffset = inputAreaHeight + 15;
+              
+              const fileAttachmentArea = document.getElementById('fileAttachmentArea');
+              if (fileAttachmentArea.style.display !== 'none') {
+                  bottomOffset += fileAttachmentArea.offsetHeight;
+              }
+
+			  tokenCounterDiv.style.bottom = `${bottomOffset}px`;
+			  scrollToggleDiv.style.bottom = `${bottomOffset}px`;
 			}
         }
+        
+        function updateModeSpecificUI() {
+            const isDataExtractionMode = appState.currentCharacter === 'estrazione-dati';
+            const uploadButton = document.getElementById('uploadButton');
+            const fileAttachmentArea = document.getElementById('fileAttachmentArea');
+
+            if (isDataExtractionMode) {
+                uploadButton.style.display = 'inline-block';
+                fileAttachmentArea.style.display = 'block';
+            } else {
+                uploadButton.style.display = 'none';
+                fileAttachmentArea.style.display = 'none';
+                clearSelectedFiles(); 
+            }
+            updateFileListUI();
+            adjustTextareaHeight(); // Recalculate positions of floating elements
+        }
+
+        function handleFileSelection(event) {
+            const newFiles = Array.from(event.target.files);
+            if (newFiles.length === 0) return;
+
+            let currentFileNames = new Set(appState.selectedFiles.map(f => f.name));
+            let addedCount = 0;
+
+            for (const file of newFiles) {
+                if (appState.selectedFiles.length >= MAX_FILES_UPLOAD) {
+                    appendMessage("error", `Limite di ${MAX_FILES_UPLOAD} file raggiunto. Non è possibile aggiungere altri file.`);
+                    break; 
+                }
+                if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+                    appendMessage("error", `Tipo file non supportato: ${file.name} (${file.type}). Consentiti: PDF, PNG, JPG/JPEG, WEBP.`);
+                    continue;
+                }
+                if (currentFileNames.has(file.name)) {
+                    // Optional: notify about duplicate, or just skip
+                    // appendMessage("system", `File '${file.name}' già selezionato.`);
+                    continue;
+                }
+                appState.selectedFiles.push(file);
+                currentFileNames.add(file.name);
+                addedCount++;
+            }
+            
+            event.target.value = ""; // Clear the file input to allow re-selecting
+            updateFileListUI();
+            if (addedCount > 0) {
+                 appendMessage("system", `${addedCount} file aggiunti alla selezione.`);
+            }
+        }
+
+        function updateFileListUI() {
+            const fileListDiv = document.getElementById('fileList');
+            const clearFilesButton = document.getElementById('clearFilesButton');
+            if (appState.selectedFiles.length > 0) {
+                fileListDiv.innerHTML = ''; 
+                const ul = document.createElement('ul');
+                appState.selectedFiles.forEach(file => {
+                    const li = document.createElement('li');
+                    li.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                    
+                    const removeBtn = document.createElement('span');
+                    removeBtn.textContent = ' (x)';
+                    removeBtn.style.cursor = 'pointer';
+                    removeBtn.style.color = 'var(--error-color)';
+                    removeBtn.style.fontSize = '0.9em';
+                    removeBtn.title = 'Rimuovi questo file';
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        appState.selectedFiles = appState.selectedFiles.filter(f => f !== file);
+                        updateFileListUI();
+                    };
+                    li.appendChild(removeBtn);
+                    ul.appendChild(li);
+                });
+                fileListDiv.appendChild(ul);
+                clearFilesButton.style.display = 'inline-block';
+            } else {
+                fileListDiv.textContent = "Nessun file selezionato.";
+                clearFilesButton.style.display = 'none';
+            }
+             adjustTextareaHeight(); // Update layout if file list height changes
+        }
+
+        function clearSelectedFiles() {
+            appState.selectedFiles = [];
+            const fileInput = document.getElementById('fileUpload');
+            if(fileInput) fileInput.value = ""; // Reset the actual file input
+            updateFileListUI();
+        }
+
 
 		function updateTokenCounterUI() {
 			const countStr = formatTokenCount(appState.currentTokenCount);
@@ -451,7 +617,7 @@
              } else if (!appState.currentCharacter) {
                  userInput.placeholder = "Caricamento config...";
              } else {
-                 userInput.placeholder = `Chiedi all'IA...`; // Already IA, no change needed
+                 userInput.placeholder = `Chiedi all'IA...`;
              }
              adjustTextareaHeight();
         }
@@ -505,6 +671,7 @@
 
             updateTokenCounterUI();
             updatePromptUI();
+            updateModeSpecificUI(); // Update UI based on new character
         }
 
         function resetConversationState(reason) {
@@ -518,6 +685,7 @@
 
             appState.conversation = [];
             appState.currentTokenCount = 0;
+            clearSelectedFiles(); // Clear files on reset
             updateTokenCounterUI();
             appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
             scrollToBottom();
@@ -582,14 +750,17 @@
             userInput.value = "";
             adjustTextareaHeight();
 
-            if (inputText === "") return;
+            const isDataExtractionMode = appState.currentCharacter === 'estrazione-dati';
+            const hasFilesForExtraction = isDataExtractionMode && appState.selectedFiles.length > 0;
+
+            if (inputText === "" && !hasFilesForExtraction) return; // Don't send if no text and no files for extraction
 
             if (appState.isWaitingForAI) {
                 if (inputText.toLowerCase() === 'stop') {
                     appendMessage("user", inputText);
                     if (appState.abortController) {
                         appState.abortController.abort();
-                        appendMessage("system", "Comando stop ricevuto. Richiesta IA interrotta."); // Edited
+                        appendMessage("system", "Comando stop ricevuto. Richiesta IA interrotta.");
                         clearThinkingAnimationAndTimer();
                         if (appState.loadingMsgDiv) {
                             appState.loadingMsgDiv.remove();
@@ -599,11 +770,11 @@
                         appState.abortController = null;
                         updateUserInteractionState();
                     } else {
-                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato."); // Edited
+                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
                     }
                 } else {
                     appendMessage("user", inputText);
-                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`); // Edited
+                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`);
                 }
                 scrollToBottom();
                 return;
@@ -616,7 +787,6 @@
 
             const commandArgs = inputText.toLowerCase().split(/\s+/);
             const command = commandArgs[0];
-            const subCommand = commandArgs.slice(0,2).join(' ');
             const originalArgs = inputText.split(/\s+/);
 
             if (command === 'reset') {
@@ -627,15 +797,9 @@
 
             if (command === 'help') {
                 appendMessage("user", inputText);
-
-				const commandsSorted = [...COMMAND_INFO].sort((a, b) =>
-					a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-				);
-
+				const commandsSorted = [...COMMAND_INFO].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) );
 				let helpOutput = "<b>COMANDI:</b>\n";
-				commandsSorted.forEach(c => {
-					helpOutput += `  <code>${c.desc}</code>\n`;
-				});
+				commandsSorted.forEach(c => { helpOutput += `  <code>${c.desc}</code>\n`; });
 				helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
 				const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
 				helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`;
@@ -643,7 +807,8 @@
 				helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
 				helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
 				helpOutput += `<b>COME CHATTARE:</b>\n`;
-				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n\n"; // Edited
+				helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n";
+                helpOutput += "  • In modalità 'estrazione-dati', allega i file usando il pulsante 📎 prima di inviare il messaggio.\n";
 				appendMessage("system", helpOutput, false, "help-output");
 				scrollToBottom();
 				return;
@@ -655,7 +820,7 @@
                      appendMessage("error", "Utilizzo: imposta modalità <nome>");
                      return;
                 }
-                const settingType = commandArgs[1]; // Should be 'modalità'
+                const settingType = commandArgs[1]; 
                 const settingValue = originalArgs.slice(2).join(' ');
 
                 if (settingType === 'modalità') {
@@ -666,8 +831,9 @@
                          if (appState.currentCharacter !== foundCharacter) {
                              appState.currentCharacter = foundCharacter;
                              appendMessage("system", `Modalità impostata su: ${appState.currentCharacter}.`);
-                             resetConversationState('character change'); // Internal key remains 'character change'
+                             resetConversationState('character change'); 
                              updatePromptUI();
+                             updateModeSpecificUI(); // Crucial for UI changes
                          } else {
                               appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
                          }
@@ -682,8 +848,12 @@
                  return;
             }
 
-            appendMessage("user", inputText);
-            appState.conversation.push({ role: "user", content: inputText });
+            // If in estrazione-dati mode, but no files selected, and no text, we already returned.
+            // If text is present, or files are present, proceed.
+            if (inputText || hasFilesForExtraction) {
+                 appendMessage("user", inputText || (hasFilesForExtraction ? "(Vedi allegati)" : "")); // Show placeholder if only files
+            }
+            appState.conversation.push({ role: "user", content: inputText || (hasFilesForExtraction ? "Estrai dati dai documenti allegati." : "") });
             scrollToBottom();
 
             appState.isWaitingForAI = true;
@@ -692,12 +862,45 @@
             appState.abortController = new AbortController();
             updateUserInteractionState();
 
+            const payload = {
+                messages: appState.conversation,
+                character: appState.currentCharacter,
+                model: appState.currentModel
+            };
+
+            if (hasFilesForExtraction) {
+                const preparingFilesMsg = appendMessage("system", "Preparazione file in corso...");
+                const fileReadPromises = appState.selectedFiles.map(file => {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve({
+                            name: file.name,
+                            type: file.type,
+                            data: reader.result // This is a data URL
+                        });
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                });
+
+                try {
+                    const fileDataArray = await Promise.all(fileReadPromises);
+                    payload.files = fileDataArray;
+                    if (preparingFilesMsg) preparingFilesMsg.remove();
+                } catch (error) {
+                    console.error("Error reading files:", error);
+                    if (preparingFilesMsg) preparingFilesMsg.remove();
+                    appendMessage("error", "Errore durante la lettura dei file. Riprova.");
+                    clearThinkingAnimationAndTimer();
+                    if (appState.loadingMsgDiv) { appState.loadingMsgDiv.remove(); appState.loadingMsgDiv = null; }
+                    appState.isWaitingForAI = false;
+                    appState.abortController = null;
+                    updateUserInteractionState();
+                    return; 
+                }
+            }
+            
             try {
-                const payload = {
-                    messages: appState.conversation,
-                    character: appState.currentCharacter, // Backend expects 'character' key
-                    model: appState.currentModel
-                };
                 const result = await callWorkerApi(payload, appState.abortController.signal);
 
                 clearThinkingAnimationAndTimer();
@@ -707,7 +910,7 @@
                      const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
                      if (contentSpan && prefixSpan) {
                          contentSpan.classList.remove('loading-content');
-                         prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase()}:`; // Edited
+                         prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase()}:`;
                          contentSpan.textContent = result.completion;
                      } else {
                          appState.loadingMsgDiv.remove();
@@ -720,6 +923,10 @@
 
                 if (result.completion !== undefined && !appState.abortController.signal.aborted) {
                     appState.conversation.push({ role: "assistant", content: result.completion });
+                }
+                
+                if (hasFilesForExtraction) { // Clear files after successful submission
+                    clearSelectedFiles();
                 }
 
                 if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
@@ -744,7 +951,7 @@
                     }
 
                     if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`; // Already IA, no change needed
+                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
                     }
                 }
                 scrollToBottom();
@@ -762,7 +969,6 @@
                    updateUserInteractionState();
                    setTimeout(() => userInput.focus(), 50);
                 }
-
                  adjustTextareaHeight();
             }
         }
@@ -813,7 +1019,7 @@
 
             appendMessage("system", "Recupero configurazione...");
             try {
-                await callWorkerApi({ type: 'init' });
+                const data = await callWorkerApi({ type: 'init' }); // callWorkerApi updates state internally
 
                 appendMessage("system", `Configurazione caricata.`);
                 appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
@@ -822,6 +1028,7 @@
                 userInput.disabled = false;
                 appState.isWaitingForAI = false;
                 updateUserInteractionState();
+                updateModeSpecificUI(); // Initial UI setup based on mode
                 setTimeout(() => userInput.focus(), 0);
 
             } catch (error) {
@@ -844,6 +1051,14 @@
                 }
             }
         });
+        
+        // File upload event listeners
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            document.getElementById('fileUpload').click();
+        });
+        document.getElementById('fileUpload').addEventListener('change', handleFileSelection);
+        document.getElementById('clearFilesButton').addEventListener('click', clearSelectedFiles);
+
 
         window.addEventListener('resize', adjustTextareaHeight);
 
