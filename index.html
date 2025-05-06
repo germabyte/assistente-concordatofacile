@@ -504,7 +504,8 @@
                     contentSpan.textContent = text;
                     break;
                 case 'assistant':
-                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase().replace(/-/g, ' ')}:`;
+                    // MODIFIED: Always use "IA:" as the prefix for assistant messages
+                    prefixSpan.textContent = "IA:";
                     if (isLoading) {
                         contentSpan.classList.add("loading-content");
                         // This specific HTML is for the loading animation, not arbitrary content from backend/user.
@@ -939,7 +940,8 @@
                      const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
                      if (contentSpan && prefixSpan) {
                          contentSpan.classList.remove('loading-content');
-                         prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase().replace(/-/g, ' ')}:`;
+                         // MODIFIED: Always use "IA:" as the prefix for the final AI message
+                         prefixSpan.textContent = "IA:";
                          contentSpan.textContent = result.completion;
                      } else { 
                          if(appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
