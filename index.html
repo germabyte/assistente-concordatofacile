@@ -320,6 +320,13 @@
         .error { background-color: var(--md-error-bg-color); align-self: center; text-align: center; max-width: 90%; border: 1px solid var(--md-error-color); }
         .error .prefix { color: var(--md-error-color); }
         .error .content { color: var(--md-error-color); font-weight: 500; }
+        .error .content code { /* Ensure code tags in error messages are styled like in help */
+            background-color: rgba(211,47,47,0.1); /* Light red bg for error code */
+            color: var(--md-error-color);
+            padding: 2px 5px; border-radius: var(--border-radius-small);
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.9em; border: 1px solid rgba(211,47,47,0.3);
+        }
 
 
         .loading-content { display: inline-flex; align-items: baseline; }
@@ -522,11 +529,11 @@
                     break;
                 case 'system':
                     prefixSpan.textContent = "SISTEMA:";
-                    extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
+                    extraClass === 'help-output' || role === 'error' ? contentSpan.innerHTML = text : contentSpan.textContent = text; // Allow HTML for help and error
                     break;
-                case 'error':
+                case 'error': // Ensure error messages also use innerHTML if they contain <code> tags
                     prefixSpan.textContent = "ERRORE!";
-                    contentSpan.textContent = text;
+                    contentSpan.innerHTML = text; // Use innerHTML for errors as they might contain <code>
                     break;
                 default:
                     prefixSpan.textContent = "???:";
@@ -608,7 +615,7 @@
                 sortedCharacters.forEach(char => {
                     const option = document.createElement('option');
                     option.value = char;
-                    // Prettify name: e.g., "estrazione-dati" -> "Estrazione Dati"
+                    // Prettify name for dropdown display: e.g., "estrazione-dati" -> "Estrazione Dati"
                     option.textContent = char.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                     if (char === appState.currentCharacter) {
                         option.selected = true;
@@ -744,7 +751,7 @@
             clearUploadedFiles(); // This also calls updateInteractiveElementsUI()
             updateTokenCounterUI();
             appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
-            updateUserInteractionState(); // <<--- FIXED: Ensure this is called to update button disabled states
+            updateUserInteractionState(); 
             scrollToBottom();
         }
 
@@ -844,15 +851,17 @@
                 const commandsSorted = [...COMMAND_INFO].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
                 let helpOutput = "<b>COMANDI DISPONIBILI:</b> (puoi digitarli o usare i pulsanti)\n";
                 commandsSorted.forEach(c => { helpOutput += `  <code>${c.desc}</code>\n`; });
-                helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b> (selezionabili dal menu a tendina)\n";
+                helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b> (selezionabili dal menu a tendina o con <code>imposta modalità <nome></code>)\n";
                 const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                helpOutput += `  ${chars.length ? chars.map(c => `<code>${c.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')}</code>`).join(', ') : 'Nessuna caricata'}\n\n`;
+                // MODIFIED: Show raw mode names
+                helpOutput += `  ${chars.length ? chars.map(c => `<code>${c}</code>`).join(', ') : 'Nessuna caricata'}\n\n`;
                 helpOutput += "<b>STATO ATTUALE:</b>\n";
-                helpOutput += `  Modalità: ${appState.currentCharacter ? appState.currentCharacter.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ') : 'N/D'}\n`;
+                // MODIFIED: Show raw current mode name
+                helpOutput += `  Modalità: ${appState.currentCharacter ? `<code>${appState.currentCharacter}</code>` : 'N/D'}\n`;
                 helpOutput += `  Modello IA:  ${appState.currentModel || 'N/D'}\n\n`;
                 helpOutput += `<b>COME CHATTARE:</b>\n`;
                 helpOutput += "  • Scrivi il tuo messaggio e premi Invio o il pulsante ➡️.\n";
-                helpOutput += "  • In modalità <code>Estrazione Dati</code>, allega file usando 📎 e poi invia (puoi aggiungere una nota testuale opzionale).\n\n";
+                helpOutput += "  • In modalità <code>estrazione-dati</code>, allega file usando 📎 e poi invia (puoi aggiungere una nota testuale opzionale).\n\n";
                 appendMessage("system", helpOutput, false, "help-output");
                 scrollToBottom();
                 return;
@@ -865,39 +874,42 @@
                      appendMessage("error", "Utilizzo: imposta modalità <nome modalità>"); return;
                 }
                 const settingValue = originalArgs.slice(2).join(' '); 
-                const characterNameLower = settingValue.toLowerCase();
+                const characterNameLower = settingValue.toLowerCase(); // Use raw value for comparison
                 const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
 
-                if (foundCharacter) {
+                if (foundCharacter) { // foundCharacter is the raw name
                      if (appState.currentCharacter !== foundCharacter) {
                          appState.currentCharacter = foundCharacter; 
                          modeSelector.value = foundCharacter; 
-                         appendMessage("system", `Modalità impostata su: ${foundCharacter.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')}.`);
-                         resetConversationState('character change'); // This now correctly updates all UI states
+                         // MODIFIED: Show raw mode name in confirmation
+                         appendMessage("system", `Modalità impostata su: <code>${foundCharacter}</code>.`);
+                         resetConversationState('character change');
                      } else {
-                          appendMessage("system", `La modalità è già: ${foundCharacter.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')}.`);
+                          // MODIFIED: Show raw mode name in confirmation
+                          appendMessage("system", `La modalità è già: <code>${foundCharacter}</code>.`);
                      }
                 } else {
                      const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.map(c => `<code>${c.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')}</code>`).join(', ') || 'Nessuna'}`);
+                     // MODIFIED: Show raw mode names in error message
+                     const availableModesString = sortedChars.length ? sortedChars.map(c => `<code>${c}</code>`).join(', ') : 'Nessuna';
+                     appendMessage("error", `Modalità '<code>${settingValue}</code>' non trovata. Disponibili: ${availableModesString}`);
                 }
                 scrollToBottom();
-                return; // Important: This return bypasses the main try/catch/finally for AI calls
+                return; 
             }
 
             let userMessageForConversation;
             let displayUserTextInChat;
 
             if (appState.currentCharacter === 'estrazione-dati') {
-                if (appState.uploadedFiles.length === 0 && !inputText) { // Allow text-only "query" in extraction mode if no files
+                if (appState.uploadedFiles.length === 0 && !inputText) { 
                     appendMessage("system", "Per l'estrazione dati, per favore allega prima dei file usando il pulsante 📎, o fornisci una query testuale.");
                     userInput.value = ""; adjustTextareaHeight(); return;
                 }
-                 // If only text is provided, treat as a normal query but within extraction context
                 if (appState.uploadedFiles.length === 0 && inputText) {
                     displayUserTextInChat = inputText;
                     userMessageForConversation = { role: "user", content: inputText };
-                } else { // Files are present (inputText might be a note)
+                } else { 
                     displayUserTextInChat = inputText || `Estrazione dati da ${appState.uploadedFiles.length} file.`;
                     const userMessageContentArray = [{ type: "text", text: inputText || "Estrai i dati dai documenti allegati come richiesto." }];
                     appState.uploadedFiles.forEach(file => {
@@ -951,7 +963,7 @@
 
                 if (result.completion !== undefined) {
                     appState.conversation.push({ role: "assistant", content: result.completion });
-                    if (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0) { // Only clear files if they were part of the request
+                    if (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0) { 
                         clearUploadedFiles();
                     }
                 }
@@ -1096,22 +1108,22 @@
         });
 
         resetButton.addEventListener('click', () => {
-            appendMessage("system", "Reset richiesto tramite pulsante."); 
+            // No need to append a message here, resetConversationState already does
             resetConversationState('button action');
         });
 
         stopButton.addEventListener('click', () => {
             if (appState.isWaitingForAI) {
-                userInput.value = 'stop'; // Simulate typing 'stop'
-                handleUserInput();      // Let handleUserInput process the 'stop'
-                userInput.value = '';   // Clear input after simulation
+                userInput.value = 'stop'; 
+                handleUserInput();      
+                userInput.value = '';   
             }
         });
 
         modeSelector.addEventListener('change', (event) => {
-            const selectedMode = event.target.value;
+            const selectedMode = event.target.value; // This is the raw mode name
             if (selectedMode && selectedMode !== appState.currentCharacter) {
-                userInput.value = `imposta modalità ${selectedMode}`;
+                userInput.value = `imposta modalità ${selectedMode}`; // Use raw mode name for command
                 handleUserInput();
                 userInput.value = ''; 
             }
@@ -1129,19 +1141,21 @@
             try {
                 await callWorkerApi({ type: 'init' });
                 appendMessage("system", `Configurazione caricata con successo.`);
-                appendMessage("system", `Modalità predefinita: ${appState.currentCharacter ? appState.currentCharacter.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ') : 'N/D'}. Modello IA: ${appState.currentModel || 'N/D'}.`);
+                // MODIFIED: Show raw mode name for default mode
+                const defaultModeText = appState.currentCharacter ? `<code>${appState.currentCharacter}</code>` : 'N/D';
+                appendMessage("system", `Modalità predefinita: ${defaultModeText}. Modello IA: ${appState.currentModel || 'N/D'}.`);
                 appendMessage("system", `Digita un messaggio, usa ❓ Aiuto per i comandi o seleziona una modalità.`);
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
                 appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
                 userInput.placeholder = "Inizializzazione fallita. Ricarica.";
-                appState.isWaitingForAI = true; // Keep UI disabled if init fails
+                appState.isWaitingForAI = true; 
             } finally {
                 if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                    appState.isWaitingForAI = false; // Allow interaction if init didn't fail
+                    appState.isWaitingForAI = false; 
                 }
                 updateUserInteractionState(); 
-                if (!appState.isWaitingForAI) { // Only focus if not effectively waiting/disabled
+                if (!appState.isWaitingForAI) { 
                     setTimeout(() => userInput.focus(), 0);
                 }
                 scrollToBottom();
