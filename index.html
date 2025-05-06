@@ -82,7 +82,7 @@
           flex-grow: 1;
           padding: var(--padding-base);
           overflow-y: auto;
-          white-space: pre-wrap;
+          white-space: pre-wrap; /* This allows wrapping of long lines but respects existing newlines and spaces */
           word-wrap: break-word;
           line-height: var(--line-height);
         }
@@ -291,6 +291,43 @@
         }
         .content { flex-grow: 1; word-break: break-word; }
 
+        /* START: Added CSS for code block formatting */
+        .message .content code { /* General styling for inline code */
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: rgba(0,0,0,0.07);
+            color: var(--md-text-primary);
+            padding: 2px 5px;
+            border-radius: var(--border-radius-small);
+            font-size: 0.9em;
+            border: 1px solid var(--md-border-color);
+            word-break: break-all; /* Allow long code strings to break */
+        }
+
+        .message .content pre { /* Styling for preformatted text blocks */
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: var(--md-system-bg-color);
+            color: var(--md-text-primary);
+            padding: calc(var(--padding-base) * 0.5);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--md-border-color);
+            overflow-x: auto; /* Allow horizontal scrolling for long lines */
+            white-space: pre;  /* Preserve whitespace and newlines */
+            font-size: 0.9em;
+        }
+
+        .message .content pre code { /* Reset/adjust styling for code elements specifically inside pre elements */
+            background-color: transparent;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            font-size: inherit; /* Inherit font size from pre */
+            color: inherit;     /* Inherit color from pre */
+            white-space: inherit; /* Inherit whitespace handling from pre */
+            word-break: normal; /* Prevent break-all from inline code to affect pre code */
+        }
+        /* END: Added CSS for code block formatting */
+
+
         .user { background-color: var(--md-primary-color-light); align-self: flex-end; }
         .user .prefix { color: var(--md-primary-color); }
         .user .content { color: var(--md-text-primary); }
@@ -310,7 +347,7 @@
         .system.help-output .prefix,
         .system.help-output .content { color: var(--md-system-color); opacity: 1; }
         .system.help-output .content a { color: var(--md-accent-color); text-decoration: underline; }
-        .system.help-output code {
+        .system.help-output code { /* This rule should take precedence for help output */
             background-color: rgba(0,0,0,0.07); color: var(--md-text-primary);
             padding: 2px 5px; border-radius: var(--border-radius-small);
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
@@ -320,7 +357,7 @@
         .error { background-color: var(--md-error-bg-color); align-self: center; text-align: center; max-width: 90%; border: 1px solid var(--md-error-color); }
         .error .prefix { color: var(--md-error-color); }
         .error .content { color: var(--md-error-color); font-weight: 500; }
-        .error .content code { /* Ensure code tags in error messages are styled like in help */
+        .error .content code { /* This rule should take precedence for error messages */
             background-color: rgba(211,47,47,0.1); /* Light red bg for error code */
             color: var(--md-error-color);
             padding: 2px 5px; border-radius: var(--border-radius-small);
@@ -515,8 +552,8 @@
 
             switch(role) {
                 case 'user':
-                    prefixSpan.textContent = "TU:"; // Changed for more personal feel
-                    contentSpan.textContent = text;
+                    prefixSpan.textContent = "TU:";
+                    contentSpan.textContent = text; // User input is always plain text
                     break;
                 case 'assistant':
                     prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase().replace(/-/g, ' ')}:`;
@@ -524,18 +561,22 @@
                         contentSpan.classList.add("loading-content");
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
                     } else {
-                        contentSpan.textContent = text;
+                        contentSpan.innerHTML = text; // MODIFIED: Render HTML from assistant
                     }
                     break;
                 case 'system':
                     prefixSpan.textContent = "SISTEMA:";
-                    extraClass === 'help-output' || role === 'error' ? contentSpan.innerHTML = text : contentSpan.textContent = text; // Allow HTML for help and error
+                    if (extraClass === 'help-output') { // Help output explicitly uses HTML
+                        contentSpan.innerHTML = text;
+                    } else { // Other system messages default to textContent for safety
+                        contentSpan.textContent = text;
+                    }
                     break;
-                case 'error': // Ensure error messages also use innerHTML if they contain <code> tags
+                case 'error': 
                     prefixSpan.textContent = "ERRORE!";
-                    contentSpan.innerHTML = text; // Use innerHTML for errors as they might contain <code>
+                    contentSpan.innerHTML = text; // Errors might contain HTML (e.g. <code> for file names/modes)
                     break;
-                default:
+                default: // Should not happen
                     prefixSpan.textContent = "???:";
                     contentSpan.textContent = text;
             }
@@ -543,15 +584,15 @@
             msgDiv.appendChild(prefixSpan);
             msgDiv.appendChild(contentSpan);
 
-            if (role === 'user' || role === 'assistant') { // Only add copy to user/assistant
+            if (role === 'user' || role === 'assistant') { 
                 const copyBtn = document.createElement("button");
                 copyBtn.classList.add("copy-btn");
                 copyBtn.setAttribute("title", "Copia messaggio");
-                copyBtn.textContent = "📋"; // Emoji for copy
+                copyBtn.textContent = "📋"; 
 
                 copyBtn.addEventListener("click", (e) => {
                   e.stopPropagation();
-                  const txt = contentSpan.textContent || "";
+                  const txt = contentSpan.textContent || ""; // .textContent gets plain text, good for copying
                   navigator.clipboard.writeText(txt).then(() => {
                     copyBtn.textContent = "✅";
                     setTimeout(() => (copyBtn.textContent = "📋"), 1500);
@@ -589,12 +630,11 @@
 
             const inputAreaElement = document.getElementById('inputArea');
             if (inputAreaElement) {
-                // Add a little extra padding to prevent overlap due to box-shadow or other elements
                 terminalDiv.style.paddingBottom = `${inputAreaElement.offsetHeight + 10}px`;
             }
 
             const inputAreaHeight = inputAreaElement?.offsetHeight || 70;
-            const baseOffset = window.innerWidth <= 768 ? 10 : 15; // Use the same breakpoint as CSS
+            const baseOffset = window.innerWidth <= 768 ? 10 : 15; 
             const newBottom = `${inputAreaHeight + baseOffset}px`;
 
             tokenCounterDiv.style.bottom = newBottom;
@@ -608,14 +648,13 @@
         }
 
         function populateModeSelector() {
-            modeSelector.innerHTML = ''; // Clear existing options
+            modeSelector.innerHTML = ''; 
             const sortedCharacters = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
 
             if (sortedCharacters.length > 0) {
                 sortedCharacters.forEach(char => {
                     const option = document.createElement('option');
                     option.value = char;
-                    // Prettify name for dropdown display: e.g., "estrazione-dati" -> "Estrazione Dati"
                     option.textContent = char.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                     if (char === appState.currentCharacter) {
                         option.selected = true;
@@ -641,7 +680,7 @@
                     ? "Premi Invio o ➡️ per estrarre, o aggiungi una nota..."
                     : "Allega file (PDF, PNG, JPG) per l'estrazione...";
                 if (appState.uploadedFiles.length > 0) {
-                    fileListContainer.style.display = 'flex'; // Use flex for alignment
+                    fileListContainer.style.display = 'flex'; 
                     clearFilesBtn.style.display = 'inline-block';
                 } else {
                     fileListContainer.style.display = 'none';
@@ -666,7 +705,6 @@
 
              userInput.disabled = effectivelyWaiting;
              sendButton.disabled = effectivelyWaiting;
-             // Attach button specific logic: also disabled if not in estrazione-dati mode
              attachFilesBtn.disabled = effectivelyWaiting || appState.currentCharacter !== 'estrazione-dati';
              modeSelector.disabled = effectivelyWaiting;
              helpButton.disabled = effectivelyWaiting;
@@ -677,11 +715,11 @@
              if (appState.isWaitingForAI && !isDisabledByInitFailure) {
                  userInput.placeholder = `IA sta rispondendo... (puoi usare 🛑 Stop)`;
              } else if (isDisabledByInitFailure) {
-                 // Placeholder already set to "Inizializzazione fallita. Ricarica."
+                 // Placeholder already set
              } else if (!appState.currentCharacter) {
                  userInput.placeholder = "Caricamento configurazione...";
              } else {
-                 updateInteractiveElementsUI(); // Sets placeholder based on mode
+                 updateInteractiveElementsUI(); 
              }
         }
 
@@ -748,7 +786,7 @@
             const italianReason = reasonMap[reason] || reason;
             appState.conversation = [];
             appState.currentTokenCount = 0;
-            clearUploadedFiles(); // This also calls updateInteractiveElementsUI()
+            clearUploadedFiles();
             updateTokenCounterUI();
             appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
             updateUserInteractionState(); 
@@ -769,28 +807,24 @@
                     let errorMsg = `Errore API (${response.status})`;
                     errorMsg += `: ${data?.error || response.statusText}`;
                     if (data?.details) console.error("Dettagli Errore API:", data.details);
-                    console.error("Risposta Errore API Completa:", data);
                     if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
                     if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
                     if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
                     updateTokenCounterUI();
                     const error = new Error(errorMsg);
                     error.status = response.status;
-                    error.data = data;
+                    error.data = data; 
                     throw error;
                 }
                 if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
-                     console.error("Struttura risposta API inattesa:", data);
                      throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
                 }
                 updateStateFromWorkerResponse(data);
                 return data;
             } catch (error) {
                 if (error.name === 'AbortError') {
-                    console.log("Fetch interrotto dall'utente.");
                     throw error; 
                 }
-                console.error("Errore Fetch/API:", error);
                 if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
                      const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
                      networkError.status = 0; 
@@ -816,7 +850,7 @@
                     } else {
                         appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
                     }
-                } else if (inputText !== "") { // Only show message if user typed something other than stop
+                } else if (inputText !== "") { 
                     appendMessage("user", inputText);
                     userInput.value = ""; adjustTextareaHeight();
                     appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Usa 🛑 Stop per interrompere.`);
@@ -853,10 +887,8 @@
                 commandsSorted.forEach(c => { helpOutput += `  <code>${c.desc}</code>\n`; });
                 helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b> (selezionabili dal menu a tendina o con <code>imposta modalità <nome></code>)\n";
                 const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                // MODIFIED: Show raw mode names
                 helpOutput += `  ${chars.length ? chars.map(c => `<code>${c}</code>`).join(', ') : 'Nessuna caricata'}\n\n`;
                 helpOutput += "<b>STATO ATTUALE:</b>\n";
-                // MODIFIED: Show raw current mode name
                 helpOutput += `  Modalità: ${appState.currentCharacter ? `<code>${appState.currentCharacter}</code>` : 'N/D'}\n`;
                 helpOutput += `  Modello IA:  ${appState.currentModel || 'N/D'}\n\n`;
                 helpOutput += `<b>COME CHATTARE:</b>\n`;
@@ -874,23 +906,20 @@
                      appendMessage("error", "Utilizzo: imposta modalità <nome modalità>"); return;
                 }
                 const settingValue = originalArgs.slice(2).join(' '); 
-                const characterNameLower = settingValue.toLowerCase(); // Use raw value for comparison
+                const characterNameLower = settingValue.toLowerCase(); 
                 const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
 
-                if (foundCharacter) { // foundCharacter is the raw name
+                if (foundCharacter) { 
                      if (appState.currentCharacter !== foundCharacter) {
                          appState.currentCharacter = foundCharacter; 
                          modeSelector.value = foundCharacter; 
-                         // MODIFIED: Show raw mode name in confirmation
                          appendMessage("system", `Modalità impostata su: <code>${foundCharacter}</code>.`);
                          resetConversationState('character change');
                      } else {
-                          // MODIFIED: Show raw mode name in confirmation
                           appendMessage("system", `La modalità è già: <code>${foundCharacter}</code>.`);
                      }
                 } else {
                      const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     // MODIFIED: Show raw mode names in error message
                      const availableModesString = sortedChars.length ? sortedChars.map(c => `<code>${c}</code>`).join(', ') : 'Nessuna';
                      appendMessage("error", `Modalità '<code>${settingValue}</code>' non trovata. Disponibili: ${availableModesString}`);
                 }
@@ -915,7 +944,7 @@
                     appState.uploadedFiles.forEach(file => {
                         if (file.type.startsWith('image/')) {
                             userMessageContentArray.push({ type: "image_url", image_url: { url: file.dataUrl } });
-                        } else if (file.type === 'application/pdf') {
+                        } else if (file.type === 'application/pdf') { 
                             userMessageContentArray.push({ type: "file", file: { filename: file.name, file_data: file.dataUrl } });
                         }
                     });
@@ -953,7 +982,7 @@
                      if (contentSpan && prefixSpan) {
                          contentSpan.classList.remove('loading-content');
                          prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase().replace(/-/g, ' ')}:`;
-                         contentSpan.textContent = result.completion;
+                         contentSpan.innerHTML = result.completion; 
                      } else { 
                          if(appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
                          appendMessage("assistant", result.completion);
@@ -984,7 +1013,7 @@
                     appendMessage("system", "Risposta IA interrotta dall'utente.");
                 } else {
                     appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
-                    if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
+                    if (error.status === 413 || (error.data && error.data.error && error.data.error.includes("Token limit reached before processing"))) { 
                         appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
                         resetConversationState('input limit');
                     }
@@ -994,7 +1023,7 @@
                 clearThinkingAnimationAndTimer(); 
                 appState.isWaitingForAI = false;
                 appState.abortController = null; 
-                if (appState.loadingMsgDiv) {
+                if (appState.loadingMsgDiv) { 
                     appState.loadingMsgDiv.remove(); 
                     appState.loadingMsgDiv = null;
                 }
@@ -1043,7 +1072,7 @@
         fileUploader.addEventListener('change', (event) => {
             const files = event.target.files;
             if (!files || files.length === 0) {
-                if (appState.uploadedFiles.length === 0) {
+                if (appState.uploadedFiles.length === 0) { 
                     fileListDisplay.textContent = "Nessuno";
                 }
                 updateInteractiveElementsUI(); return;
@@ -1060,7 +1089,7 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (!ALLOWED_MIMETYPES.includes(file.type)) {
-                    appendMessage("error", `Tipo file non supportato: ${file.name} (${file.type}). Consentiti: PDF, PNG, JPG, WEBP.`);
+                    appendMessage("error", `Tipo file non supportato: <code>${file.name}</code> (<code>${file.type}</code>). Consentiti: PDF, PNG, JPG, WEBP.`);
                     invalidFileFound = true; continue;
                 }
                 const reader = new FileReader();
@@ -1072,8 +1101,7 @@
                         resolve();
                     };
                     reader.onerror = (e) => {
-                        console.error("Errore lettura file:", file.name, e);
-                        appendMessage("error", `Errore durante la lettura del file: ${file.name}`);
+                        appendMessage("error", `Errore durante la lettura del file: <code>${file.name}</code>`);
                         reject(e);
                     };
                     reader.readAsDataURL(file);
@@ -1086,7 +1114,9 @@
                     if (appState.uploadedFiles.length > 0) {
                         const names = appState.uploadedFiles.map(f => f.name).join(', ');
                         fileListDisplay.textContent = names;
-                        appendMessage("system", `${files.length} file selezionat${files.length > 1 ? 'i' : 'o'}. Totale allegati: ${appState.uploadedFiles.length}.`);
+                        if(files.length > 0 && !invalidFileFound && (appState.uploadedFiles.length <= MAX_FILES)) { 
+                           appendMessage("system", `${files.length - (invalidFileFound ? Array.from(files).filter(f => !ALLOWED_MIMETYPES.includes(f.type)).length : 0) } file validi aggiunti. Totale allegati: ${appState.uploadedFiles.length}.`);
+                        }
                     } else if (!invalidFileFound) { 
                          fileListDisplay.textContent = "Nessuno";
                     }
@@ -1108,7 +1138,6 @@
         });
 
         resetButton.addEventListener('click', () => {
-            // No need to append a message here, resetConversationState already does
             resetConversationState('button action');
         });
 
@@ -1121,9 +1150,9 @@
         });
 
         modeSelector.addEventListener('change', (event) => {
-            const selectedMode = event.target.value; // This is the raw mode name
+            const selectedMode = event.target.value; 
             if (selectedMode && selectedMode !== appState.currentCharacter) {
-                userInput.value = `imposta modalità ${selectedMode}`; // Use raw mode name for command
+                userInput.value = `imposta modalità ${selectedMode}`; 
                 handleUserInput();
                 userInput.value = ''; 
             }
@@ -1141,7 +1170,6 @@
             try {
                 await callWorkerApi({ type: 'init' });
                 appendMessage("system", `Configurazione caricata con successo.`);
-                // MODIFIED: Show raw mode name for default mode
                 const defaultModeText = appState.currentCharacter ? `<code>${appState.currentCharacter}</code>` : 'N/D';
                 appendMessage("system", `Modalità predefinita: ${defaultModeText}. Modello IA: ${appState.currentModel || 'N/D'}.`);
                 appendMessage("system", `Digita un messaggio, usa ❓ Aiuto per i comandi o seleziona una modalità.`);
