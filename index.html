@@ -577,8 +577,13 @@
             userInput.style.height = newHeight + 'px';
 
             const inputAreaElement = document.getElementById('inputArea');
-            const inputAreaHeight = inputAreaElement?.offsetHeight || 70; // Approximate default if not rendered
-            const baseOffset = window.innerWidth <= 768 ? 10 : 15;
+            if (inputAreaElement) {
+                // MODIFIED: Increased padding from +10 to +30 for more space
+                terminalDiv.style.paddingBottom = `${inputAreaElement.offsetHeight + 30}px`; 
+            }
+
+            const inputAreaHeight = inputAreaElement?.offsetHeight || 70; 
+            const baseOffset = window.innerWidth <= 768 ? 10 : 15; 
             const newBottom = `${inputAreaHeight + baseOffset}px`;
 
             tokenCounterDiv.style.bottom = newBottom;
