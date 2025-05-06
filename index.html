@@ -846,8 +846,8 @@
                 helpOutput += `  ${chars.length ? chars.map(c => `${c}`).join(', ') : 'Nessuna caricata'}\n\n`;
                 
                 helpOutput += "STATO ATTUALE:\n";
-                helpOutput += `  Modalità: ${appState.currentCharacter ? `${appState.currentCharacter}` : 'N/D'}\n`;
-                helpOutput += `  Modello IA:  ${appState.currentModel || 'N/D'}\n\n`;
+                helpOutput += `  Modalità: ${appState.currentCharacter ? `${appState.currentCharacter}` : 'N/D'}\n\n`;
+                // helpOutput += `  Modello IA:  ${appState.currentModel || 'N/D'}\n\n`; // <-- MODIFICATION: AI Model display removed
                 
                 helpOutput += "COME CHATTARE:\n";
                 helpOutput += "  • Scrivi il tuo messaggio e premi Invio o il pulsante ➡️.\n";
@@ -1130,7 +1130,7 @@
                 await callWorkerApi({ type: 'init' });
                 appendMessage("system", `Configurazione caricata con successo.`);
                 const defaultModeText = appState.currentCharacter ? appState.currentCharacter : 'N/D';
-                appendMessage("system", `Modalità predefinita: ${defaultModeText}. Modello IA: ${appState.currentModel || 'N/D'}.`);
+                appendMessage("system", `Modalità predefinita: ${defaultModeText}.`); // <-- MODIFICATION: AI Model display removed
                 appendMessage("system", `Digita un messaggio, usa ❓ Aiuto per i comandi o seleziona una modalità.`);
             } catch (error) {
                 appendMessage("error", `Inizializzazione fallita: ${error.message}`);
