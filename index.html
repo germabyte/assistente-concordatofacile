@@ -1075,7 +1075,7 @@
                     if (appState.uploadedFiles.length > 0) {
                         const names = appState.uploadedFiles.map(f => f.name).join(', ');
                         fileListDisplay.textContent = names;
-                        appendMessage("system", `${files.length} file selezionat${files.length > 1 ? 'i' : 'o'}. Totale allegati: ${appState.uploadedFiles.length}.`);
+                        appendMessage("system", `Totale allegati: ${appState.uploadedFiles.length}.`);
                     } else if (!invalidFileFound) { 
                          fileListDisplay.textContent = "Nessuno";
                     }
