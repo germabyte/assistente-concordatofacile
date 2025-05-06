@@ -6,7 +6,6 @@
 	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        /* --- palette, tipografia, layout: immutati --- */
         :root {
           --bg-color: #f8f9fa;
           --text-color: #343a40;
@@ -32,98 +31,327 @@
           --padding-mobile: 12px;
           --border-radius-base: 10px;
         }
-        *,*::before,*::after{box-sizing:border-box;}
 
-        html{font-size:var(--font-size-base);}
-        body{
-          background-color:var(--bg-color);
-          color:var(--text-color);
-          font-family:var(--font-family);
-          margin:0;
-          padding:0;
-          display:flex;
-          flex-direction:column;
-          height:100vh;height:100dvh;
-          overflow:hidden;
+        *, *::before, *::after {
+          box-sizing: border-box;
         }
 
-        main#terminal{
-          flex-grow:1;
-		  padding:var(--padding-base) var(--padding-base) 75px var(--padding-base);
-          overflow-y:auto;
-          white-space:pre-wrap;word-wrap:break-word;
-          line-height:var(--line-height);
-        }
-        main#terminal::-webkit-scrollbar{width:10px;}
-        main#terminal::-webkit-scrollbar-track{background:var(--scrollbar-track-color);}
-        main#terminal::-webkit-scrollbar-thumb{background-color:var(--scrollbar-thumb-color);border-radius:5px;border:2px solid var(--scrollbar-track-color);}
-        main#terminal::-webkit-scrollbar-thumb:hover{background-color:#adb5bd;}
-        main#terminal{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb-color) var(--scrollbar-track-color);}
-
-        footer#inputArea{
-          display:flex;align-items:stretch;
-          background-color:var(--input-bg-color);
-          padding:calc(var(--padding-base)/1.5) var(--padding-base);
-          border-top:1px solid var(--border-color);
-          box-shadow:0 -2px 10px rgba(0,0,0,.05);
-          flex-shrink:0;position:relative;z-index:10;
+        html {
+          font-size: var(--font-size-base);
         }
 
-        /* --- PULSANTE ALLEGATI (nuovo) --- */
-        #attachBtn{
-          display:none;                 /* reso visibile solo in modalità estrazione‑dati */
-          border:none;background:transparent;
-          font-size:1.4em;line-height:1;
-          cursor:pointer;
-          margin-right:8px;
-          color:var(--prompt-color);
-        }
-        #attachBtn:hover{opacity:.7;}
-
-        #tokenCounter{
-          position:fixed;bottom:80px;right:20px;
-          background-color:rgba(255,255,255,.85);color:var(--text-color);
-          padding:6px 12px;border:1px solid var(--border-color);
-          border-radius:var(--border-radius-base);
-          z-index:1000;font-family:var(--font-family);font-size:14px;
-          backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
-          transition:bottom .2s ease-out;
+        body {
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          font-family: var(--font-family);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
         }
 
-        /* --- messaggi, textarea etc.: inalterati --- */
-        .message{position:relative;margin-bottom:calc(var(--padding-base)*.8);display:flex;flex-direction:column;align-items:flex-start;padding:calc(var(--padding-base)/1.2);border-radius:var(--border-radius-base);max-width:95%;}
-        .prefix{font-weight:bold;flex-shrink:0;margin-bottom:.3em;user-select:none;white-space:pre;font-size:.9em;opacity:.9;}
-        .content{flex-grow:1;word-break:break-word;}
-        .user .prefix{color:var(--user-prefix-color);} .user .content{color:var(--text-color);} .user{background-color:rgba(0,123,255,.08);align-self:flex-end;}
-        .assistant .prefix{color:var(--assistant-color);} .assistant .content{color:var(--text-color);} .assistant{background-color:rgba(111,66,193,.08);align-self:flex-start;}
-        .system .prefix{color:var(--system-color);} .system .content{color:var(--system-color);opacity:.9;} .system{background-color:rgba(108,117,125,.08);font-size:.95em;align-self:center;max-width:90%;text-align:center;}
-        .system.help-output{text-align:left;align-self:flex-start;max-width:95%;background-color:rgba(108,117,125,.08);}
-        .system.help-output .prefix,.system.help-output .content{color:var(--command-color);opacity:1;}
-		.system.help-output .content a{color:var(--assistant-color);text-decoration:underline;}
-		.system.help-output code{background-color:rgba(0,0,0,.05);color:var(--text-color);padding:2px 5px;border-radius:4px;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:.9em;border:1px solid var(--border-color);}
-        .error .prefix{color:var(--error-color);} .error .content{color:var(--error-color);font-weight:bold;} .error{background-color:rgba(220,53,69,.08);align-self:center;text-align:center;max-width:90%;}
-        #prompt{color:var(--prompt-color);margin-right:.6em;font-weight:bold;line-height:var(--line-height);padding:calc(var(--padding-base)/2.5) 0;user-select:none;align-self:flex-start;padding-top:10px;}
-        #userInput{flex-grow:1;background-color:transparent;border:none;outline:none;color:var(--text-color);font-family:var(--font-family);font-size:inherit;line-height:var(--line-height);padding:calc(var(--padding-base)/2.5) 0;caret-color:var(--prompt-color);resize:none;overflow-y:hidden;min-height:calc(var(--line-height)*1em + (var(--padding-base)/2.5)*2 + 4px);}
-        #userInput::placeholder{color:#999;font-style:italic;opacity:.8;} #userInput:disabled{cursor:not-allowed;opacity:.6;}
-
-        .loading-content{display:inline-flex;align-items:baseline;}
-        .thinking-timer-span{margin-left:8px;font-size:.9em;opacity:.8;color:var(--system-color);white-space:nowrap;}
-
-        @media (max-width:600px){
-          html{font-size:var(--font-size-mobile);}
-		  main#terminal{padding:var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);}
-          footer#inputArea{padding:calc(var(--padding-mobile)/1.2) var(--padding-mobile);}
-          #attachBtn{font-size:1.2em;margin-right:6px;}
-          #prompt{padding:calc(var(--padding-mobile)/2) 0;padding-top:8px;}
-          #userInput{padding:calc(var(--padding-mobile)/2) 0;min-height:calc(var(--line-height)*1em + var(--padding-mobile));}
-          .message{margin-bottom:calc(var(--padding-mobile)*1.2);}
-          .message.user,.message.assistant,.message.system,.message.error{padding:calc(var(--padding-mobile)*1.1);}
-          main#terminal::-webkit-scrollbar{width:8px;} main#terminal::-webkit-scrollbar-thumb{border-width:1px;}
-          #tokenCounter{bottom:70px;right:15px;font-size:13px;padding:5px 10px;}
-          .message{max-width:100%;}.system,.error{max-width:95%;}
+        main#terminal {
+          flex-grow: 1;
+		  padding: var(--padding-base) var(--padding-base) 75px var(--padding-base);
+          overflow-y: auto;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          line-height: var(--line-height);
         }
 
-		/* scroll toggle, copy‑btn: inalterati */
+        main#terminal::-webkit-scrollbar { width: 10px; }
+        main#terminal::-webkit-scrollbar-track { background: var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb-color); border-radius: 5px; border: 2px solid var(--scrollbar-track-color); }
+        main#terminal::-webkit-scrollbar-thumb:hover { background-color: #adb5bd; }
+        main#terminal { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); }
+
+        footer#inputArea {
+          display: flex;
+          align-items: stretch; /* Changed from 'flex-end' to 'stretch' for vertical alignment of items */
+          background-color: var(--input-bg-color);
+          padding: calc(var(--padding-base) / 1.5) var(--padding-base);
+          border-top: 1px solid var(--border-color);
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+          flex-shrink: 0;
+          position: relative;
+          z-index: 10;
+        }
+
+        #attachmentButton {
+            align-self: center; /* Aligns button vertically in the center */
+            margin-right: 8px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 32px; /* Slightly smaller */
+            height: 32px; /* Slightly smaller */
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 30px; /* Adjust for vertical centering of icon */
+            color: #333;
+            flex-shrink: 0;
+        }
+        #attachmentButton:hover {
+            background-color: #e0e0e0;
+        }
+
+        #inputControlsContainer { /* Wraps file preview, prompt, and textarea */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevents file preview from pushing things around too much */
+        }
+
+        #filePreviewArea {
+            font-size: 0.75em; /* Smaller font for file names */
+            max-height: 38px; /* Max 2 lines of typical file names */
+            overflow-y: auto;
+            margin-bottom: 3px;
+            color: #555;
+            line-height: 1.3;
+        }
+        #filePreviewArea ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex; /* Allow files to wrap if many are short */
+            flex-wrap: wrap;
+        }
+        #filePreviewArea li {
+            background-color: #e9ecef;
+            padding: 2px 5px;
+            margin-right: 4px;
+            margin-bottom: 2px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        #filePreviewArea .remove-file-btn {
+            margin-left: 4px;
+            border: none;
+            background: transparent;
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 1.1em;
+            padding:0;
+            line-height: 1;
+        }
+
+
+        #promptAndInputLine { /* Contains prompt and textarea */
+            display: flex;
+            align-items: stretch; /* Ensures textarea stretches vertically if needed */
+        }
+
+
+        #tokenCounter {
+          position: fixed;
+          bottom: 80px;
+          right: 20px;
+          background-color: rgba(255, 255, 255, 0.85);
+          color: var(--text-color);
+          padding: 6px 12px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius-base);
+          z-index: 1000;
+          font-family: var(--font-family);
+          font-size: 14px;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          transition: bottom 0.2s ease-out;
+        }
+
+        .message {
+          position: relative;
+		  margin-bottom: calc(var(--padding-base) * 0.8);
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: calc(var(--padding-base) / 1.2);
+          border-radius: var(--border-radius-base);
+          max-width: 95%;
+        }
+
+        .prefix {
+          font-weight: bold;
+          flex-shrink: 0;
+          margin-bottom: 0.3em;
+          user-select: none;
+          white-space: pre;
+          font-size: 0.9em;
+          opacity: 0.9;
+        }
+
+        .content {
+          flex-grow: 1;
+          word-break: break-word;
+        }
+        .content ul, .content ol { /* Ensure lists in messages are styled well */
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            padding-left: 2em; /* Indent list items */
+        }
+        .content li {
+            margin-bottom: 0.25em;
+        }
+
+
+        .user .prefix { color: var(--user-prefix-color); }
+        .user .content { color: var(--text-color); }
+        .user { background-color: rgba(0, 123, 255, 0.08); align-self: flex-end; }
+
+        .assistant .prefix { color: var(--assistant-color); }
+        .assistant .content { color: var(--text-color); }
+        .assistant { background-color: rgba(111, 66, 193, 0.08); align-self: flex-start; }
+
+        .system .prefix { color: var(--system-color); }
+        .system .content { color: var(--system-color); opacity: 0.9; }
+        .system { background-color: rgba(108, 117, 125, 0.08); font-size: 0.95em; align-self: center; max-width: 90%; text-align: center; }
+
+        .system.help-output {
+            text-align: left;
+            align-self: flex-start;
+            max-width: 95%;
+            background-color: rgba(108, 117, 125, 0.08);
+        }
+        .system.help-output .prefix,
+        .system.help-output .content {
+            color: var(--command-color);
+            opacity: 1;
+        }
+		.system.help-output .content a {
+			color: var(--assistant-color);
+			text-decoration: underline;
+		}
+		.system.help-output code {
+			background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+			padding: 2px 5px;
+			border-radius: 4px;
+			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+			font-size: 0.9em;
+            border: 1px solid var(--border-color);
+		}
+
+        .error .prefix { color: var(--error-color); }
+        .error .content { color: var(--error-color); font-weight: bold; }
+        .error { background-color: rgba(220, 53, 69, 0.08); align-self: center; text-align: center; max-width: 90%; }
+
+        #prompt {
+          color: var(--prompt-color);
+          margin-right: 0.6em;
+          font-weight: bold;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          user-select: none;
+          align-self: flex-start; /* Changed to flex-start for alignment with textarea */
+          /* padding-top: 10px; */ /* Original from your code, let's use the calc one */
+        }
+
+        #userInput {
+          flex-grow: 1;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: var(--text-color);
+          font-family: var(--font-family);
+          font-size: inherit;
+          line-height: var(--line-height);
+          padding: calc(var(--padding-base) / 2.5) 0;
+          caret-color: var(--prompt-color);
+          resize: none;
+          overflow-y: hidden;
+          min-height: calc(var(--line-height) * 1em + (var(--padding-base) / 2.5) * 2 + 4px);
+        }
+        #userInput::placeholder { color: #999; font-style: italic; opacity: 0.8; }
+        #userInput:disabled { cursor: not-allowed; opacity: 0.6; }
+
+        .loading-content {
+            display: inline-flex;
+            align-items: baseline;
+        }
+
+        .thinking-timer-span {
+            margin-left: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: var(--system-color);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+          html { font-size: var(--font-size-mobile); }
+		  main#terminal {
+            padding: var(--padding-mobile) var(--padding-mobile) 70px var(--padding-mobile);
+          }
+          footer#inputArea { padding: calc(var(--padding-mobile) / 1.2) var(--padding-mobile); }
+          #prompt { padding: calc(var(--padding-mobile) / 2) 0; /* padding-top: 8px; */ }
+          #userInput { padding: calc(var(--padding-mobile) / 2) 0; min-height: calc(var(--line-height) * 1em + var(--padding-mobile)); }
+          .message { margin-bottom: calc(var(--padding-mobile) * 1.2); }
+          .message.user, .message.assistant, .message.system, .message.error { padding: calc(var(--padding-mobile) * 1.1); }
+          main#terminal::-webkit-scrollbar { width: 8px; }
+          main#terminal::-webkit-scrollbar-thumb { border-width: 1px; }
+          #tokenCounter { bottom: 70px; right: 15px; font-size: 13px; padding: 5px 10px; }
+          .message { max-width: 100%; }
+          .system, .error { max-width: 95%; }
+          #attachmentButton { width: 28px; height: 28px; font-size: 16px; line-height: 26px; margin-right: 6px;}
+          #filePreviewArea { max-height: 36px; font-size: 0.7em; }
+        }
+
+		.floatingToggle {
+		  position: fixed;
+		  bottom: 80px;
+		  left: 20px;
+		  background-color: rgba(255, 255, 255, 0.85);
+		  color: var(--text-color);
+		  padding: 6px 12px;
+		  border: 1px solid var(--border-color);
+		  border-radius: var(--border-radius-base);
+		  z-index: 1000;
+		  font-family: var(--font-family);
+		  font-size: 14px;
+		  backdrop-filter: blur(3px);
+		  -webkit-backdrop-filter: blur(3px);
+		  transition: bottom 0.2s ease-out;
+		  cursor: pointer;
+		  user-select: none;
+		}
+
+		@media (max-width: 600px) {
+		  #scrollToggle {
+			bottom: 70px;
+			left: 15px;
+			font-size: 13px;
+            padding: 5px 10px;
+		  }
+		}
+
+		.copy-btn {
+		  position: absolute;
+		  top: 6px;
+		  right: 6px;
+		  border: none;
+		  background: rgba(0,0,0,0.05);
+		  color: var(--highlight-color);
+          padding: 3px 6px;
+          border-radius: 4px;
+		  font-family: var(--font-family);
+		  font-size: 0.75em;
+		  cursor: pointer;
+		  opacity: 0;
+		  user-select: none;
+		  transition: opacity 0.15s ease-in, background-color 0.15s ease-in;
+          line-height: 1.2;
+          text-align: center;
+		}
+		.message:hover .copy-btn { opacity: 0.7; }
+        .copy-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
+		.copy-btn:focus { outline: none; }
 
     </style>
 </head>
@@ -131,15 +359,17 @@
     <main id="terminal"></main>
     <div id="tokenCounter">Token: 0</div>
 	<div id="scrollToggle" class="floatingToggle">🔽 Scroll Automatico: ON</div>
-
-    <!-- INPUT AREA -->
     <footer id="inputArea">
-        <!-- pulsante allegati (visibile solo in modalità estrazione‑dati) -->
-        <button id="attachBtn" title="Allega file">📎</button>
-        <!-- input file nascosto -->
-        <input id="fileUploader" type="file" accept=".pdf,.png,.jpg,.jpeg,image/*,application/pdf" multiple style="display:none;">
-        <span id="prompt">></span>
-        <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
+        <button id="attachmentButton" title="Allega file (max 15)" style="display:none;">📎</button>
+        <input type="file" id="fileUploader" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" style="display:none;">
+        
+        <div id="inputControlsContainer">
+            <div id="filePreviewArea"></div>
+            <div id="promptAndInputLine">
+                <span id="prompt">></span>
+                <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
+            </div>
+        </div>
     </footer>
 
     <script>
@@ -148,24 +378,21 @@
 		const COMMAND_INFO = [
 		  { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
 		  { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-		  { name: "imposta modalità", desc: "imposta modalità &lt;nome&gt; - Cambia la modalità IA (reimposta contesto)." },
+		  { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (reimposta contesto)." },
 		  { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." }
 		];
+        const ESTRAZIONE_DATI_MODE_NAME = "estrazione-dati"; // For easy reference
 
-        const terminalDiv   = document.getElementById("terminal");
-        const userInput     = document.getElementById("userInput");
+        const terminalDiv = document.getElementById("terminal");
+        const userInput = document.getElementById("userInput");
         const tokenCounterDiv = document.getElementById("tokenCounter");
-        const attachBtn     = document.getElementById("attachBtn");
-        const fileUploader  = document.getElementById("fileUploader");
-
-		let autoScrollEnabled = true;
-		const scrollToggleDiv = document.getElementById("scrollToggle");
-		scrollToggleDiv.addEventListener("click", () => {
-		  autoScrollEnabled = !autoScrollEnabled;
-		  scrollToggleDiv.textContent = autoScrollEnabled ? "🔽 Scroll Automatico: ON" : "⏸️ Scroll Automatico: OFF";
-		});
-
+        const scrollToggleDiv = document.getElementById("scrollToggle");
         const promptSpan = document.getElementById("prompt");
+
+        const attachmentButton = document.getElementById('attachmentButton');
+        const fileUploader = document.getElementById('fileUploader');
+        const filePreviewArea = document.getElementById('filePreviewArea');
+
 
         const appState = {
             conversation: [],
@@ -182,305 +409,634 @@
             thinkingStartTime: null,
             abortController: null,
             loadingMsgDiv: null,
-            /* --- nuovi flag per allegati --- */
-            pendingFiles: []          // File oggetti in attesa di essere inviati
+            uploadedFiles: [], // Stores { name: string, type: string, dataUrl: string }
         };
 
-        /* ---------- HELPER ALLEGATI ---------- */
-        function updateAttachmentUI(){
-            if (appState.currentCharacter && appState.currentCharacter.toLowerCase()==="estrazione-dati"){
-                attachBtn.style.display = "inline-block";
-                userInput.placeholder = appState.isWaitingForAI
-                    ? `Digita 'stop' per interrompere`
-                    : `Scrivi un messaggio o premi 📎 per allegare (max 15 file)`;
-            }else{
-                attachBtn.style.display = "none";
-            }
+		let autoScrollEnabled = true;
+		scrollToggleDiv.addEventListener("click", () => {
+		  autoScrollEnabled = !autoScrollEnabled;
+		  scrollToggleDiv.textContent = autoScrollEnabled
+			? "🔽 Scroll Automatico: ON"
+			: "⏸️ Scroll Automatico: OFF";
+		});
+
+        function formatTokenCount(num) {
+            if (num === undefined || num === null) return '?';
+            if (num < 1000) return num.toString();
+            return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
         }
-        function fileToDataURL(file){
-            return new Promise((resolve,reject)=>{
-                const reader=new FileReader();
-                reader.onload=()=>resolve(reader.result);
-                reader.onerror=reject;
-                reader.readAsDataURL(file);
-            });
-        }
-        attachBtn.addEventListener("click",()=>fileUploader.click());
-        fileUploader.addEventListener("change",(e)=>{
-            const sel=[...e.target.files];
-            if (!sel.length) return;
-            if (appState.pendingFiles.length + sel.length > 15){
-                appendMessage("error", "È possibile allegare al massimo 15 file alla volta.");
-                fileUploader.value="";
-                return;
+
+        function appendMessage(role, text, isLoading = false, extraClass = null, overridePrefix = null) {
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", role);
+
+            if (extraClass) {
+                msgDiv.classList.add(extraClass);
             }
-            sel.forEach(f=>appState.pendingFiles.push(f));
-            appendMessage("system", `${sel.length} file aggiunti alla coda (${appState.pendingFiles.length}/15).`);
-            fileUploader.value="";
-        });
 
-        /* ------------------------------------- */
+            const prefixSpan = document.createElement("span");
+            prefixSpan.classList.add("prefix");
 
-        function formatTokenCount(num){ if(num===undefined||num===null) return'?'; if(num<1000) return num.toString(); return (num/1000).toFixed(1).replace(/\.0$/,'')+"k";}
+            const contentSpan = document.createElement("span");
+            contentSpan.classList.add("content");
 
-        /* appendMessage, scrollToBottom etc. INVARIATI */
-
-        function appendMessage(role,text,isLoading=false,extraClass=null,overridePrefix=null){
-            const msgDiv=document.createElement("div");msgDiv.classList.add("message",role);
-            if(extraClass)msgDiv.classList.add(extraClass);
-            const prefixSpan=document.createElement("span");prefixSpan.classList.add("prefix");
-            const contentSpan=document.createElement("span");contentSpan.classList.add("content");
-            switch(role){
+            switch(role) {
                 case 'user':
-                    prefixSpan.textContent="UTENTE:";
-                    contentSpan.textContent=text;
+                    prefixSpan.textContent = "UTENTE:";
+                    // If text is an array (for multimodal), extract the text part for display
+                    if (Array.isArray(text)) {
+                        const textPart = text.find(item => item.type === 'text');
+                        contentSpan.textContent = textPart ? textPart.text : "[Contenuto multimediale]";
+                        // Optionally, list file names if files were sent
+                        const filesPart = text.filter(item => item.type === 'image_url' || item.type === 'file');
+                        if (filesPart.length > 0) {
+                            let fileList = "\nAllegati: ";
+                            filesPart.forEach(fp => {
+                                if(fp.type === 'file') fileList += fp.file.filename + "; ";
+                                else if (fp.type === 'image_url') { // Heuristic to get a name
+                                    const url = fp.image_url.url;
+                                    if (url.startsWith("data:")) fileList += "immagine locale; ";
+                                    else fileList += url.substring(url.lastIndexOf('/') + 1) + "; ";
+                                }
+                            });
+                            contentSpan.textContent += fileList.slice(0, -2);
+                        }
+                    } else {
+                        contentSpan.textContent = text;
+                    }
                     break;
                 case 'assistant':
-                    prefixSpan.textContent=overridePrefix ?? `${(appState.currentCharacter||'IA').toUpperCase()}:`;
-                    if(isLoading){
+                    prefixSpan.textContent = overridePrefix ?? `${(appState.currentCharacter || 'IA').toUpperCase()}:`;
+                    if (isLoading) {
                         contentSpan.classList.add("loading-content");
-                        contentSpan.innerHTML=`<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
-                    }else{contentSpan.textContent=text;}
+                        contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
+                    } else {
+                        // Render HTML content if needed, e.g. for lists from LLM
+                        // For safety, this should be sanitized if from untrusted source or use a markdown parser
+                        contentSpan.innerHTML = text; // Assuming LLM output is safe or will be parsed
+                    }
                     break;
 				case 'system':
-					prefixSpan.textContent="SISTEMA:";
-					extraClass==='help-output'?contentSpan.innerHTML=text:contentSpan.textContent=text;
+					prefixSpan.textContent = "SISTEMA:";
+					extraClass === 'help-output' ? contentSpan.innerHTML = text : contentSpan.textContent = text;
 					break;
                 case 'error':
-                    prefixSpan.textContent="ERRORE!";
-                    contentSpan.textContent=text;
+                    prefixSpan.textContent = "ERRORE!";
+                    contentSpan.textContent = text;
                     break;
                 default:
-                    prefixSpan.textContent="???:";contentSpan.textContent=text;
+                    prefixSpan.textContent = "???:";
+                    contentSpan.textContent = text;
+                    break;
             }
-			msgDiv.appendChild(prefixSpan);msgDiv.appendChild(contentSpan);
-			const copyBtn=document.createElement("button");copyBtn.classList.add("copy-btn");copyBtn.setAttribute("title","Copia questo messaggio");copyBtn.textContent="Copia";
-			copyBtn.addEventListener("click",(e)=>{e.stopPropagation();const txt=contentSpan.textContent||"";navigator.clipboard.writeText(txt).then(()=>{copyBtn.textContent="Copiato!";setTimeout(()=>copyBtn.textContent="Copia",1500);}).catch(()=>{copyBtn.textContent="Errore";setTimeout(()=>copyBtn.textContent="Copia",1500);});});
+
+			msgDiv.appendChild(prefixSpan);
+			msgDiv.appendChild(contentSpan);
+
+			const copyBtn = document.createElement("button");
+			copyBtn.classList.add("copy-btn");
+			copyBtn.setAttribute("title", "Copia questo messaggio");
+			copyBtn.textContent = "Copia";
+
+			copyBtn.addEventListener("click", (e) => {
+			  e.stopPropagation();
+			  const txt = contentSpan.textContent || ""; // Or innerText for better representation
+			  navigator.clipboard.writeText(txt).then(() => {
+				copyBtn.textContent = "Copiato!";
+				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
+			  }).catch(() => {
+				copyBtn.textContent = "Errore";
+				setTimeout(() => (copyBtn.textContent = "Copia"), 1500);
+			  });
+			});
+
 			msgDiv.appendChild(copyBtn);
-			terminalDiv.appendChild(msgDiv);scrollToBottom();return msgDiv;
+
+			terminalDiv.appendChild(msgDiv);
+			scrollToBottom();
+			return msgDiv;
 		}
-        function scrollToBottom(){if(!autoScrollEnabled)return;requestAnimationFrame(()=>{terminalDiv.scrollTo({top:terminalDiv.scrollHeight,behavior:'smooth'});});}
 
-        /* adjustTextareaHeight, start/clear thinking, etc. INVARIATI */
+		function scrollToBottom() {
+		  if (!autoScrollEnabled) return;
+		  requestAnimationFrame(() => {
+			terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
+		  });
+		}
 
-        function updatePromptUI(){promptSpan.textContent="> ";updateAttachmentUI();}
-        function updateTokenCounterUI(){const countStr=formatTokenCount(appState.currentTokenCount);const limitStr=formatTokenCount(appState.currentTokenLimit);tokenCounterDiv.textContent=`Token: ${countStr}${appState.currentTokenLimit!==null?'/'+limitStr:''}`;}
+        function adjustTextareaHeight() {
+            userInput.style.height = 'auto';
+            let newHeight = userInput.scrollHeight;
+            const maxHeight = 180; // Max height for textarea
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                userInput.style.overflowY = 'auto';
+            } else {
+                userInput.style.overflowY = 'hidden';
+            }
+            userInput.style.height = newHeight + 'px';
 
-        function updateUserInteractionState(){
-             const isDisabled=userInput.placeholder==="Inizializzazione fallita. Ricarica.";
-             userInput.disabled=isDisabled;
-             if(appState.isWaitingForAI){
-                 userInput.placeholder=`Digita 'stop' per interrompere`;
-             }else if(isDisabled){
-                 /* lascia disabled */
-             }else if(!appState.currentCharacter){
-                 userInput.placeholder="Caricamento config...";
-             }else if(appState.currentCharacter.toLowerCase()==="estrazione-dati"){
-                 userInput.placeholder=`Scrivi un messaggio o premi 📎 per allegare (max 15 file)`;
-             }else{
-                 userInput.placeholder=`Chiedi all'IA...`;
+            // Adjust overall input area related elements
+            const inputArea = document.getElementById('inputArea');
+            if (inputArea) {
+              const inputAreaHeight = inputArea.offsetHeight;
+              const newBottom = `${inputAreaHeight + 15}px`; // 15px is some spacing
+              tokenCounterDiv.style.bottom = newBottom;
+              scrollToggleDiv.style.bottom = newBottom;
+            }
+        }
+
+		function updateTokenCounterUI() {
+			const countStr = formatTokenCount(appState.currentTokenCount);
+			const limitStr = formatTokenCount(appState.currentTokenLimit);
+			tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
+		}
+
+        function updatePromptUI() {
+            promptSpan.textContent = "> ";
+        }
+
+        function updateUserInteractionState() {
+             const isDisabled = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
+             userInput.disabled = isDisabled;
+
+             if (appState.isWaitingForAI) {
+                 userInput.placeholder = `Digita 'stop' per interrompere`;
+             } else if (isDisabled) {
+                 // Keep disabled placeholder
+             } else if (!appState.currentCharacter) {
+                 userInput.placeholder = "Caricamento config...";
+             } else {
+                 userInput.placeholder = `Chiedi all'IA...`;
              }
              adjustTextareaHeight();
         }
 
-        function updateStateFromWorkerResponse(data){
-            if(data.activeCharacter) appState.currentCharacter=data.activeCharacter;
-            if(data.activeModel)     appState.currentModel=data.activeModel;
-            if(data.availableCharacters) appState.availableCharacters=data.availableCharacters;
-            if(typeof data.tokenCount==='number') appState.currentTokenCount=data.tokenCount;
-            if(typeof data.tokenLimit==='number') appState.currentTokenLimit=data.tokenLimit;
-            updateTokenCounterUI();updatePromptUI();
+        function startThinkingAnimationAndTimer() {
+            if (!appState.loadingMsgDiv) return;
+            const dotsSpan = appState.loadingMsgDiv.querySelector('.thinking-dots-span');
+            const timerSpan = appState.loadingMsgDiv.querySelector('.thinking-timer-span');
+            if (!dotsSpan || !timerSpan) return;
+            let dotCount = 1;
+            appState.thinkingIntervalId = setInterval(() => {
+                dotCount = (dotCount % 3) + 1;
+                dotsSpan.textContent = "Sto pensando" + ".".repeat(dotCount);
+            }, 400);
+            appState.thinkingStartTime = Date.now();
+            timerSpan.textContent = `(0.0s)`;
+            appState.timerIntervalId = setInterval(() => {
+                const elapsedMilliseconds = Date.now() - appState.thinkingStartTime;
+                const elapsedSecondsFormatted = (elapsedMilliseconds / 1000).toFixed(1);
+                timerSpan.textContent = `(${elapsedSecondsFormatted}s)`;
+            }, 100);
         }
 
-        /* resetConversationState: aggiunto svuota pendingFiles */
-        function resetConversationState(reason){
-            const reasonMap={'user command':'comando utente','character change':'cambio modalità','token limit':'limite token','input limit':'limite input'};
-            const italianReason=reasonMap[reason]||reason;
-            appState.conversation=[];appState.currentTokenCount=0;appState.pendingFiles=[];
+        function clearThinkingAnimationAndTimer() {
+            if (appState.thinkingIntervalId) clearInterval(appState.thinkingIntervalId);
+            if (appState.timerIntervalId) clearInterval(appState.timerIntervalId);
+            appState.thinkingIntervalId = null;
+            appState.timerIntervalId = null;
+            appState.thinkingStartTime = null;
+            if (appState.loadingMsgDiv) {
+                const contentSpan = appState.loadingMsgDiv.querySelector('.content');
+                if (contentSpan) contentSpan.classList.remove('loading-content');
+            }
+        }
+
+        function updateStateFromWorkerResponse(data) {
+            if (data.activeCharacter) appState.currentCharacter = data.activeCharacter;
+            if (data.activeModel) appState.currentModel = data.activeModel;
+            if (data.availableCharacters) appState.availableCharacters = data.availableCharacters;
+            if (typeof data.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
+            if (typeof data.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
             updateTokenCounterUI();
-            appendMessage("system",`Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
+            updatePromptUI();
+            // Toggle attachment button based on current character
+            attachmentButton.style.display = appState.currentCharacter === ESTRAZIONE_DATI_MODE_NAME ? 'inline-block' : 'none';
+            if (appState.currentCharacter !== ESTRAZIONE_DATI_MODE_NAME) {
+                appState.uploadedFiles = [];
+                updateFilePreview();
+            }
+        }
+
+        function resetConversationState(reason) {
+            const reasonMap = {
+                'user command': 'comando utente',
+                'character change': 'cambio modalità',
+                'token limit': 'limite token',
+                'input limit': 'limite input'
+            };
+            const italianReason = reasonMap[reason] || reason;
+            appState.conversation = [];
+            appState.currentTokenCount = 0;
+            appState.uploadedFiles = []; // Clear files on reset
+            updateFilePreview();
+            updateTokenCounterUI();
+            appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
             scrollToBottom();
         }
 
-        /* ---------- FUNZIONE PRINCIPALE INPUT UTENTE ---------- */
-        async function handleUserInput(){
-            let inputText=userInput.value.trim();
-            userInput.value="";adjustTextareaHeight();
-            /* consente inviare solo file */
-            if(inputText==="" && appState.pendingFiles.length===0) return;
-
-            if(appState.isWaitingForAI){
-                if(inputText.toLowerCase()==='stop'){appendMessage("user",inputText);
-                    if(appState.abortController){appState.abortController.abort();appendMessage("system","Comando stop ricevuto. Richiesta IA interrotta.");clearThinkingAnimationAndTimer();if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove();appState.loadingMsgDiv=null;}appState.isWaitingForAI=false;appState.abortController=null;updateUserInteractionState();}
-                    else{appendMessage("error","Impossibile fermare: Nessun processo IA attivo trovato.");}
-                }else{
-                    appendMessage("user",inputText);appendMessage("system",`Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`);
-                }scrollToBottom();return;
+        async function callWorkerApi(payload, signal) {
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                    signal
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    let errorMsg = `Errore API (${response.status})`;
+                    errorMsg += `: ${data?.error || response.statusText}`;
+                    if (data?.details) console.error("Dettagli Errore API:", data.details);
+                    updateStateFromWorkerResponse(data); // Update state even on error if parts are available
+                    const error = new Error(errorMsg);
+                    error.status = response.status;
+                    error.data = data;
+                    throw error;
+                }
+                if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
+                     throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
+                }
+                updateStateFromWorkerResponse(data);
+                return data;
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log("Fetch interrotto dall'utente.");
+                    throw error;
+                }
+                console.error("Errore Fetch/API:", error);
+                if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+                     const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
+                     networkError.status = 0;
+                     throw networkError;
+                }
+                throw error;
             }
+        }
 
-            /* cronologia comandi – invariata */
-            if(appState.commandHistory.length===0||appState.commandHistory[appState.commandHistory.length-1]!==inputText){appState.commandHistory.push(inputText);}
-            appState.historyIndex=appState.commandHistory.length;
-
-            /* comandi help/reset ecc.: invariati – salto al blocco riferimento */
-            const commandArgs=inputText.toLowerCase().split(/\s+/);
-            const command=commandArgs[0];
-            const originalArgs=inputText.split(/\s+/);
-
-            if(command==='reset'){appendMessage("user",inputText);resetConversationState('user command');return;}
-            if(command==='help'){appendMessage("user",inputText);
-                /* help output unchanged */ /* ... (omesso per brevità, identico al codice precedente) ... */
-                const commandsSorted=[...COMMAND_INFO].sort((a,b)=>a.name.localeCompare(b.name,undefined,{sensitivity:"base"}));
-                let helpOutput="<b>COMANDI:</b>\n";commandsSorted.forEach(c=>{helpOutput+=`  <code>${c.desc}</code>\n`;});
-                helpOutput+="\n<b>MODALITÀ DISPONIBILI:</b>\n";
-                const chars=[...(appState.availableCharacters||[])].sort((a,b)=>a.localeCompare(b));
-                helpOutput+=`  ${chars.length?chars.join(', '):'Nessuna disponibile'}\n\n`;
-                helpOutput+="<b>STATO ATTUALE:</b>\n";helpOutput+=`  Modalità: ${appState.currentCharacter||'N/D'}\n`;helpOutput+=`  Modello:  ${appState.currentModel||'N/D'}\n\n`;
-                helpOutput+="<b>COME CHATTARE:</b>\n  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n\n";
-                appendMessage("system",helpOutput,false,"help-output");scrollToBottom();return;
+        async function handleUserInput() {
+            const inputText = userInput.value.trim();
+            if (inputText === "" && appState.uploadedFiles.length === 0) { // Only return if both are empty
+                 userInput.value = ""; // Clear just in case
+                 adjustTextareaHeight();
+                 return;
             }
-            if(command==='imposta'){appendMessage("user",inputText);
-                if(originalArgs.length<3){appendMessage("error","Utilizzo: imposta modalità <nome>");return;}
-                const settingType=commandArgs[1];const settingValue=originalArgs.slice(2).join(' ');
-                if(settingType==='modalità'){
-                    const characterNameLower=settingValue.toLowerCase();
-                    const foundCharacter=appState.availableCharacters.find(c=>c.toLowerCase()===characterNameLower);
-                    if(foundCharacter){
-                        if(appState.currentCharacter!==foundCharacter){
-                            appState.currentCharacter=foundCharacter;appendMessage("system",`Modalità impostata su: ${appState.currentCharacter}.`);
-                            resetConversationState('character change');updatePromptUI();
-                        }else{appendMessage("system",`La modalità è già impostata su: ${appState.currentCharacter}.`);}
-                    }else{
-                        const sortedChars=[...(appState.availableCharacters||[])].sort((a,b)=>a.localeCompare(b));
-                        appendMessage("error",`Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ')||'Nessuna disponibile'}`);
+            userInput.value = "";
+            adjustTextareaHeight();
+
+            if (appState.isWaitingForAI) {
+                if (inputText.toLowerCase() === 'stop') {
+                    appendMessage("user", inputText);
+                    if (appState.abortController) {
+                        appState.abortController.abort();
+                        appendMessage("system", "Comando stop ricevuto. Richiesta IA interrotta.");
+                        clearThinkingAnimationAndTimer();
+                        if (appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
+                        appState.loadingMsgDiv = null;
+                        appState.isWaitingForAI = false;
+                        appState.abortController = null;
+                        updateUserInteractionState();
+                    } else {
+                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
                     }
-                }else{appendMessage("error","Tipo di impostazione sconosciuto. Usa 'modalità'.");}
-                scrollToBottom();return;
+                } else if (inputText !== "") { // Only show error if user typed something other than stop
+                    appendMessage("user", inputText);
+                    appendMessage("system", `Input "${inputText}" ignorato: IA occupata. Digita 'stop' per interrompere.`);
+                }
+                scrollToBottom();
+                return;
             }
 
-            /* ---------- QUI COSTRUIAMO IL MESSAGGIO DA INVIARE ---------- */
-            /* testo visualizzato nel terminale (includo info allegati) */
-            const displayText = (inputText || "(documenti inviati)") +
-                (appState.pendingFiles.length ? `\n[${appState.pendingFiles.length} allegato/i]` : "");
-            appendMessage("user", displayText);
+            const fullInputToLog = (inputText !== "" || appState.uploadedFiles.length > 0) ? inputText : "";
+            if (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== fullInputToLog) {
+                 if(fullInputToLog !== "") appState.commandHistory.push(fullInputToLog); // Only push non-empty history
+            }
+            appState.historyIndex = appState.commandHistory.length;
 
-            /* costruiamo content array per OpenRouter */
-            let userContentArray=[];
-            if(inputText!=="") userContentArray.push({type:"text",text:inputText});
+            // Command handling (only if no files are attached, or make commands take precedence)
+            if (appState.uploadedFiles.length === 0 && inputText !== "") {
+                const commandArgs = inputText.toLowerCase().split(/\s+/);
+                const command = commandArgs[0];
+                const originalArgs = inputText.split(/\s+/);
 
-            if(appState.pendingFiles.length){
-                /* convertiamo ogni file in base64 → data URL */
-                for(const f of appState.pendingFiles){
-                    try{
-                        const dataURL = await fileToDataURL(f);
-                        if(f.type==="application/pdf"){
-                            userContentArray.push({type:"file",file:{filename:f.name,file_data:dataURL}});
-                        }else{
-                            userContentArray.push({type:"image_url",image_url:{url:dataURL}});
-                        }
-                    }catch(err){
-                        appendMessage("error",`Errore lettura file ${f.name}: ${err.message}`); /* continua senza interruzione */
+                if (command === 'reset') {
+                    appendMessage("user", inputText);
+                    resetConversationState('user command');
+                    return;
+                }
+                if (command === 'help') {
+                    appendMessage("user", inputText);
+                    const commandsSorted = [...COMMAND_INFO].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+                    let helpOutput = "<b>COMANDI:</b>\n";
+                    commandsSorted.forEach(c => helpOutput += `  <code>${c.desc}</code>\n`);
+                    helpOutput += "\n<b>MODALITÀ DISPONIBILI:</b>\n";
+                    const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
+                    helpOutput += `  ${chars.length ? chars.join(', ') : 'Nessuna disponibile'}\n\n`;
+                    helpOutput += "<b>STATO ATTUALE:</b>\n";
+                    helpOutput += `  Modalità: ${appState.currentCharacter || 'N/D'}\n`;
+                    helpOutput += `  Modello:  ${appState.currentModel || 'N/D'}\n\n`;
+                    helpOutput += `<b>COME CHATTARE:</b>\n`;
+                    helpOutput += "  • Scrivi semplicemente qualsiasi cosa che non sia un comando per chattare con la modalità IA corrente.\n";
+                    helpOutput += `  • In modalità '${ESTRAZIONE_DATI_MODE_NAME}', puoi allegare file usando il pulsante 📎.\n\n`;
+                    appendMessage("system", helpOutput, false, "help-output");
+                    scrollToBottom();
+                    return;
+                }
+                if (command === 'imposta' && originalArgs[1]?.toLowerCase() === 'modalità') {
+                    appendMessage("user", inputText);
+                    if (originalArgs.length < 3) {
+                         appendMessage("error", "Utilizzo: imposta modalità <nome>");
+                         return;
                     }
+                    const settingValue = originalArgs.slice(2).join(' ');
+                    const characterNameLower = settingValue.toLowerCase();
+                    const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
+
+                    if (foundCharacter) {
+                         if (appState.currentCharacter !== foundCharacter) {
+                             // Call API to switch character, backend handles reset logic
+                             appState.isWaitingForAI = true; // Simulate waiting
+                             updateUserInteractionState();
+                             callWorkerApi({ type: 'set_character', character: foundCharacter })
+                                .then(data => {
+                                    appendMessage("system", `Modalità impostata su: ${data.activeCharacter}. Contesto reimpostato.`);
+                                    // Backend response `updateStateFromWorkerResponse` already handles updating appState.currentCharacter
+                                    // and related UI like attachment button visibility.
+                                    // It also implies conversation reset on backend if character changes.
+                                    // Frontend only needs to clear its local conversation array if not implicitly handled by full state sync.
+                                    appState.conversation = []; // Explicitly clear frontend conversation history
+                                    appState.currentTokenCount = 0; // Reset token count shown locally
+                                    updateTokenCounterUI();
+                                })
+                                .catch(err => appendMessage("error", `Errore impostando modalità: ${err.message}`))
+                                .finally(() => {
+                                     appState.isWaitingForAI = false;
+                                     updateUserInteractionState();
+                                });
+                         } else {
+                              appendMessage("system", `La modalità è già impostata su: ${appState.currentCharacter}.`);
+                         }
+                    } else {
+                         const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
+                         appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${sortedChars.join(', ') || 'Nessuna disponibile'}`);
+                    }
+                    scrollToBottom();
+                    return;
                 }
             }
-            /* azzeriamo la coda allegati */
-            appState.pendingFiles=[];
 
-            /* aggiungiamo al contesto conversazione */
-            appState.conversation.push({role:"user",content:userContentArray.length===1?userContentArray[0].text:userContentArray});
+            // Prepare content for LLM
+            const messageContentList = [];
+            if (inputText !== "") {
+                messageContentList.push({ type: "text", text: inputText });
+            }
+
+            if (appState.currentCharacter === ESTRAZIONE_DATI_MODE_NAME && appState.uploadedFiles.length > 0) {
+                appState.uploadedFiles.forEach(file => {
+                    if (file.type.startsWith("image/")) { // image/jpeg, image/png, image/webp
+                        messageContentList.push({
+                            type: "image_url",
+                            image_url: { url: file.dataUrl }
+                        });
+                    } else if (file.type === "application/pdf") {
+                        messageContentList.push({
+                            type: "file",
+                            file: {
+                                filename: file.name,
+                                file_data: file.dataUrl
+                            }
+                        });
+                    }
+                });
+            }
+            
+            if (messageContentList.length === 0) return; // Nothing to send
+
+            appendMessage("user", messageContentList.length === 1 && messageContentList[0].type === "text" ? messageContentList[0].text : messageContentList);
+            appState.conversation.push({ role: "user", content: messageContentList });
             scrollToBottom();
 
-            /* parte richiesta AI */
-            appState.isWaitingForAI=true;
-            appState.loadingMsgDiv = appendMessage("assistant","",true);
+            // Clear uploaded files from preview and state after they are added to conversation
+            if (appState.currentCharacter === ESTRAZIONE_DATI_MODE_NAME) {
+                appState.uploadedFiles = [];
+                updateFilePreview();
+            }
+
+            appState.isWaitingForAI = true;
+            appState.loadingMsgDiv = appendMessage("assistant", "", true);
             startThinkingAnimationAndTimer();
             appState.abortController = new AbortController();
             updateUserInteractionState();
 
-            try{
-                const payload={messages:appState.conversation,character:appState.currentCharacter,model:appState.currentModel};
-                const result = await callWorkerApi(payload,appState.abortController.signal);
-
+            try {
+                const payload = {
+                    messages: appState.conversation,
+                    character: appState.currentCharacter,
+                    model: appState.currentModel // This could be dynamic per character in future
+                };
+                const result = await callWorkerApi(payload, appState.abortController.signal);
                 clearThinkingAnimationAndTimer();
 
-                if(appState.loadingMsgDiv && !appState.abortController.signal.aborted){
-                    const contentSpan=appState.loadingMsgDiv.querySelector('.content');
-                    const prefixSpan =appState.loadingMsgDiv.querySelector('.prefix');
-                    if(contentSpan && prefixSpan){
-                        contentSpan.classList.remove('loading-content');
-                        prefixSpan.textContent=`${(appState.currentCharacter||'IA').toUpperCase()}:`;
-                        contentSpan.textContent=result.completion;
-                    }else{
-                        appState.loadingMsgDiv.remove();
-                        appendMessage("assistant",result.completion);
-                    }
-                }else if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove();}
-                appState.loadingMsgDiv=null;
-
-                if(result.completion!==undefined && !appState.abortController.signal.aborted){
-                    appState.conversation.push({role:"assistant",content:result.completion});
+                if (appState.loadingMsgDiv && !appState.abortController.signal.aborted) {
+                     const contentSpan = appState.loadingMsgDiv.querySelector('.content');
+                     const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
+                     if (contentSpan && prefixSpan) {
+                         contentSpan.classList.remove('loading-content');
+                         prefixSpan.textContent = `${(appState.currentCharacter || 'IA').toUpperCase()}:`;
+                         contentSpan.innerHTML = result.completion; // Use innerHTML for formatted responses
+                     } else { // Fallback if divs aren't found
+                         if(appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
+                         appendMessage("assistant", result.completion);
+                     }
+                } else if (appState.loadingMsgDiv) {
+                    appState.loadingMsgDiv.remove();
                 }
-                if(appState.currentTokenLimit!==null && appState.currentTokenCount>=appState.currentTokenLimit){
-                    appendMessage("system",`Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
+                appState.loadingMsgDiv = null;
+
+                if (result.completion !== undefined && !appState.abortController.signal.aborted) {
+                    appState.conversation.push({ role: "assistant", content: result.completion });
+                }
+
+                if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
+                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
                     resetConversationState('token limit');
                 }
-
-            }catch(error){
+            } catch (error) {
                 clearThinkingAnimationAndTimer();
-                if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove();appState.loadingMsgDiv=null;}
-                if(error.name!=="AbortError"){
-                    appendMessage("error",error.message||"Si è verificato un errore sconosciuto.");
-                    if(error.status===413 || (error.message && error.message.includes("Token limit reached before processing"))){
-                        appendMessage("system","Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
+                if (appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
+                appState.loadingMsgDiv = null;
+
+                if (error.name !== 'AbortError') {
+                    appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
+                    if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
+                        appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
                         resetConversationState('input limit');
                     }
-                    if(userInput.placeholder!=="Inizializzazione fallita. Ricarica."){
-                        userInput.placeholder=`Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
+                    if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                      userInput.placeholder = `Errore. Riprova o usa 'reset'. Chiedi all'IA...`;
                     }
                 }
                 scrollToBottom();
-            }finally{
-                clearThinkingAnimationAndTimer();
-                appState.isWaitingForAI=false;
-                appState.abortController=null;
-                if(appState.loadingMsgDiv){appState.loadingMsgDiv.remove();appState.loadingMsgDiv=null;}
-                if(userInput.placeholder!=="Inizializzazione fallita. Ricarica."){
-                    updateUserInteractionState();
-                    setTimeout(()=>userInput.focus(),50);
+            } finally {
+                clearThinkingAnimationAndTimer(); // Ensure cleared
+                appState.isWaitingForAI = false;
+                appState.abortController = null;
+                if (appState.loadingMsgDiv) { // Final check
+                    appState.loadingMsgDiv.remove();
+                    appState.loadingMsgDiv = null;
+                }
+                if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                   updateUserInteractionState();
+                   setTimeout(() => userInput.focus(), 50);
                 }
                 adjustTextareaHeight();
             }
         }
 
-        /* handleKeyDown: invariato */
-
-        async function initializeApp(){
-            appendMessage("system",`Sessione avviata: ${new Date().toLocaleString('it-IT')}`);
-            updateTokenCounterUI();updatePromptUI();
-            userInput.placeholder="Inizializzazione...";userInput.disabled=true;adjustTextareaHeight();scrollToBottom();
-            appendMessage("system","Recupero configurazione...");
-            try{
-                await callWorkerApi({type:'init'});
-                appendMessage("system",`Configurazione caricata.`);
-                appendMessage("system",`Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
-                appendMessage("system",`Digita 'help' per i comandi.`);
-                userInput.disabled=false;appState.isWaitingForAI=false;
-                updateUserInteractionState();setTimeout(()=>userInput.focus(),0);
-            }catch(error){
-                appendMessage("error",`Inizializzazione fallita: ${error.message}`);
-                appendMessage("system","Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
-                userInput.placeholder="Inizializzazione fallita. Ricarica.";userInput.disabled=true;appState.isWaitingForAI=true;
-            }finally{scrollToBottom();}
+        function handleKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
+                event.preventDefault();
+                handleUserInput();
+            } else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
+                if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
+                    event.preventDefault();
+                    appState.historyIndex--;
+                    userInput.value = appState.commandHistory[appState.historyIndex];
+                    requestAnimationFrame(() => userInput.setSelectionRange(userInput.value.length, userInput.value.length));
+                    adjustTextareaHeight();
+                }
+            } else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
+                 if (appState.historyIndex < appState.commandHistory.length - 1) {
+                    event.preventDefault();
+                    appState.historyIndex++;
+                    userInput.value = appState.commandHistory[appState.historyIndex];
+                    requestAnimationFrame(() => userInput.setSelectionRange(userInput.value.length, userInput.value.length));
+                    adjustTextareaHeight();
+                } else if (appState.historyIndex === appState.commandHistory.length - 1) {
+                    event.preventDefault();
+                    appState.historyIndex++;
+                    userInput.value = "";
+                    adjustTextareaHeight();
+                }
+            }
         }
 
-        /* event listeners invariati */
-        userInput.addEventListener("keydown",handleKeyDown);
-        userInput.addEventListener("input",adjustTextareaHeight);
-        terminalDiv.addEventListener('click',(event)=>{if(event.target===terminalDiv||(terminalDiv.contains(event.target)&&event.target.tagName!=='A'&&!event.target.closest('.copy-btn'))){if(window.getSelection().toString()===''&&!appState.isWaitingForAI&&!userInput.disabled){userInput.focus();}}});
-        window.addEventListener('resize',adjustTextareaHeight);
+        async function initializeApp() {
+            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT')}`);
+            updateTokenCounterUI();
+            updatePromptUI();
+            userInput.placeholder = "Inizializzazione...";
+            userInput.disabled = true;
+            adjustTextareaHeight();
+            scrollToBottom();
+            appendMessage("system", "Recupero configurazione...");
+            try {
+                await callWorkerApi({ type: 'init' }); // This will call updateStateFromWorkerResponse
+                appendMessage("system", `Configurazione caricata.`);
+                appendMessage("system", `Modalità: ${appState.currentCharacter}. Modello: ${appState.currentModel}.`);
+                appendMessage("system", `Digita 'help' per i comandi.`);
+                userInput.disabled = false;
+                appState.isWaitingForAI = false;
+                updateUserInteractionState();
+                setTimeout(() => userInput.focus(), 0);
+            } catch (error) {
+                appendMessage("error", `Inizializzazione fallita: ${error.message}`);
+                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
+                userInput.placeholder = "Inizializzazione fallita. Ricarica.";
+                userInput.disabled = true;
+                appState.isWaitingForAI = true; // Effectively disabled
+            } finally {
+                 scrollToBottom();
+            }
+        }
+
+        // File handling functions
+        attachmentButton.addEventListener('click', () => fileUploader.click());
+        fileUploader.addEventListener('change', handleFileSelection);
+
+        function handleFileSelection(event) {
+            const files = Array.from(event.target.files);
+            const currentFileCount = appState.uploadedFiles.length;
+            const MAX_FILES = 15;
+
+            if (currentFileCount + files.length > MAX_FILES) {
+                appendMessage("error", `Puoi caricare un massimo di ${MAX_FILES} file. Hai già ${currentFileCount} file pronti e hai tentato di aggiungerne ${files.length}.`);
+                fileUploader.value = ""; // Clear the input
+                return;
+            }
+
+            let newFilesAdded = 0;
+            files.forEach(file => {
+                if (appState.uploadedFiles.length >= MAX_FILES) return; // Stop if max reached during processing
+
+                if (appState.uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    // appendMessage("system", `File "${file.name}" sembra già in lista. Skippato.`);
+                    return; // Skip if likely duplicate
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    appState.uploadedFiles.push({
+                        name: file.name,
+                        type: file.type,
+                        dataUrl: e.target.result,
+                        size: file.size
+                    });
+                    newFilesAdded++;
+                    if (newFilesAdded === files.length || appState.uploadedFiles.length === MAX_FILES) { // Update preview once all selected are processed or max is hit
+                        updateFilePreview();
+                    }
+                };
+                reader.onerror = () => {
+                    appendMessage("error", `Errore durante la lettura del file ${file.name}`);
+                };
+                reader.readAsDataURL(file);
+            });
+            fileUploader.value = ""; // Clear the input to allow re-selecting the same file if removed and re-added
+            if (files.length === 0) updateFilePreview(); // Ensure preview updates if selection was cancelled
+        }
+
+        function updateFilePreview() {
+            filePreviewArea.innerHTML = ''; // Clear previous previews
+            if (appState.uploadedFiles.length > 0) {
+                const list = document.createElement('ul');
+                appState.uploadedFiles.forEach((file, index) => {
+                    const item = document.createElement('li');
+                    const fileNameSpan = document.createElement('span');
+                    fileNameSpan.textContent = `${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}`;
+                    fileNameSpan.title = file.name; // Show full name on hover
+                    item.appendChild(fileNameSpan);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = '✖'; // Clearer 'x'
+                    removeBtn.classList.add('remove-file-btn');
+                    removeBtn.setAttribute('aria-label', `Rimuovi ${file.name}`);
+                    removeBtn.title = `Rimuovi ${file.name}`;
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        appState.uploadedFiles.splice(index, 1);
+                        updateFilePreview();
+                    };
+                    item.appendChild(removeBtn);
+                    list.appendChild(item);
+                });
+                filePreviewArea.appendChild(list);
+            }
+            adjustTextareaHeight(); // File preview area height might change
+        }
+
+        userInput.addEventListener("keydown", handleKeyDown);
+        userInput.addEventListener("input", adjustTextareaHeight);
+        terminalDiv.addEventListener('click', (event) => {
+            if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn') && !event.target.closest('.remove-file-btn'))) {
+                if (window.getSelection().toString() === '' && !appState.isWaitingForAI && !userInput.disabled) {
+                   userInput.focus();
+                }
+            }
+        });
+        window.addEventListener('resize', adjustTextareaHeight);
 
         initializeApp();
-
     </script>
 </body>
 </html>
