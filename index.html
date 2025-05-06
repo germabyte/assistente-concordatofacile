@@ -61,6 +61,97 @@
           overflow: hidden;
         }
 
+        /* --- Password Overlay Styles --- */
+        #passwordOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(33, 33, 33, 0.6); /* Darker overlay */
+            display: flex; /* Managed by JS */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            font-family: var(--font-family);
+        }
+
+        #passwordModal {
+            background-color: var(--md-surface-color);
+            padding: 24px;
+            border-radius: var(--border-radius-base);
+            box-shadow: var(--elevation-4);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        #passwordModal h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--md-primary-color);
+            font-weight: 500;
+        }
+        #passwordModal p {
+            margin-bottom: 16px;
+            color: var(--md-text-secondary);
+            font-size: 0.95em;
+        }
+
+        #passwordInput {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--md-border-color);
+            border-radius: var(--border-radius-small);
+            font-size: 1em;
+            margin-bottom: 16px;
+            background-color: var(--md-surface-color);
+            color: var(--md-text-primary);
+        }
+        #passwordInput:focus {
+            border-color: var(--md-primary-color);
+            box-shadow: 0 0 0 2px var(--md-primary-color-light);
+            outline: none;
+        }
+
+        #passwordSubmitButton {
+            background-color: var(--md-primary-color);
+            color: var(--md-text-on-primary);
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--elevation-1);
+        }
+        #passwordSubmitButton:hover {
+            background-color: #1565C0; /* Darker shade of primary */
+            box-shadow: var(--elevation-2);
+        }
+        #passwordSubmitButton:disabled {
+            background-color: var(--md-bg-color);
+            color: var(--md-text-secondary);
+            opacity: 0.7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #passwordError {
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-top: 10px;
+            color: var(--md-error-color); /* Ensure error text color */
+            display: none; /* Initially hidden */
+        }
+
+        .app-content-hidden {
+            display: none !important;
+        }
+        /* --- End Password Overlay Styles --- */
+
+
         #appBar {
             background-color: var(--md-primary-color);
             color: var(--md-text-on-primary);
@@ -69,7 +160,7 @@
             font-weight: 500;
             box-shadow: var(--elevation-2);
             z-index: 20;
-            display: flex;
+            display: flex; /* Keep this for original layout */
             align-items: center;
         }
         #appBar h1 {
@@ -94,7 +185,7 @@
         main#terminal { scrollbar-width: thin; scrollbar-color: var(--md-scrollbar-thumb-color) var(--md-scrollbar-track-color); }
 
         footer#inputArea {
-          display: flex;
+          display: flex; /* Keep this for original layout */
           flex-direction: column;
           align-items: stretch;
           background-color: var(--md-surface-color);
@@ -162,102 +253,72 @@
             white-space: nowrap;
         }
 
-        /* --- ATTACHMENT UI IMPROVEMENTS START --- */
         #fileListContainer {
             width: 100%;
             padding: var(--padding-base);
             border: 2px dashed var(--md-border-color);
             border-radius: var(--border-radius-base);
-            background-color: var(--md-surface-color); /* Or var(--md-bg-color) for more subtle contrast */
-            margin-bottom: calc(var(--padding-base) * 0.75); /* Space below it, before inputControls */
-            
+            background-color: var(--md-surface-color);
+            margin-bottom: calc(var(--padding-base) * 0.75);
             font-size: 0.9em;
-            /* color: var(--md-text-secondary); -- Handled by children */
-            
-            /* display: none; -- JS manages this. Assumed to be 'flex' when in estrazione-dati mode. */
-            /* For best UX, this container should be 'flex' when estrazione-dati mode is active,
-               regardless of whether files are selected. JS would control this. */
-            display: flex; 
+            display: flex;
             justify-content: space-between;
             align-items: center;
             transition: border-color 0.2s ease-in-out;
         }
-
-        #fileListContainer:hover {
-            /* Optional: slightly change border on hover if it's meant to feel like a drop target */
-            /* border-color: var(--md-primary-color-light); */
-        }
-
-        #fileListContainer > div { /* Wrapper for "File allegati: [files]" text */
+        #fileListContainer > div {
              display: flex;
              align-items: center;
-             gap: 8px; 
-             overflow: hidden; /* Prevent text from pushing button */
-             flex-grow: 1; /* Allow this part to take up available space */
+             gap: 8px;
+             overflow: hidden;
+             flex-grow: 1;
         }
-
-        #fileListContainer strong { /* "File allegati:" text */
+        #fileListContainer strong {
             font-weight: 500;
             color: var(--md-text-primary);
-            flex-shrink: 0; /* Prevent "File allegati:" from shrinking */
+            flex-shrink: 0;
             white-space: nowrap;
         }
-
         #fileListDisplay {
-            /* background-color: var(--md-bg-color); -- Removed for cleaner look, inherits container's bg */
             padding: 6px 10px;
             border-radius: var(--border-radius-small);
             border: 1px solid var(--md-border-color);
-            
-            white-space: nowrap; 
-            overflow-x: auto; 
-            flex-grow: 1; 
-            max-width: 100%; /* Ensure it doesn't overflow its parent if text is very long */
-            
-            max-height: 45px; 
-            overflow-y: auto; /* For rare cases if content somehow wraps despite nowrap */
-            
-            /* JS should set these styles for "Nessuno" text for better visual cue:
-               font-style: italic;
-               color: var(--md-text-secondary);
-               Otherwise, for actual file names:
-               font-style: normal;
-               color: var(--md-text-primary);
-            */
-            color: var(--md-text-primary); /* Default, JS can override for "Nessuno" */
+            white-space: nowrap;
+            overflow-x: auto;
+            flex-grow: 1;
+            max-width: 100%;
+            max-height: 45px;
+            overflow-y: auto;
+            color: var(--md-text-primary);
         }
-        
         #clearFilesBtn {
-            font-size: 0.9em; /* Match action-button font-size */
-            padding: 8px 12px; /* Match action-button padding */
+            font-size: 0.9em;
+            padding: 8px 12px;
             background-color: var(--md-error-bg-color);
             color: var(--md-error-color);
-            border: 1px solid transparent; /* Consistent with action-button border behavior */
+            border: 1px solid transparent;
             border-radius: var(--border-radius-small);
             cursor: pointer;
             font-weight: 500;
-            flex-shrink: 0; /* Prevent button from shrinking */
-            margin-left: var(--padding-base); /* Space from the file list text */
+            flex-shrink: 0;
+            margin-left: var(--padding-base);
             transition: background-color 0.2s ease, border-color 0.2s ease;
-            /* display: none; -- Managed by JS */
         }
         #clearFilesBtn:hover {
-            background-color: #f1b0b7; /* Lighter red on hover */
-            border-color: var(--md-error-color); /* Show border on hover like action buttons */
+            background-color: #f1b0b7;
+            border-color: var(--md-error-color);
         }
         #clearFilesBtn:disabled {
             background-color: var(--md-bg-color);
             color: var(--md-text-secondary);
-            border-color: var(--md-border-color) !important; /* Ensure border always visible for disabled */
+            border-color: var(--md-border-color) !important;
             opacity: 0.6;
             cursor: not-allowed;
         }
         #clearFilesBtn:disabled:hover {
-            background-color: var(--md-bg-color); /* No hover effect when disabled */
+            background-color: var(--md-bg-color);
             border-color: var(--md-border-color) !important;
         }
-        /* --- ATTACHMENT UI IMPROVEMENTS END --- */
-
 
         #inputControls {
             display: flex;
@@ -417,7 +478,7 @@
           right: 20px;
         }
 
-        @media (max-width: 768px) { 
+        @media (max-width: 768px) {
           html { font-size: var(--font-size-mobile); }
           #appBar { padding: calc(var(--padding-mobile) * 0.8) var(--padding-mobile); font-size: 1.15em; }
           main#terminal { padding: var(--padding-mobile); }
@@ -432,38 +493,42 @@
           .emoji-button { font-size: 1.5em; padding: 8px; width: 40px; height: 40px; }
           #userInput { padding: 8px 10px; min-height: calc(var(--line-height) * 1em + 16px + 2px); }
           #actionsContainer { flex-direction: column; align-items: stretch; gap: 6px; }
-          .action-select { min-width: 0; } 
-          
-          /* Attachment UI Mobile Adjustments */
+          .action-select { min-width: 0; }
+
           #fileListContainer {
               padding: var(--padding-mobile);
-              /* These were already in the original code for mobile, ensuring they are kept if needed */
-              flex-direction: column; 
-              align-items: stretch; 
-              gap: 8px; /* Consistent gap for mobile */
+              flex-direction: column;
+              align-items: stretch;
+              gap: 8px;
           }
-          #fileListContainer > div { /* Text wrapper */
-            gap: 6px; /* Slightly smaller gap for text part on mobile */
-          }
-          #clearFilesBtn { 
-            align-self: flex-end; /* Keep button to the right in column layout */
-            margin-left: 0; /* No left margin needed in column layout */
-            margin-top: 4px; /* Add some space above if it wraps under text */
-          }
+          #fileListContainer > div { gap: 6px; }
+          #clearFilesBtn { align-self: flex-end; margin-left: 0; margin-top: 4px; }
         }
     </style>
 </head>
 <body>
-    <header id="appBar">
+    <!-- Password Overlay -->
+    <div id="passwordOverlay" style="display: none;"> <!-- Initially hidden, JS will show if needed -->
+        <div id="passwordModal">
+            <h2>Accesso Protetto</h2>
+            <p>Inserisci la password per sbloccare l'assistente:</p>
+            <input type="password" id="passwordInput" placeholder="Password" autofocus>
+            <button id="passwordSubmitButton">Accedi</button>
+            <p id="passwordError" style="color: var(--md-error-color); display: none; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <!-- Main App Content: add app-content-hidden class -->
+    <header id="appBar" class="app-content-hidden">
         <h1>🤖 Assistente ConcordatoFacile Plus</h1>
     </header>
 
-    <main id="terminal"></main>
+    <main id="terminal" class="app-content-hidden"></main>
 
-    <div id="tokenCounter">Token: 0</div>
-    <div id="scrollToggle" class="floatingToggle">🔄 Scroll: ON</div>
+    <div id="tokenCounter" class="app-content-hidden">Token: 0</div>
+    <div id="scrollToggle" class="floatingToggle app-content-hidden">🔄 Scroll: ON</div>
 
-    <footer id="inputArea">
+    <footer id="inputArea" class="app-content-hidden">
         <div id="actionsContainer">
             <div class="mode-selector-container">
                 <label for="modeSelector">👤 Modalità:</label>
@@ -474,19 +539,18 @@
             <button id="stopButton" class="action-button" title="Interrompi risposta IA" style="display: none; background-color: var(--md-error-bg-color); color: var(--md-error-color); border-color: var(--md-error-color);">🛑 Stop</button>
         </div>
 
-        <!-- Attachment Area: JS should ensure this is display:flex when in estrazione-dati mode -->
         <div id="fileListContainer" style="display: none;">
-            <div> <!-- Wrapper for text part -->
-                <strong>File allegati:</strong> 
-                <span id="fileListDisplay">Nessuno</span> <!-- JS updates this. "Nessuno" should be styled (e.g. italic, dimmed) by JS if no files -->
+            <div>
+                <strong>File allegati:</strong>
+                <span id="fileListDisplay">Nessuno</span>
             </div>
-            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi Tutti</button> <!-- Text changed for clarity -->
+            <button id="clearFilesBtn" title="Rimuovi tutti i file" style="display: none;">🗑️ Rimuovi Tutti</button>
         </div>
 
         <div id="inputControls">
             <button id="attachFilesBtn" class="emoji-button" title="Allega file (max 15)">📎</button>
             <input type="file" id="fileUploader" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" style="display:none;">
-            <span id="prompt">></span> <!-- Kept for JS logic but hidden via CSS -->
+            <span id="prompt">></span>
             <textarea id="userInput" rows="1" placeholder="Inizializzazione..." autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
             <button id="sendButton" class="emoji-button" title="Invia messaggio">➡️</button>
         </div>
@@ -495,18 +559,29 @@
     <script>
         const WORKER_URL = "https://germabyte-assistente-80.deno.dev/";
 
-        const COMMAND_INFO = [
-          { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
-          { name: "reset", desc: "reset - Reimposta il contesto della chat." },
-          { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (es. fideiussione, estrazione-dati)." },
-          { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." }
-        ];
+        // --- Elements for Password Overlay ---
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordSubmitButton = document.getElementById('passwordSubmitButton');
+        const passwordError = document.getElementById('passwordError');
+        const AUTH_SESSION_KEY = 'appAuthenticated_assistente_cf_plus_v1'; // Specific key, v1 for potential future changes
 
+        // --- Main App Elements (cache them for show/hide) ---
+        const mainAppContentElements = [
+            document.getElementById('appBar'),
+            document.getElementById('terminal'),
+            document.getElementById('tokenCounter'),
+            document.getElementById('scrollToggle'),
+            document.getElementById('inputArea')
+        ].filter(el => el !== null); // Filter out nulls if any ID is mistyped
+
+
+        // --- Existing App Elements ---
         const terminalDiv = document.getElementById("terminal");
         const userInput = document.getElementById("userInput");
         const tokenCounterDiv = document.getElementById("tokenCounter");
         const scrollToggleDiv = document.getElementById("scrollToggle");
-        const promptSpan = document.getElementById("prompt"); 
+        const promptSpan = document.getElementById("prompt");
 
         const attachFilesBtn = document.getElementById("attachFilesBtn");
         const fileUploader = document.getElementById("fileUploader");
@@ -521,17 +596,16 @@
         const modeSelector = document.getElementById("modeSelector");
 
 
+        const COMMAND_INFO = [
+          { name: "help", desc: "help - Mostra questo messaggio di aiuto." },
+          { name: "reset", desc: "reset - Reimposta il contesto della chat." },
+          { name: "imposta modalità", desc: "imposta modalità <nome> - Cambia la modalità IA (es. fideiussione, estrazione-dati)." },
+          { name: "stop", desc: "stop - Interrompe la risposta corrente dell'IA." }
+        ];
         const MAX_FILES = 15;
         const ALLOWED_MIMETYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp'];
 
         let autoScrollEnabled = true;
-        scrollToggleDiv.addEventListener("click", () => {
-          autoScrollEnabled = !autoScrollEnabled;
-          scrollToggleDiv.textContent = autoScrollEnabled
-            ? "🔄 Scroll: ON"
-            : "🚫 Scroll: OFF";
-        });
-
         const appState = {
             conversation: [],
             commandHistory: [],
@@ -550,6 +624,105 @@
             uploadedFiles: [],
         };
 
+        // --- UI Control Functions for Auth ---
+        function showMainAppUI() {
+            mainAppContentElements.forEach(el => {
+                if (el) {
+                    el.classList.remove('app-content-hidden');
+                    // Restore original display styles if '.app-content-hidden' used 'display: none !important'
+                    // For flex containers, ensure their display style is set correctly
+                    if (el.id === 'appBar' || el.id === 'inputArea' || el.id === 'actionsContainer' || el.id === 'inputControls' || el.id === 'fileListContainer') {
+                        el.style.display = 'flex'; // These are known flex containers or children of flex
+                    } else if (el.id === 'terminal' || el.id === 'tokenCounter' || el.id === 'scrollToggle') {
+                        el.style.display = 'block'; // Or their original display type
+                    } else {
+                         el.style.display = ''; // Fallback to default CSS computed display
+                    }
+                }
+            });
+            if (passwordOverlay) passwordOverlay.style.display = 'none';
+
+            // Ensure specific flex containers are indeed flex if needed, as `app-content-hidden` might override
+            if (document.getElementById('appBar')) document.getElementById('appBar').style.display = 'flex';
+            if (document.getElementById('inputArea')) document.getElementById('inputArea').style.display = 'flex';
+            if (document.getElementById('actionsContainer')) document.getElementById('actionsContainer').style.display = 'flex';
+            if (document.getElementById('inputControls')) document.getElementById('inputControls').style.display = 'flex';
+            // fileListContainer's display is managed by updateInteractiveElementsUI
+
+            adjustTextareaHeight(); // Recalculate layout-dependent styles
+            if (userInput && !userInput.disabled) {
+                setTimeout(() => userInput.focus(), 100); // Focus after UI is surely visible
+            }
+        }
+
+        function showPasswordScreenUI() {
+            mainAppContentElements.forEach(el => {
+                if (el) {
+                    el.classList.add('app-content-hidden');
+                    el.style.display = 'none'; // Ensure it's hidden
+                }
+            });
+            if (passwordOverlay) {
+                passwordOverlay.style.display = 'flex';
+                setTimeout(() => {
+                    if(passwordInput) passwordInput.focus();
+                }, 100);
+            }
+        }
+
+        async function attemptAuthentication() {
+            const password = passwordInput.value;
+            if (!password) {
+                passwordError.textContent = "La password non può essere vuota.";
+                passwordError.style.display = 'block';
+                return;
+            }
+
+            passwordSubmitButton.disabled = true;
+            passwordError.style.display = 'none';
+
+            try {
+                const response = await callWorkerApi({ type: 'auth', password: password }); // No signal needed for auth
+
+                if (response.authenticated) {
+                    sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+                    showMainAppUI();
+                    if (response.message && terminalDiv) { // Display server message if any (e.g. "password not configured")
+                        appendMessage("system", response.message);
+                    }
+                    initializeApp(); // Initialize the main application logic AFTER authentication
+                } else {
+                    passwordError.textContent = response.error || "Password errata. Riprova.";
+                    passwordError.style.display = 'block';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            } catch (error) {
+                console.error("Errore durante il processo di autenticazione:", error);
+                let displayError = "Errore di autenticazione. Riprova più tardi.";
+                if (error && error.message && !error.message.toLowerCase().includes('failed to fetch')) {
+                     // Use error.message only if it's from our explicit backend error structure
+                    if (error.data && error.data.error) displayError = error.data.error;
+                    else displayError = error.message;
+                } else if (error && error.message && error.message.toLowerCase().includes('failed to fetch')) {
+                    displayError = "Errore di rete. Impossibile contattare il server.";
+                }
+                passwordError.textContent = displayError;
+                passwordError.style.display = 'block';
+            } finally {
+                passwordSubmitButton.disabled = false;
+            }
+        }
+
+
+        // --- Existing App Functions (slightly reordered for clarity) ---
+        scrollToggleDiv.addEventListener("click", () => {
+          autoScrollEnabled = !autoScrollEnabled;
+          scrollToggleDiv.textContent = autoScrollEnabled
+            ? "🔄 Scroll: ON"
+            : "🚫 Scroll: OFF";
+        });
+
         function formatTokenCount(num) {
             if (num === undefined || num === null) return '?';
             if (num < 1000) return num.toString();
@@ -557,6 +730,7 @@
         }
 
         function appendMessage(role, text, isLoading = false, extraClass = null, overridePrefix = null) {
+            if (!terminalDiv) return null; // Guard against terminalDiv not being ready
             const msgDiv = document.createElement("div");
             msgDiv.classList.add("message", role);
             if (extraClass) msgDiv.classList.add(extraClass);
@@ -567,71 +741,52 @@
             contentSpan.classList.add("content");
 
             switch(role) {
-                case 'user':
-                    prefixSpan.textContent = "TU:";
-                    contentSpan.textContent = text;
-                    break;
+                case 'user': prefixSpan.textContent = "TU:"; contentSpan.textContent = text; break;
                 case 'assistant':
                     prefixSpan.textContent = "IA:";
                     if (isLoading) {
                         contentSpan.classList.add("loading-content");
                         contentSpan.innerHTML = `<span class="thinking-dots-span">Sto pensando.</span><span class="thinking-timer-span">(0.0s)</span>`;
-                    } else {
-                        contentSpan.textContent = text;
-                    }
+                    } else { contentSpan.textContent = text; }
                     break;
-                case 'system':
-                    prefixSpan.textContent = "SISTEMA:";
-                    contentSpan.textContent = text;
-                    break;
-                case 'error':
-                    prefixSpan.textContent = "ERRORE!";
-                    contentSpan.textContent = text;
-                    break;
-                default: 
-                    prefixSpan.textContent = "???:";
-                    contentSpan.textContent = text;
+                case 'system': prefixSpan.textContent = "SISTEMA:"; contentSpan.textContent = text; break;
+                case 'error': prefixSpan.textContent = "ERRORE!"; contentSpan.textContent = text; break;
+                default: prefixSpan.textContent = "???:"; contentSpan.textContent = text;
             }
-
             msgDiv.appendChild(prefixSpan);
             msgDiv.appendChild(contentSpan);
 
-            if (role === 'user' || role === 'assistant') { 
+            if ((role === 'user' || role === 'assistant') && !isLoading) {
                 const copyBtn = document.createElement("button");
-                copyBtn.classList.add("copy-btn");
-                copyBtn.setAttribute("title", "Copia messaggio");
-                copyBtn.textContent = "📋"; 
-
+                copyBtn.classList.add("copy-btn"); copyBtn.setAttribute("title", "Copia messaggio"); copyBtn.textContent = "📋";
                 copyBtn.addEventListener("click", (e) => {
                   e.stopPropagation();
                   const txtToCopy = contentSpan.textContent || "";
                   navigator.clipboard.writeText(txtToCopy).then(() => {
-                    copyBtn.textContent = "✅";
-                    setTimeout(() => (copyBtn.textContent = "📋"), 1500);
+                    copyBtn.textContent = "✅"; setTimeout(() => (copyBtn.textContent = "📋"), 1500);
                   }).catch(() => {
-                    copyBtn.textContent = "❌";
-                    setTimeout(() => (copyBtn.textContent = "📋"), 1500);
+                    copyBtn.textContent = "❌"; setTimeout(() => (copyBtn.textContent = "📋"), 1500);
                   });
                 });
                 msgDiv.appendChild(copyBtn);
             }
-
             terminalDiv.appendChild(msgDiv);
             scrollToBottom();
             return msgDiv;
         }
 
         function scrollToBottom() {
-          if (!autoScrollEnabled) return;
+          if (!autoScrollEnabled || !terminalDiv) return;
           requestAnimationFrame(() => {
             terminalDiv.scrollTo({ top: terminalDiv.scrollHeight, behavior: 'smooth' });
           });
         }
 
         function adjustTextareaHeight() {
+            if (!userInput) return;
             userInput.style.height = 'auto';
             let newHeight = userInput.scrollHeight;
-            const maxHeight = 180; 
+            const maxHeight = 180;
             if (newHeight > maxHeight) {
                 newHeight = maxHeight;
                 userInput.style.overflowY = 'auto';
@@ -641,26 +796,28 @@
             userInput.style.height = newHeight + 'px';
 
             const inputAreaElement = document.getElementById('inputArea');
-            if (inputAreaElement) {
-                terminalDiv.style.paddingBottom = `${inputAreaElement.offsetHeight + 30}px`; 
+            if (inputAreaElement && terminalDiv) { // Check terminalDiv exists
+                terminalDiv.style.paddingBottom = `${inputAreaElement.offsetHeight + 30}px`;
             }
 
-            const inputAreaHeight = inputAreaElement?.offsetHeight || 70; 
-            const baseOffset = window.innerWidth <= 768 ? 10 : 15; 
+            const inputAreaHeight = inputAreaElement?.offsetHeight || 70;
+            const baseOffset = window.innerWidth <= 768 ? 10 : 15;
             const newBottom = `${inputAreaHeight + baseOffset}px`;
 
-            tokenCounterDiv.style.bottom = newBottom;
-            scrollToggleDiv.style.bottom = newBottom;
+            if(tokenCounterDiv) tokenCounterDiv.style.bottom = newBottom;
+            if(scrollToggleDiv) scrollToggleDiv.style.bottom = newBottom;
         }
 
         function updateTokenCounterUI() {
+            if (!tokenCounterDiv) return;
             const countStr = formatTokenCount(appState.currentTokenCount);
             const limitStr = formatTokenCount(appState.currentTokenLimit);
             tokenCounterDiv.textContent = `Token: ${countStr}${appState.currentTokenLimit !== null ? '/' + limitStr : ''}`;
         }
 
         function populateModeSelector() {
-            modeSelector.innerHTML = ''; 
+            if (!modeSelector) return;
+            modeSelector.innerHTML = '';
             const sortedCharacters = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
 
             if (sortedCharacters.length > 0) {
@@ -668,43 +825,34 @@
                     const option = document.createElement('option');
                     option.value = char;
                     option.textContent = char.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                    if (char === appState.currentCharacter) {
-                        option.selected = true;
-                    }
+                    if (char === appState.currentCharacter) option.selected = true;
                     modeSelector.appendChild(option);
                 });
                 modeSelector.disabled = false;
             } else {
                 const option = document.createElement('option');
-                option.textContent = "Nessuna modalità disponibile";
-                option.disabled = true;
+                option.textContent = "Nessuna modalità disponibile"; option.disabled = true;
                 modeSelector.appendChild(option);
                 modeSelector.disabled = true;
             }
         }
 
         function updateInteractiveElementsUI() {
+            if (!attachFilesBtn || !fileListContainer || !userInput || !fileListDisplay || !clearFilesBtn || !modeSelector) return;
+
             const isEstrazioneDati = appState.currentCharacter === 'estrazione-dati';
             attachFilesBtn.style.display = isEstrazioneDati ? 'inline-flex' : 'none';
 
-            // SUGGESTED JS ADJUSTMENT FOR ATTACHMENT UX:
-            // The fileListContainer should be visible whenever 'estrazione-dati' mode is active.
-            // Its content (file names or "Nessuno") and the clear button's visibility
-            // will still depend on whether files are actually uploaded.
             if (isEstrazioneDati) {
-                fileListContainer.style.display = 'flex'; // <-- Key change: make visible in this mode
-
+                fileListContainer.style.display = 'flex';
                 userInput.placeholder = appState.uploadedFiles.length > 0
                     ? "Premi Invio o ➡️ per estrarre, o aggiungi una nota..."
                     : "Allega file (PDF, PNG, JPG) per l'estrazione...";
-                
                 if (appState.uploadedFiles.length > 0) {
-                    // fileListDisplay text is set by fileUploader event or clearUploadedFiles
                     fileListDisplay.style.fontStyle = 'normal';
-                    fileListDisplay.style.color = 'var(--md-text-primary)'; // Or your default text color for files
+                    fileListDisplay.style.color = 'var(--md-text-primary)';
                     clearFilesBtn.style.display = 'inline-block';
                 } else {
-                    // fileListDisplay text is "Nessuno" (set by clearUploadedFiles or init)
                     fileListDisplay.style.fontStyle = 'italic';
                     fileListDisplay.style.color = 'var(--md-text-secondary)';
                     clearFilesBtn.style.display = 'none';
@@ -714,15 +862,13 @@
                 clearFilesBtn.style.display = 'none';
                 userInput.placeholder = `Chiedi all'IA (${appState.currentCharacter ? appState.currentCharacter.replace(/-/g, ' ') : '...'})`;
             }
-            
-            if (modeSelector.value !== appState.currentCharacter) {
-                modeSelector.value = appState.currentCharacter;
-            }
-
+            if (modeSelector.value !== appState.currentCharacter) modeSelector.value = appState.currentCharacter;
             adjustTextareaHeight();
         }
 
         function updateUserInteractionState() {
+            if (!userInput || !sendButton || !attachFilesBtn || !modeSelector || !helpButton || !resetButton || !clearFilesBtn || !stopButton) return;
+
              const isDisabledByInitFailure = userInput.placeholder === "Inizializzazione fallita. Ricarica.";
              const effectivelyWaiting = appState.isWaitingForAI || isDisabledByInitFailure;
 
@@ -732,9 +878,7 @@
              modeSelector.disabled = effectivelyWaiting;
              helpButton.disabled = effectivelyWaiting;
              resetButton.disabled = effectivelyWaiting;
-             clearFilesBtn.disabled = effectivelyWaiting || appState.uploadedFiles.length === 0; // Also disable if no files
-
-
+             clearFilesBtn.disabled = effectivelyWaiting || appState.uploadedFiles.length === 0;
              stopButton.style.display = appState.isWaitingForAI && !isDisabledByInitFailure ? 'inline-flex' : 'none';
 
              if (appState.isWaitingForAI && !isDisabledByInitFailure) {
@@ -744,7 +888,7 @@
              } else if (!appState.currentCharacter) {
                  userInput.placeholder = "Caricamento configurazione...";
              } else {
-                 updateInteractiveElementsUI(); 
+                 updateInteractiveElementsUI();
              }
         }
 
@@ -770,9 +914,7 @@
         function clearThinkingAnimationAndTimer() {
             if (appState.thinkingIntervalId) clearInterval(appState.thinkingIntervalId);
             if (appState.timerIntervalId) clearInterval(appState.timerIntervalId);
-            appState.thinkingIntervalId = null;
-            appState.timerIntervalId = null;
-            appState.thinkingStartTime = null;
+            appState.thinkingIntervalId = null; appState.timerIntervalId = null; appState.thinkingStartTime = null;
             if (appState.loadingMsgDiv) {
                 const contentSpan = appState.loadingMsgDiv.querySelector('.content');
                 if (contentSpan) contentSpan.classList.remove('loading-content');
@@ -788,112 +930,104 @@
             }
             if (typeof data.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
             if (typeof data.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
-            
             updateTokenCounterUI();
-            updateInteractiveElementsUI(); 
+            updateInteractiveElementsUI();
         }
 
         function clearUploadedFiles() {
             appState.uploadedFiles = [];
-            fileUploader.value = null;
-            fileListDisplay.textContent = "Nessuno"; // JS sets this text
-            // updateInteractiveElementsUI will handle styling of "Nessuno" and button visibility
+            if (fileUploader) fileUploader.value = null;
+            if (fileListDisplay) fileListDisplay.textContent = "Nessuno";
             updateInteractiveElementsUI();
-            updateUserInteractionState(); // To correctly update clearFilesBtn disabled state
+            updateUserInteractionState();
         }
 
         function resetConversationState(reason) {
-            const reasonMap = {
-                'user command': 'comando utente',
-                'character change': 'cambio modalità',
-                'token limit': 'limite token',
-                'input limit': 'limite input',
-                'button action': 'azione utente'
-            };
+            const reasonMap = { 'user command': 'comando utente', 'character change': 'cambio modalità',
+                                'token limit': 'limite token', 'input limit': 'limite input', 'button action': 'azione utente' };
             const italianReason = reasonMap[reason] || reason;
-            appState.conversation = [];
-            appState.currentTokenCount = 0;
-            clearUploadedFiles(); 
+            appState.conversation = []; appState.currentTokenCount = 0;
+            clearUploadedFiles();
             updateTokenCounterUI();
             appendMessage("system", `Contesto chat reimpostato (${italianReason}). Nuova conversazione avviata.`);
-            updateUserInteractionState(); 
+            updateUserInteractionState();
             scrollToBottom();
         }
 
-        async function callWorkerApi(payload, signal) {
+        async function callWorkerApi(payload, signal) { // Signal is optional
             let response;
             try {
                 response = await fetch(WORKER_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
-                    signal
+                    signal // Pass signal if provided
                 });
-                const data = await response.json();
+                const data = await response.json(); // Always try to parse JSON for error details
+
                 if (!response.ok) {
                     let errorMsg = `Errore API (${response.status})`;
-                    errorMsg += `: ${data?.error || response.statusText}`;
+                    errorMsg += `: ${data?.error || response.statusText || 'Errore sconosciuto dal server'}`;
                     if (data?.details) console.error("Dettagli Errore API:", data.details);
                     console.error("Risposta Errore API Completa:", data);
+
+                    // Preserve some state if possible from error response
                     if (data?.availableCharacters) appState.availableCharacters = data.availableCharacters;
                     if (typeof data?.tokenLimit === 'number') appState.currentTokenLimit = data.tokenLimit;
                     if (typeof data?.tokenCount === 'number') appState.currentTokenCount = data.tokenCount;
-                    updateTokenCounterUI();
+                    updateTokenCounterUI(); // Update UI with any partial state received
+
                     const error = new Error(errorMsg);
                     error.status = response.status;
-                    error.data = data;
+                    error.data = data; // Attach full error data
                     throw error;
                 }
-                if (!data || (payload.messages && typeof data.completion !== 'string' && !signal?.aborted)) {
-                     console.error("Struttura risposta API inattesa:", data);
-                     throw new Error("Ricevuto un formato di risposta inatteso dall'API.");
+                // For non-auth calls, update state if it's a successful AI/init response
+                if (payload.type !== 'auth' && data) {
+                   updateStateFromWorkerResponse(data);
                 }
-                updateStateFromWorkerResponse(data);
-                return data;
+                return data; // Return full data for auth or AI/init
             } catch (error) {
                 if (error.name === 'AbortError') {
                     console.log("Fetch interrotto dall'utente.");
-                    throw error; 
+                    throw error; // Re-throw for specific handling upstream
                 }
                 console.error("Errore Fetch/API:", error);
                 if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
                      const networkError = new Error("Errore di rete. Impossibile raggiungere il worker API.");
-                     networkError.status = 0; 
+                     networkError.status = 0; // Indicate network error
+                     networkError.data = { error: networkError.message }; // Standardize error structure
                      throw networkError;
                 }
-                throw error; 
+                // If error already has a 'data' property (from the !response.ok block), preserve it
+                if (!error.data) {
+                    error.data = { error: error.message || "Errore sconosciuto durante la chiamata API." };
+                }
+                throw error; // Re-throw for upstream handling
             }
         }
-        
+
         async function handleUserInput() {
+            if (!userInput) return;
             const inputText = userInput.value.trim();
 
             if (appState.currentCharacter !== 'estrazione-dati' && inputText === "") {
                 userInput.value = ""; adjustTextareaHeight(); return;
             }
-
             if (appState.isWaitingForAI) {
                 if (inputText.toLowerCase() === 'stop') {
-                    appendMessage("user", inputText); 
-                    userInput.value = ""; adjustTextareaHeight();
-                    if (appState.abortController) {
-                        appState.abortController.abort(); 
-                    } else {
-                        appendMessage("error", "Impossibile fermare: Nessun processo IA attivo trovato.");
-                    }
-                } else if (inputText !== "") { 
-                    appendMessage("user", inputText);
-                    userInput.value = ""; adjustTextareaHeight();
-                    appendMessage("system", "L'IA è occupata. Il tuo messaggio è stato ignorato. Usa 🛑 Stop per interrompere.");
+                    appendMessage("user", inputText); userInput.value = ""; adjustTextareaHeight();
+                    if (appState.abortController) appState.abortController.abort();
+                    else appendMessage("error", "Impossibile fermare: Nessun processo IA attivo.");
+                } else if (inputText !== "") {
+                    appendMessage("user", inputText); userInput.value = ""; adjustTextareaHeight();
+                    appendMessage("system", "L'IA è occupata. Il tuo messaggio è ignorato. Usa 🛑 Stop.");
                 }
-                scrollToBottom();
-                return;
+                scrollToBottom(); return;
             }
 
             const currentInputTextForHistory = (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0)
-                ? (inputText || `[${appState.uploadedFiles.length} file allegati]`)
-                : inputText;
-
+                ? (inputText || `[${appState.uploadedFiles.length} file allegati]`) : inputText;
             if (currentInputTextForHistory && (appState.commandHistory.length === 0 || appState.commandHistory[appState.commandHistory.length - 1] !== currentInputTextForHistory)) {
                 appState.commandHistory.push(currentInputTextForHistory);
             }
@@ -904,88 +1038,56 @@
             const originalArgs = inputText.split(/\s+/);
 
             if (command === 'reset') {
-                appendMessage("user", inputText);
-                userInput.value = ""; adjustTextareaHeight();
-                resetConversationState('user command');
-                return;
+                appendMessage("user", inputText); userInput.value = ""; adjustTextareaHeight();
+                resetConversationState('user command'); return;
             }
-
             if (command === 'help') {
-                appendMessage("user", inputText);
-                userInput.value = ""; adjustTextareaHeight();
-                const commandsSorted = [...COMMAND_INFO].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
-                
-                let helpOutput = "COMANDI DISPONIBILI: (puoi digitarli o usare i pulsanti)\n";
-                commandsSorted.forEach(c => { helpOutput += `  ${c.desc}\n`; });
-                
-                helpOutput += "\nMODALITÀ DISPONIBILI: (selezionabili dal menu a tendina o con imposta modalità <nome>)\n";
-                const chars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                helpOutput += `  ${chars.length ? chars.map(c => `${c}`).join(', ') : 'Nessuna caricata'}\n\n`;
-                
-                helpOutput += "STATO ATTUALE:\n";
-                helpOutput += `  Modalità: ${appState.currentCharacter ? `${appState.currentCharacter}` : 'Non impostata'}\n\n`;
-                
-                helpOutput += "COME CHATTARE:\n";
-                helpOutput += "  • Scrivi il tuo messaggio e premi Invio o il pulsante ➡️.\n";
-                helpOutput += "  • In modalità estrazione-dati, allega file usando 📎 e poi invia (puoi aggiungere una nota testuale opzionale).\n\n";
-                
-                appendMessage("system", helpOutput, false, "help-output");
-                scrollToBottom();
-                return;
+                appendMessage("user", inputText); userInput.value = ""; adjustTextareaHeight();
+                const commandsSorted = [...COMMAND_INFO].sort((a,b)=>a.name.localeCompare(b.name,{sensitivity:"base"}));
+                let helpOutput = "COMANDI DISPONIBILI:\n" + commandsSorted.map(c=>`  ${c.desc}`).join("\n");
+                helpOutput += "\n\nMODALITÀ DISPONIBILI:\n  " + (appState.availableCharacters.length ? appState.availableCharacters.join(', ') : 'Nessuna caricata');
+                helpOutput += `\n\nSTATO ATTUALE:\n  Modalità: ${appState.currentCharacter || 'Non impostata'}\n`;
+                helpOutput += "\nCOME CHATTARE:\n  • Scrivi e premi Invio o ➡️.\n  • Estrazione-dati: allega file (📎), poi invia.\n";
+                appendMessage("system", helpOutput, false, "help-output"); scrollToBottom(); return;
             }
-
             if (command === 'imposta' && originalArgs.length >= 2 && originalArgs[1].toLowerCase() === 'modalità') {
-                appendMessage("user", inputText); 
-                userInput.value = ""; adjustTextareaHeight();
-                if (originalArgs.length < 3) {
-                     appendMessage("error", "Utilizzo: imposta modalità <nome modalità>"); return;
-                }
-                const settingValue = originalArgs.slice(2).join(' '); 
-                const characterNameLower = settingValue.toLowerCase(); 
+                appendMessage("user", inputText); userInput.value = ""; adjustTextareaHeight();
+                if (originalArgs.length < 3) { appendMessage("error", "Utilizzo: imposta modalità <nome>"); return; }
+                const settingValue = originalArgs.slice(2).join(' ');
+                const characterNameLower = settingValue.toLowerCase();
                 const foundCharacter = appState.availableCharacters.find(c => c.toLowerCase() === characterNameLower);
-
-                if (foundCharacter) { 
+                if (foundCharacter) {
                      if (appState.currentCharacter !== foundCharacter) {
-                         appState.currentCharacter = foundCharacter; 
-                         modeSelector.value = foundCharacter; 
+                         appState.currentCharacter = foundCharacter; modeSelector.value = foundCharacter;
                          appendMessage("system", `Modalità impostata su: ${foundCharacter}.`);
-                         resetConversationState('character change'); // This will call updateInteractiveElementsUI
-                     } else {
-                          appendMessage("system", `La modalità è già: ${foundCharacter}.`);
-                     }
+                         resetConversationState('character change');
+                     } else appendMessage("system", `La modalità è già: ${foundCharacter}.`);
                 } else {
-                     const sortedChars = [...(appState.availableCharacters || [])].sort((a, b) => a.localeCompare(b));
-                     const availableModesString = sortedChars.length ? sortedChars.map(c => `${c}`).join(', ') : 'Nessuna';
+                     const availableModesString = appState.availableCharacters.length ? appState.availableCharacters.join(', ') : 'Nessuna';
                      appendMessage("error", `Modalità '${settingValue}' non trovata. Disponibili: ${availableModesString}`);
                 }
-                scrollToBottom();
-                return; 
+                scrollToBottom(); return;
             }
 
-            let userMessageForConversation;
-            let displayUserTextInChat;
-
+            let userMessageForConversation, displayUserTextInChat;
             if (appState.currentCharacter === 'estrazione-dati') {
-                if (appState.uploadedFiles.length === 0 && !inputText) { 
-                    appendMessage("system", "Per l'estrazione dati, per favore allega prima dei file usando il pulsante 📎, o fornisci una query testuale.");
+                if (appState.uploadedFiles.length === 0 && !inputText) {
+                    appendMessage("system", "Per estrazione dati, allega file (📎) o fornisci query testuale.");
                     userInput.value = ""; adjustTextareaHeight(); return;
                 }
                 if (appState.uploadedFiles.length === 0 && inputText) {
                     displayUserTextInChat = inputText;
                     userMessageForConversation = { role: "user", content: inputText };
-                } else { 
+                } else {
                     displayUserTextInChat = inputText || `Estrazione dati da ${appState.uploadedFiles.length} file.`;
-                    const userMessageContentArray = [{ type: "text", text: inputText || "Estrai i dati dai documenti allegati come richiesto." }];
+                    const userMessageContentArray = [{ type: "text", text: inputText || "Estrai i dati dai documenti." }];
                     appState.uploadedFiles.forEach(file => {
-                        if (file.type.startsWith('image/')) {
-                            userMessageContentArray.push({ type: "image_url", image_url: { url: file.dataUrl } });
-                        } else if (file.type === 'application/pdf') {
-                            userMessageContentArray.push({ type: "file", file: { filename: file.name, file_data: file.dataUrl } });
-                        }
+                        if (file.type.startsWith('image/')) userMessageContentArray.push({ type: "image_url", image_url: { url: file.dataUrl } });
+                        else if (file.type === 'application/pdf') userMessageContentArray.push({ type: "file", file: { filename: file.name, file_data: file.dataUrl } });
                     });
                     userMessageForConversation = { role: "user", content: userMessageContentArray };
                 }
-            } else { 
+            } else {
                 if (inputText === "") return;
                 displayUserTextInChat = inputText;
                 userMessageForConversation = { role: "user", content: inputText };
@@ -993,32 +1095,25 @@
 
             appendMessage("user", displayUserTextInChat);
             appState.conversation.push(userMessageForConversation);
-            userInput.value = ""; adjustTextareaHeight();
-            scrollToBottom();
+            userInput.value = ""; adjustTextareaHeight(); scrollToBottom();
 
-            appState.isWaitingForAI = true;
-            updateUserInteractionState(); 
+            appState.isWaitingForAI = true; updateUserInteractionState();
             appState.loadingMsgDiv = appendMessage("assistant", "", true);
             startThinkingAnimationAndTimer();
             appState.abortController = new AbortController();
 
             try {
-                const payload = {
-                    messages: appState.conversation,
-                    character: appState.currentCharacter,
-                    model: appState.currentModel
-                };
-                const result = await callWorkerApi(payload, appState.abortController.signal);
+                const payload = { messages: appState.conversation, character: appState.currentCharacter, model: appState.currentModel };
+                const result = await callWorkerApi(payload, appState.abortController.signal); // Signal is passed here
                 clearThinkingAnimationAndTimer();
 
-                if (appState.loadingMsgDiv) { 
+                if (appState.loadingMsgDiv) {
                      const contentSpan = appState.loadingMsgDiv.querySelector('.content');
                      const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
                      if (contentSpan && prefixSpan) {
-                         contentSpan.classList.remove('loading-content');
-                         prefixSpan.textContent = "IA:";
+                         contentSpan.classList.remove('loading-content'); prefixSpan.textContent = "IA:";
                          contentSpan.textContent = result.completion;
-                     } else { 
+                     } else {
                          if(appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
                          appendMessage("assistant", result.completion);
                      }
@@ -1027,107 +1122,88 @@
 
                 if (result.completion !== undefined) {
                     appState.conversation.push({ role: "assistant", content: result.completion });
-                    if (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0) { 
-                        clearUploadedFiles(); // This now calls updateInteractiveElementsUI and updateUserInteractionState
-                    }
+                    if (appState.currentCharacter === 'estrazione-dati' && appState.uploadedFiles.length > 0) clearUploadedFiles();
                 }
-
                 if (appState.currentTokenLimit !== null && appState.currentTokenCount >= appState.currentTokenLimit) {
-                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reimpostazione automatica del contesto.`);
+                    appendMessage("system", `Limite token (${formatTokenCount(appState.currentTokenLimit)}) raggiunto. Reset automatico.`);
                     resetConversationState('token limit');
                 }
-
-            } catch (error) { 
+            } catch (error) {
                 clearThinkingAnimationAndTimer();
-                if (appState.loadingMsgDiv) {
-                    appState.loadingMsgDiv.remove();
-                    appState.loadingMsgDiv = null;
-                }
+                if (appState.loadingMsgDiv) { appState.loadingMsgDiv.remove(); appState.loadingMsgDiv = null; }
 
                 if (error.name === 'AbortError') {
                     appendMessage("system", "Risposta IA interrotta dall'utente.");
                 } else {
-                    appendMessage("error", error.message || "Si è verificato un errore sconosciuto.");
-                    if (error.status === 413 || (error.message && error.message.includes("Token limit reached before processing"))) {
-                        appendMessage("system", "Messaggio di input troppo lungo o limite contesto raggiunto. Reimpostazione automatica del contesto.");
+                    // Use error.data.error if available (from structured backend error), else error.message
+                    const errorMessageToDisplay = (error.data && error.data.error) ? error.data.error : (error.message || "Errore sconosciuto.");
+                    appendMessage("error", errorMessageToDisplay);
+                    if (error.status === 413 || (errorMessageToDisplay && errorMessageToDisplay.includes("Token limit reached"))) {
+                        appendMessage("system", "Input troppo lungo o limite contesto. Reset automatico.");
                         resetConversationState('input limit');
                     }
                 }
                 scrollToBottom();
             } finally {
-                clearThinkingAnimationAndTimer(); 
-                appState.isWaitingForAI = false;
-                appState.abortController = null; 
-                if (appState.loadingMsgDiv) {
-                    appState.loadingMsgDiv.remove(); 
-                    appState.loadingMsgDiv = null;
-                }
-                if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                   updateUserInteractionState(); // This will call updateInteractiveElementsUI
-                   setTimeout(() => userInput.focus(), 50); 
+                clearThinkingAnimationAndTimer();
+                appState.isWaitingForAI = false; appState.abortController = null;
+                if (appState.loadingMsgDiv) { appState.loadingMsgDiv.remove(); appState.loadingMsgDiv = null; }
+                if (userInput && userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                   updateUserInteractionState();
+                   setTimeout(() => userInput.focus(), 50);
                 }
             }
         }
 
-
         function handleKeyDown(event) {
-            if (event.key === "Enter" && !event.shiftKey && !userInput.disabled) {
+            if (!userInput || userInput.disabled) return;
+            if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault(); handleUserInput();
             }
-            else if (event.key === "ArrowUp" && !userInput.disabled && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
+            else if (event.key === "ArrowUp" && userInput.selectionStart === 0 && userInput.selectionEnd === 0) {
                 if (appState.commandHistory.length > 0 && appState.historyIndex > 0) {
-                    event.preventDefault();
-                    appState.historyIndex--;
+                    event.preventDefault(); appState.historyIndex--;
                     userInput.value = appState.commandHistory[appState.historyIndex];
                     requestAnimationFrame(() => { userInput.setSelectionRange(userInput.value.length, userInput.value.length); });
                     adjustTextareaHeight();
                 }
             }
-            else if (event.key === "ArrowDown" && !userInput.disabled && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
+            else if (event.key === "ArrowDown" && userInput.selectionStart === userInput.value.length && userInput.selectionEnd === userInput.value.length) {
                  if (appState.historyIndex < appState.commandHistory.length - 1) {
-                    event.preventDefault();
-                    appState.historyIndex++;
+                    event.preventDefault(); appState.historyIndex++;
                     userInput.value = appState.commandHistory[appState.historyIndex];
                     requestAnimationFrame(() => { userInput.setSelectionRange(userInput.value.length, userInput.value.length); });
                     adjustTextareaHeight();
                 } else if (appState.historyIndex === appState.commandHistory.length - 1) {
-                    event.preventDefault();
-                    appState.historyIndex++;
-                    userInput.value = "";
-                    adjustTextareaHeight();
+                    event.preventDefault(); appState.historyIndex++; userInput.value = ""; adjustTextareaHeight();
                 }
             }
         }
 
-        attachFilesBtn.addEventListener('click', () => fileUploader.click());
-        clearFilesBtn.addEventListener('click', () => {
-            if (appState.isWaitingForAI) return; 
+        // --- Event Listeners Setup (should be done after DOM is ready or elements are defined) ---
+        // Listeners for auth screen are set in DOMContentLoaded
+        // Listeners for main app can be set here or within initializeApp if elements are not ready globally
+
+        if (attachFilesBtn) attachFilesBtn.addEventListener('click', () => fileUploader.click());
+        if (clearFilesBtn) clearFilesBtn.addEventListener('click', () => {
+            if (appState.isWaitingForAI) return;
             clearUploadedFiles();
             appendMessage("system", "File allegati rimossi.");
         });
-        fileUploader.addEventListener('change', (event) => {
+        if (fileUploader) fileUploader.addEventListener('change', (event) => {
             const files = event.target.files;
             if (!files || files.length === 0) {
-                if (appState.uploadedFiles.length === 0) {
-                    fileListDisplay.textContent = "Nessuno";
-                }
-                updateInteractiveElementsUI(); 
-                updateUserInteractionState(); // Update button states
-                return;
+                if (appState.uploadedFiles.length === 0) fileListDisplay.textContent = "Nessuno";
+                updateInteractiveElementsUI(); updateUserInteractionState(); return;
             }
             if (appState.uploadedFiles.length + files.length > MAX_FILES) {
-                appendMessage("error", `Puoi caricare un massimo di ${MAX_FILES} file in totale.`);
-                fileUploader.value = null; 
-                return;
+                appendMessage("error", `Max ${MAX_FILES} file.`); fileUploader.value = null; return;
             }
-
-            const fileReadPromises = [];
-            let invalidFileFound = false;
-
+            const fileReadPromises = []; let invalidFileFound = false;
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (!ALLOWED_MIMETYPES.includes(file.type)) {
-                    appendMessage("error", `Tipo file non supportato: ${file.name} (${file.type}). Consentiti: PDF, PNG, JPG, WEBP.`);
+                    appendMessage("error", `File non supportato: ${file.name} (${file.type}).`);
                     invalidFileFound = true; continue;
                 }
                 const reader = new FileReader();
@@ -1135,111 +1211,111 @@
                     reader.onload = (e) => {
                         if (!appState.uploadedFiles.find(f => f.name === file.name)) {
                             appState.uploadedFiles.push({ name: file.name, type: file.type, dataUrl: e.target.result });
-                        }
-                        resolve();
-                    };
+                        } resolve(); };
                     reader.onerror = (e) => {
                         console.error("Errore lettura file:", file.name, e);
-                        appendMessage("error", `Errore durante la lettura del file: ${file.name}`);
-                        reject(e);
-                    };
+                        appendMessage("error", `Errore lettura file: ${file.name}`); reject(e); };
                     reader.readAsDataURL(file);
                 });
                 fileReadPromises.push(promise);
             }
-
             Promise.all(fileReadPromises)
                 .then(() => {
                     if (appState.uploadedFiles.length > 0) {
-                        const names = appState.uploadedFiles.map(f => f.name).join(' | ');
-                        fileListDisplay.textContent = names;
-                    } else if (!invalidFileFound) { 
-                         fileListDisplay.textContent = "Nessuno";
-                    }
-                    updateInteractiveElementsUI();
-                    updateUserInteractionState(); // Update button states
+                        fileListDisplay.textContent = appState.uploadedFiles.map(f => f.name).join(' | ');
+                    } else if (!invalidFileFound) fileListDisplay.textContent = "Nessuno";
+                    updateInteractiveElementsUI(); updateUserInteractionState();
                 })
                 .catch(() => {
-                    if (appState.uploadedFiles.length === 0) clearUploadedFiles(); 
-                    updateInteractiveElementsUI();
-                    updateUserInteractionState(); // Update button states
+                    if (appState.uploadedFiles.length === 0) clearUploadedFiles();
+                    updateInteractiveElementsUI(); updateUserInteractionState();
                 });
-            fileUploader.value = null; 
+            fileUploader.value = null;
         });
 
-        sendButton.addEventListener('click', handleUserInput);
-
-        helpButton.addEventListener('click', () => {
-            userInput.value = 'help';
-            handleUserInput();
-            userInput.value = ''; 
+        if (sendButton) sendButton.addEventListener('click', handleUserInput);
+        if (helpButton) helpButton.addEventListener('click', () => {
+            userInput.value = 'help'; handleUserInput(); userInput.value = '';
         });
-
-        resetButton.addEventListener('click', () => {
-            resetConversationState('button action');
+        if (resetButton) resetButton.addEventListener('click', () => { resetConversationState('button action'); });
+        if (stopButton) stopButton.addEventListener('click', () => {
+            if (appState.isWaitingForAI) { userInput.value = 'stop'; handleUserInput(); userInput.value = ''; }
         });
-
-        stopButton.addEventListener('click', () => {
-            if (appState.isWaitingForAI) {
-                userInput.value = 'stop'; 
-                handleUserInput();      
-                userInput.value = '';   
-            }
-        });
-
-        modeSelector.addEventListener('change', (event) => {
-            const selectedMode = event.target.value; 
+        if (modeSelector) modeSelector.addEventListener('change', (event) => {
+            const selectedMode = event.target.value;
             if (selectedMode && selectedMode !== appState.currentCharacter) {
-                userInput.value = `imposta modalità ${selectedMode}`; 
-                handleUserInput();
-                userInput.value = ''; 
+                userInput.value = `imposta modalità ${selectedMode}`; handleUserInput(); userInput.value = '';
             }
         });
-
-
-        async function initializeApp() {
-            appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' })}`);
-            // Initialize fileListDisplay to "Nessuno" before first UI update
-            fileListDisplay.textContent = "Nessuno";
-
-            updateUserInteractionState(); // Initial call to set disabled states
-            adjustTextareaHeight();
-            
-            appendMessage("system", "Recupero configurazione iniziale...");
-            try {
-                await callWorkerApi({ type: 'init' });
-                const defaultModeText = appState.currentCharacter ? appState.currentCharacter.replace(/-/g, ' ') : 'Non impostata';
-                appendMessage("system", `Assistente pronto. Modalità predefinita: ${defaultModeText}. Digita un messaggio, usa ❓ Aiuto per i comandi, o seleziona una modalità dal menu.`);
-            } catch (error) {
-                appendMessage("error", `Inizializzazione fallita: ${error.message}`);
-                appendMessage("system", "Impossibile caricare la configurazione. Funzionalità limitate. Prova a ricaricare la pagina.");
-                userInput.placeholder = "Inizializzazione fallita. Ricarica.";
-                appState.isWaitingForAI = true; 
-            } finally {
-                if (userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
-                    appState.isWaitingForAI = false; 
-                }
-                updateTokenCounterUI(); 
-                updateUserInteractionState(); // This will correctly call updateInteractiveElementsUI
-                if (!appState.isWaitingForAI) { 
-                    setTimeout(() => userInput.focus(), 0);
-                }
-                scrollToBottom();
-            }
+        if (userInput) {
+            userInput.addEventListener("keydown", handleKeyDown);
+            userInput.addEventListener("input", adjustTextareaHeight);
         }
-
-        userInput.addEventListener("keydown", handleKeyDown);
-        userInput.addEventListener("input", adjustTextareaHeight);
-        terminalDiv.addEventListener('click', (event) => {
+        if (terminalDiv) terminalDiv.addEventListener('click', (event) => {
             if (event.target === terminalDiv || (terminalDiv.contains(event.target) && event.target.tagName !== 'A' && !event.target.closest('.copy-btn') && !event.target.closest('button') && !event.target.closest('select'))) {
-                if (window.getSelection().toString() === '' && !userInput.disabled) {
+                if (window.getSelection().toString() === '' && userInput && !userInput.disabled) {
                    userInput.focus();
                 }
             }
         });
         window.addEventListener('resize', adjustTextareaHeight);
 
-        initializeApp();
+
+        // --- Application Initialization ---
+        async function initializeApp() {
+            if (terminalDiv) appendMessage("system", `Sessione avviata: ${new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' })}`);
+            if (fileListDisplay) fileListDisplay.textContent = "Nessuno";
+
+            updateUserInteractionState(); // Initial call to set disabled states
+            adjustTextareaHeight();
+
+            if (terminalDiv) appendMessage("system", "Recupero configurazione iniziale...");
+            try {
+                await callWorkerApi({ type: 'init' }); // No signal needed for init
+                const defaultModeText = appState.currentCharacter ? appState.currentCharacter.replace(/-/g, ' ') : 'Non impostata';
+                if (terminalDiv) appendMessage("system", `Assistente pronto. Modalità: ${defaultModeText}. Digita un messaggio, ❓ Aiuto, o seleziona modalità.`);
+            } catch (error) {
+                const errorMsg = (error.data && error.data.error) ? error.data.error : (error.message || "Errore sconosciuto.");
+                if (terminalDiv) appendMessage("error", `Inizializzazione fallita: ${errorMsg}`);
+                if (terminalDiv) appendMessage("system", "Impossibile caricare config. Funzionalità limitate. Ricarica pagina.");
+                if (userInput) userInput.placeholder = "Inizializzazione fallita. Ricarica.";
+                appState.isWaitingForAI = true; // Prevent further interaction
+            } finally {
+                if (userInput && userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
+                    appState.isWaitingForAI = false;
+                }
+                updateTokenCounterUI();
+                updateUserInteractionState();
+                if (userInput && !appState.isWaitingForAI) {
+                    setTimeout(() => userInput.focus(), 0);
+                }
+                scrollToBottom();
+            }
+        }
+
+        // --- Entry Point: DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already authenticated in this session
+            if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
+                showMainAppUI();
+                initializeApp(); // Initialize if already authenticated
+            } else {
+                showPasswordScreenUI(); // Show password screen first
+            }
+
+            // Setup listeners for password screen
+            if (passwordSubmitButton) {
+                passwordSubmitButton.addEventListener('click', attemptAuthentication);
+            }
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        attemptAuthentication();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
