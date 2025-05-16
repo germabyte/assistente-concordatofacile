@@ -1104,21 +1104,49 @@
 
             try {
                 const payload = { messages: appState.conversation, character: appState.currentCharacter, model: appState.currentModel };
-                const result = await callWorkerApi(payload, appState.abortController.signal); // Signal is passed here
+                const result = await callWorkerApi(payload, appState.abortController.signal);
                 clearThinkingAnimationAndTimer();
 
                 if (appState.loadingMsgDiv) {
-                     const contentSpan = appState.loadingMsgDiv.querySelector('.content');
-                     const prefixSpan = appState.loadingMsgDiv.querySelector('.prefix');
-                     if (contentSpan && prefixSpan) {
-                         contentSpan.classList.remove('loading-content'); prefixSpan.textContent = "IA:";
-                         contentSpan.textContent = result.completion;
+                     const contentSpanOfLoadingMsg = appState.loadingMsgDiv.querySelector('.content');
+                     const prefixSpanOfLoadingMsg = appState.loadingMsgDiv.querySelector('.prefix');
+
+                     if (contentSpanOfLoadingMsg && prefixSpanOfLoadingMsg) {
+                         contentSpanOfLoadingMsg.classList.remove('loading-content');
+                         prefixSpanOfLoadingMsg.textContent = "IA:";
+                         contentSpanOfLoadingMsg.textContent = result.completion;
+
+                         // MODIFICATION START: Add copy button to the updated assistant message
+                         if (!appState.loadingMsgDiv.querySelector('.copy-btn')) { // Ensure not to add if somehow already there
+                            const copyBtn = document.createElement("button");
+                            copyBtn.classList.add("copy-btn");
+                            copyBtn.setAttribute("title", "Copia messaggio");
+                            copyBtn.textContent = "📋";
+                            copyBtn.addEventListener("click", (e) => {
+                              e.stopPropagation();
+                              // contentSpanOfLoadingMsg is the span whose textContent was just updated
+                              const txtToCopy = contentSpanOfLoadingMsg.textContent || "";
+                              navigator.clipboard.writeText(txtToCopy).then(() => {
+                                copyBtn.textContent = "✅";
+                                setTimeout(() => (copyBtn.textContent = "📋"), 1500);
+                              }).catch(() => {
+                                copyBtn.textContent = "❌";
+                                setTimeout(() => (copyBtn.textContent = "📋"), 1500);
+                              });
+                            });
+                            appState.loadingMsgDiv.appendChild(copyBtn);
+                         }
+                         // MODIFICATION END
                      } else {
+                         // This branch handles cases where loadingMsgDiv structure is unexpected.
+                         // It removes the old loading message and appends a new one.
+                         // The new message (created by appendMessage below) will correctly get a copy button
+                         // because isLoading will be false by default.
                          if(appState.loadingMsgDiv) appState.loadingMsgDiv.remove();
                          appendMessage("assistant", result.completion);
                      }
                 }
-                appState.loadingMsgDiv = null;
+                appState.loadingMsgDiv = null; // Clear the reference
 
                 if (result.completion !== undefined) {
                     appState.conversation.push({ role: "assistant", content: result.completion });
@@ -1135,7 +1163,6 @@
                 if (error.name === 'AbortError') {
                     appendMessage("system", "Risposta IA interrotta dall'utente.");
                 } else {
-                    // Use error.data.error if available (from structured backend error), else error.message
                     const errorMessageToDisplay = (error.data && error.data.error) ? error.data.error : (error.message || "Errore sconosciuto.");
                     appendMessage("error", errorMessageToDisplay);
                     if (error.status === 413 || (errorMessageToDisplay && errorMessageToDisplay.includes("Token limit reached"))) {
@@ -1145,9 +1172,16 @@
                 }
                 scrollToBottom();
             } finally {
-                clearThinkingAnimationAndTimer();
+                clearThinkingAnimationAndTimer(); // Ensure cleared even if error occurred before loadingMsgDiv was handled
                 appState.isWaitingForAI = false; appState.abortController = null;
-                if (appState.loadingMsgDiv) { appState.loadingMsgDiv.remove(); appState.loadingMsgDiv = null; }
+                if (appState.loadingMsgDiv && !appState.loadingMsgDiv.querySelector('.content').classList.contains('loading-content')) {
+                    // If loadingMsgDiv was somehow not nulled but its content updated, ensure it's cleared.
+                    // This should ideally be covered by the try block logic, but as a safeguard.
+                } else if (appState.loadingMsgDiv) { // If still in loading state (e.g., error before content update)
+                    appState.loadingMsgDiv.remove();
+                }
+                appState.loadingMsgDiv = null; // Definitive clear
+
                 if (userInput && userInput.placeholder !== "Inizializzazione fallita. Ricarica.") {
                    updateUserInteractionState();
                    setTimeout(() => userInput.focus(), 50);
